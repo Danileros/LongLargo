@@ -38,6 +38,6 @@ If you want to share your tracks—best solution is to create an assetbundle usi
 
 ## Special Thanks
 
-[DigitalZombie]("https://github.com/DigitalzombieTLD") for creating AudioManager and AudioCore that I depend on.
-[Fuar11]("https://github.com/Fuar11") for Improved soundtracks mod that I've drawn inspiration from.
+[DigitalZombie](https://github.com/DigitalzombieTLD/) for creating AudioManager and AudioCore that I depend on.
+[Fuar11](https://github.com/Fuar11) for Improved soundtracks mod that I've drawn inspiration from.
 Without you, I wouldn't have even started developing Long Largo.
