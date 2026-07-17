@@ -102,7 +102,7 @@ public class PlaylistProvider
         var clipManager = AudioMaster.NewClipManager();
         try
         {
-            if (Settings.settings.EnableUglyLoad)
+            if (LLSettings.settings.EnableUglyLoad)
             {
                 LoadUgly(soundtrackPaths, clipManager);
             }

@@ -12,7 +12,7 @@ internal class MusicEventManagerPatches
     {
         internal static bool Prefix()
         {
-            return !Settings.settings.StalkedSuppress;
+            return !LLSettings.settings.StalkedSuppress;
         }
     }
     
@@ -21,7 +21,7 @@ internal class MusicEventManagerPatches
     {
         internal static bool Prefix()
         {
-            return !Settings.settings.SuccessSuppress;
+            return !LLSettings.settings.SuccessSuppress;
         }
     }
     
@@ -30,7 +30,7 @@ internal class MusicEventManagerPatches
     {
         internal static bool Prefix()
         {
-            return !Settings.settings.StalkedSuppress;
+            return !LLSettings.settings.StalkedSuppress;
         }
     }
 

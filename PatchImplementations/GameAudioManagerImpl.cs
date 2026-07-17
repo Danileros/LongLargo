@@ -89,12 +89,12 @@ public static class GameAudioManagerImpl
 
     private static bool MaybeSupressEvent(SituationType situation)
     {
-        if (Settings.settings.WeatherSuppress && (SituationType.WeatherClear | SituationType.WeatherBlizzard | 
+        if (LLSettings.settings.WeatherSuppress && (SituationType.WeatherClear | SituationType.WeatherBlizzard | 
                                                   SituationType.WeatherSnow | SituationType.WeatherFog).HasFlag(situation)
-            || Settings.settings.TimeSuppress && (SituationType.TimeDawn | SituationType.TimeDusk).HasFlag(situation)
-            || Settings.settings.StalkedSuppress && (SituationType.Stalked).HasFlag(situation)
-            || Settings.settings.TimberwolfSuppress && (SituationType.Timberwolf).HasFlag(situation)
-            || Settings.settings.SuccessSuppress && (SituationType.Success | SituationType.Sorrow).HasFlag(situation))
+            || LLSettings.settings.TimeSuppress && (SituationType.TimeDawn | SituationType.TimeDusk).HasFlag(situation)
+            || LLSettings.settings.StalkedSuppress && (SituationType.Stalked).HasFlag(situation)
+            || LLSettings.settings.TimberwolfSuppress && (SituationType.Timberwolf).HasFlag(situation)
+            || LLSettings.settings.SuccessSuppress && (SituationType.Success | SituationType.Sorrow).HasFlag(situation))
         {
             return true;
         }
@@ -295,7 +295,7 @@ public static class GameAudioManagerImpl
 
     private static bool ShouldSkip()
     {
-        if (!Settings.settings.ModEnabled)
+        if (!LLSettings.settings.ModEnabled)
         {
             return true;
         }

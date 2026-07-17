@@ -106,7 +106,7 @@ internal class LongLargoSettings : JsonModSettings
     }
 }
 
-internal static class Settings
+internal static class LLSettings
 {
     public static LongLargoSettings settings = new LongLargoSettings();
 

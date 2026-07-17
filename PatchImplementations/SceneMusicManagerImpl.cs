@@ -1,8 +1,7 @@
 using System;
-using AudioMgr;
+using System.Collections;
 using Il2Cpp;
 using Il2CppInterop.Runtime.Attributes;
-using Il2CppVLB;
 using LongLargo.Handlers;
 using LongLargo.Model;
 using MelonLoader;
@@ -14,20 +13,19 @@ namespace LongLargo.PatchImplementations;
 public class SceneMusicManagerImpl : MonoBehaviour
 {
     private SceneMusicManager _instance;
-    private Clip _clip;
     
     public SceneMusicManagerImpl(IntPtr intPtr)  : base(intPtr) { }
 
     public void Awake()
     {
         _instance = gameObject.GetComponent<SceneMusicManager>();
-        if (!Settings.settings.ModEnabled)
+        if (!LLSettings.settings.ModEnabled)
         {
             return;
         }
 
         LLogger.Debug("SceneMusicManagerImpl awakens");
-        var delayModifier = Settings.settings.ExplorationDelay;
+        var delayModifier = LLSettings.settings.ExplorationDelay;
         if (delayModifier != 100)
         {
             var modifier = delayModifier / 100f;
@@ -60,7 +58,7 @@ public class SceneMusicManagerImpl : MonoBehaviour
             return true;
         }
 
-        if (Settings.settings.ExplorationSuppress)
+        if (LLSettings.settings.ExplorationSuppress)
         {
             return false;
         }
@@ -72,29 +70,17 @@ public class SceneMusicManagerImpl : MonoBehaviour
         
         LLogger.Debug("SceneMusicManagerImpl playing explore music");
         
-        (_clip, var allowVanilla) = LongLargoMain.QueueManager.GetExplorationClip();
+        (var clip, var allowVanilla) = LongLargoMain.QueueManager.GetExplorationClip();
         
-        LLogger.Debug($"SceneMusicManagerImpl chosen clip {_clip?.audioClip?.name ?? "LongSilence"}");
+        LLogger.Debug($"SceneMusicManagerImpl chosen clip {clip?.audioClip?.name ?? "LongSilence"}");
         
-        var source = gameObject.GetOrAddComponent<AudioSource>();
-        source.clip = _clip.audioClip;
-        LongLargoMain.QueueManager.PlaySoft(_clip);
+        LongLargoMain.QueueManager.PlaySoft(clip);
         return allowVanilla;
-    }
-
-    [HideFromIl2Cpp]
-    public void PlayExploreMusicPost()
-    {
-        if (ShouldSkip()  || Settings.settings.ExplorationSuppress)
-        {
-            return;
-        }
-        
     }
 
     private static bool ShouldSkip()
     {
-        if (!Settings.settings.ModEnabled)
+        if (!LLSettings.settings.ModEnabled)
         {
             return true;
         }

@@ -90,6 +90,7 @@ public class QueueManager
             LLogger.Log($"Scheduled after {delay}: {clip.audioClip.name}");
             Shot._audioSource.loop = false;
             Shot.AssignClip(LongLargoMain.PlaylistProvider.ShortSilence);
+            Shot.Play();
             _lastToken = MelonCoroutines.Start(this.PlayRoutine(clip, delay));
         }
     }
@@ -267,26 +268,26 @@ public class QueueManager
     private bool Disabled(SituationType situation)
     {
         return
-            Settings.settings.ExplorationVanillaOnly
+            LLSettings.settings.ExplorationVanillaOnly
                 && (SituationType.ExplorationNight | SituationType.ExplorationDay 
                                                    | SituationType.ExplorationAurora).HasFlag(situation)
-            || Settings.settings.WeatherVanillaOnly
+            || LLSettings.settings.WeatherVanillaOnly
                 && (SituationType.WeatherBlizzard | SituationType.WeatherClear 
                                                   | SituationType.WeatherFog 
                                                   | SituationType.WeatherSnow).HasFlag(situation)
-            || Settings.settings.TimeVanillaOnly
+            || LLSettings.settings.TimeVanillaOnly
                 && (SituationType.TimeDawn | SituationType.TimeDusk).HasFlag(situation)
-            || Settings.settings.StalkedVanillaOnly
+            || LLSettings.settings.StalkedVanillaOnly
                 && (SituationType.Stalked).HasFlag(situation)
-            || Settings.settings.TimberwolfVanillaOnly
+            || LLSettings.settings.TimberwolfVanillaOnly
                 && (SituationType.Timberwolf).HasFlag(situation)
-            || Settings.settings.SuccessVanillaOnly
+            || LLSettings.settings.SuccessVanillaOnly
                 && (SituationType.Success | SituationType.Sorrow).HasFlag(situation);
     }
 
     private Clip ChooseRandomSoundtrack(ICollection<SoundtrackInfo> soundtracks)
     {
-        var vanillaChance = Settings.settings.ModVanillaMusicChance;
+        var vanillaChance = LLSettings.settings.ModVanillaMusicChance;
         var sum = soundtracks.Sum(s => s.Chance) + vanillaChance;
         var choosenOne = UnityEngine.Random.Range(0, sum);
         if (choosenOne < vanillaChance)

@@ -22,7 +22,7 @@ public class LongLargoMain : MelonMod
             DebugMode = true;
         }
 
-        Settings.OnLoad();
+        LLSettings.OnLoad();
 
         PlaylistProvider = new PlaylistProvider();
         QueueManager = new QueueManager(PlaylistProvider.Soundtracks);

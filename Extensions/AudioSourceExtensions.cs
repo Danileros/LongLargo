@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using System.Collections;
+using LongLargo.Handlers;
 
 namespace LongLargo.Extensions;
 
@@ -15,11 +16,14 @@ public static class AudioSourceExtensions
     public static IEnumerator FadeOut (this AudioSource audioSource, float fadeTime)
     {
         var startVolume = audioSource.volume;
+        var startTime = Time.time;
+        var time = 0f;
         
-        // should be a bit better than linear
-        while (audioSource.volume > 0)
+        // sounds a bit better than linear
+        while (time < fadeTime)
         {
-            audioSource.volume = startVolume * (float)(Math.Cos(Time.deltaTime / fadeTime * Math.PI) + 1) / 2.0f;
+            time = Time.time - startTime;
+            audioSource.volume = startVolume * (float)(Math.Cos(time / fadeTime * Math.PI) + 1) / 2.0f;
             yield return null;
         }
         
@@ -28,7 +32,7 @@ public static class AudioSourceExtensions
         //     audioSource.volume -= startVolume * Time.deltaTime / fadeTime;
         //     yield return null;
         // }
-
+        
         audioSource.Stop ();
         audioSource.volume = startVolume;
     }
