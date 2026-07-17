@@ -1,6 +1,6 @@
 # Long Largo
 
-![Screenshot](.\logo.jpg)
+![Screenshot](logo.jpg)
 
 A MelonLoader mod for **The Long Dark** survival mode.
 
