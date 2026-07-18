@@ -23,7 +23,6 @@ public static class GameAudioManagerImpl
             return true;
         }
         
-        Clip clip;
         var situationInfo = GetSituationByEvent(soundName);
         if (MaybeIgnoreEvent(situationInfo))
         {
@@ -36,8 +35,18 @@ public static class GameAudioManagerImpl
             return false;
         }
         
-        (clip, var playVanilla) = LongLargoMain.QueueManager.GetSituationClip(situationInfo.Situation);
-        
+        Clip clip;
+        bool playVanilla;
+
+        if (situationInfo.Situation.IsExploration())
+        {
+            (clip, playVanilla) = LongLargoMain.QueueManager.GetExplorationClip();
+        }
+        else
+        {
+            (clip, playVanilla) = LongLargoMain.QueueManager.GetSituationClip(situationInfo.Situation);
+        }
+
         LLogger.Debug($"GameAudioManagerImpl plays {situationInfo.Situation} clip {clip?.audioClip?.name ?? "ShortSilence"}");
         
         return PlayCLip(playVanilla, situationInfo, clip, go);
@@ -118,6 +127,19 @@ public static class GameAudioManagerImpl
         SituationInfo situationInfo = new SituationInfo();
         switch (soundName)
         {
+            // Randomly plays in certain locations; let's pretend it is an Exploration track 
+            case "Play_Caves":
+            case "Play_SteamTunnels":
+            // Not sure if it could be triggered here but just in case
+            case "Play_SndMusicExploration1":
+            case "Play_SndMusicExploration1Light":
+            case "Play_SndMusicExploration2":
+            case "Play_SndMusicExplorationLong":
+            case "Play_SndMusicExplorationLongDay":
+            case "Play_SndMusicExplorationLongNight":
+                LLogger.Debug($"[GameAudioManager] Exploration event {soundName}");
+                situationInfo.Situation = SituationTypeExtensions.GetExplorationSituation();
+                break;
             case "Play_MusicClear":
                 situationInfo.Situation = SituationType.WeatherClear;
                 break;
@@ -253,7 +275,6 @@ public static class GameAudioManagerImpl
             // case "Play_Weather_Blizzard":
                 
             // reasons to play Silence to avoid overlap
-            case "Play_Caves":
             case "Play_musicMood_Creepy":
             case "Play_musicMood_Hope":
             case "Play_musicMood_Hope02":

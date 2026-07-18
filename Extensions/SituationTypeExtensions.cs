@@ -1,3 +1,4 @@
+using Il2Cpp;
 using LongLargo.Model;
 
 namespace LongLargo.Extensions;
@@ -29,5 +30,14 @@ public static class SituationTypeExtensions
     {
         return (SituationType.ConditionSorrow
                 | SituationType.ConditionSuccess).HasFlag(situationType);
+    }
+    
+
+    public static SituationType GetExplorationSituation()
+    {
+        var timeOfDay = GameManager.GetTimeOfDayComponent();
+        var aurora = GameManager.GetAuroraManager();
+        var situation = aurora.AuroraIsActive() ? SituationType.ExplorationAurora : (timeOfDay.IsDay() ? SituationType.ExplorationDay : SituationType.ExplorationNight);
+        return situation;
     }
 }

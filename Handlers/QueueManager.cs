@@ -176,9 +176,7 @@ public class QueueManager
     /// <returns>(Clip, playVanilla)</returns>
     public (Clip, bool) GetExplorationClip()
     {
-        var timeOfDay = GameManager.GetTimeOfDayComponent();
-        var aurora = GameManager.GetAuroraManager();
-        var situation = aurora.AuroraIsActive() ? SituationType.ExplorationAurora : (timeOfDay.IsDay() ? SituationType.ExplorationDay : SituationType.ExplorationNight);
+        var situation = SituationTypeExtensions.GetExplorationSituation();
         if (Disabled(situation))
         {
             return (LongLargoMain.PlaylistProvider.LongSilence, true);
@@ -207,7 +205,7 @@ public class QueueManager
             return (LongLargoMain.PlaylistProvider.LongSilence, true);
         }
     }
-    
+
     /// <summary>
     /// Gets random situation clip.
     /// </summary>
