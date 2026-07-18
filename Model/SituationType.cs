@@ -23,9 +23,6 @@ public enum SituationType
     TimeDawn = 1 << 8,
     Stalked = 1 << 9,
     Timberwolf = 1 << 10,
-    Success = 1 << 11,
-    Sorrow = 1 << 12,
-    
-    SilenceShort = 1 << 20,
-    SilenceLong = 1 << 21,
+    ConditionSuccess = 1 << 11,
+    ConditionSorrow = 1 << 12,
 }

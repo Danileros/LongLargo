@@ -10,6 +10,10 @@ internal class LongLargoSettings : JsonModSettings
     [Name("Mod Enabled")]
     public bool ModEnabled = true;
 
+    [Name("Debug mode")]
+    [Description("Write more info in logs. Useful when you want to report a problem with mod.")]
+    public bool DebugMode = false;
+
     [Name("Load local soundtrack by NAudio")]
     [Description("Fix for loading local files by AudioManager. Will be removed when unnecessary.")]
     public bool EnableUglyLoad = true;
@@ -68,22 +72,22 @@ internal class LongLargoSettings : JsonModSettings
     [Section("Timberwolf")]
         
     [Name("Suppress Timberwolf soundtracks")]
-    [Description("If Yes, you will fight timberwolves in silence.")]
+    [Description("If Yes, you will fight timberwolves without custom soundtracks.")]
     public bool TimberwolfSuppress = false;
 
     [Name("Vanilla only Timberwolf soundtracks")]
     [Description("If Yes, only vanilla tracks would play.")]
     public bool TimberwolfVanillaOnly = false;
 
-    [Section("Success")]
+    [Section("Condition")]
         
     [Name("Suppress Success/Sorrow soundtracks")]
     [Description("If Yes, success and sorrow tracks would never play.")]
-    public bool SuccessSuppress = false;
+    public bool ConditionSuppress = false;
 
     [Name("Vanilla only Success/Sorrow soundtracks")]
     [Description("If Yes, only vanilla tracks would play.")]
-    public bool SuccessVanillaOnly = false;
+    public bool ConditionVanillaOnly = false;
 
     protected override void OnChange(FieldInfo field, object oldValue, object newValue)
     {
@@ -102,7 +106,7 @@ internal class LongLargoSettings : JsonModSettings
         SetFieldVisible(nameof(TimeSuppress), ModEnabled);
         SetFieldVisible(nameof(StalkedSuppress), ModEnabled);
         SetFieldVisible(nameof(TimberwolfSuppress), ModEnabled);
-        SetFieldVisible(nameof(SuccessSuppress), ModEnabled);
+        SetFieldVisible(nameof(ConditionSuppress), ModEnabled);
     }
 }
 

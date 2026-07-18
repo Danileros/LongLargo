@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json;
-using System.Threading.Tasks;
 using AudioMgr;
 using LongLargo.Model;
 using NAudio.Wave;
@@ -191,20 +190,20 @@ Fields:
     ExplorationDay
     ExplorationNight
     ExplorationAurora
-    -- Short soundtracks (<1m) that are bound to specific weather
+    -- Extra short soundtracks (<30s) that are bound to specific weather
     WeatherClear
     WeatherFog
     WeatherSnow
     WeatherBlizzard
-    -- Short soundtracks (<1m) that are bound to specific time
+    -- Extra short soundtracks (<30s) that are bound to specific time
     TimeDusk
     TimeDawn
     -- Short soundtracks (<1m) when animal hunts you, plays looped
     Stalked
     Timberwolf
-    -- Extra short soundtracks (<30s)
-    Success
-    Sorrow
+    -- Extra short soundtracks (<30s) that are bound to specific condition
+    ConditionSuccess
+    ConditionSorrow
   LocationsTypeRestrictTo - Play only at specific location type (only for Exploration* soundtracks). If Any, plays at any location type.
     Example:
       ""LocationsTypeRestrictTo"": ""Region, TransitionZone"",

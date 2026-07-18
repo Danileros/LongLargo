@@ -46,6 +46,7 @@ public class SafeJsonEnumConverter<TEnum> : JsonConverter<TEnum> where TEnum : s
         }
 
         // Safe Fallback: Returns the first defined element (usually index 0, e.g., 'Unknown' or 'None')
+        LLogger.Error($"Unknown enum {nameof(TEnum)} value: {reader.GetString()}");
         return default(TEnum);
     }
 

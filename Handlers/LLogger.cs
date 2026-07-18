@@ -1,3 +1,5 @@
+using LongLargo.Model;
+
 namespace LongLargo.Handlers;
 
 /// <summary>
@@ -17,7 +19,7 @@ public static class LLogger
     
     public static void Debug(string message)
     {
-        if (LongLargoMain.DebugMode)
+        if (LLSettings.settings.DebugMode)
         {
             MelonLoader.MelonLogger.Msg(message);
         }

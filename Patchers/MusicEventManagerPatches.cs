@@ -21,7 +21,7 @@ internal class MusicEventManagerPatches
     {
         internal static bool Prefix()
         {
-            return !LLSettings.settings.SuccessSuppress;
+            return !LLSettings.settings.ConditionSuppress;
         }
     }
     

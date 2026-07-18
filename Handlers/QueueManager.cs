@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using AudioMgr;
 using Il2Cpp;
-using Il2CppSystem.Linq;
 using LongLargo.Extensions;
 using LongLargo.Model;
 using MelonLoader;
@@ -21,6 +20,8 @@ public class QueueManager
     private static Shot _shot;
     private bool isPaused = false;
     private object _lastToken;
+
+    public SituationType LastSituation { get; private set; }
 
     public SoundtrackInfo LastSoundtrack { get; private set; }
     
@@ -91,7 +92,7 @@ public class QueueManager
             Shot._audioSource.loop = false;
             Shot.AssignClip(LongLargoMain.PlaylistProvider.ShortSilence);
             Shot.Play();
-            _lastToken = MelonCoroutines.Start(this.PlayRoutine(clip, delay));
+            _lastToken = MelonCoroutines.Start(this.PlayDelayedRoutine(clip, delay));
         }
     }
 
@@ -197,10 +198,12 @@ public class QueueManager
         var soundtrack = ChooseRandomSoundtrack(soundtracks);
         if (soundtrack != null)
         {
+            LastSituation = situation;
             return (soundtrack, false);
         }
         else
         {
+            LastSituation = SituationType.Disabled;
             return (LongLargoMain.PlaylistProvider.LongSilence, true);
         }
     }
@@ -225,15 +228,17 @@ public class QueueManager
         var soundtrack = ChooseRandomSoundtrack(soundtracks);
         if (soundtrack != null)
         {
+            LastSituation = situation;
             return (soundtrack, false);
         }
         else
         {
+            LastSituation = SituationType.Disabled;
             return (LongLargoMain.PlaylistProvider.ShortSilence, true);
         }
     }
 
-    private IEnumerator PlayRoutine(Clip audioClip, float delay)
+    private IEnumerator PlayDelayedRoutine(Clip audioClip, float delay)
     {
         yield return new WaitForSeconds(delay);
         PlayHard(audioClip);
@@ -281,8 +286,8 @@ public class QueueManager
                 && (SituationType.Stalked).HasFlag(situation)
             || LLSettings.settings.TimberwolfVanillaOnly
                 && (SituationType.Timberwolf).HasFlag(situation)
-            || LLSettings.settings.SuccessVanillaOnly
-                && (SituationType.Success | SituationType.Sorrow).HasFlag(situation);
+            || LLSettings.settings.ConditionVanillaOnly
+                && (SituationType.ConditionSuccess | SituationType.ConditionSorrow).HasFlag(situation);
     }
 
     private Clip ChooseRandomSoundtrack(ICollection<SoundtrackInfo> soundtracks)

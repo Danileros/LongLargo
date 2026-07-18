@@ -1,9 +1,7 @@
 using System;
 using HarmonyLib;
 using Il2Cpp;
-using Il2CppVLB;
 using LongLargo.Handlers;
-using LongLargo.Model;
 using LongLargo.PatchImplementations;
 using UnityEngine;
 
@@ -16,7 +14,7 @@ internal class GameAudioManagerPatches
     {
         public static bool Prefix(ref string soundID, ref GameObject go)
         {
-            LLogger.Debug($"[PlayMusic] str soundID: {soundID}");
+            LLogger.Log($"[PlayMusic] str soundID: {soundID}");
             return GameAudioManagerImpl.PlayMusic(soundID, ref go);
         }
     }
@@ -27,7 +25,7 @@ internal class GameAudioManagerPatches
         public static bool Prefix(ref uint soundID, ref GameObject go)
         {
             var eventName = EventIdProvider.GetEventName(soundID);
-            LLogger.Debug($"[PlayMusic] int soundID: {soundID}");
+            LLogger.Log($"[PlayMusic] int soundID: {eventName}");
             return GameAudioManagerImpl.PlayMusic(eventName, ref go);
         }
     }

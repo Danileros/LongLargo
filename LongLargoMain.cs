@@ -1,5 +1,4 @@
-﻿using System.IO;
-using LongLargo.Handlers;
+﻿using LongLargo.Handlers;
 using LongLargo.Model;
 using MelonLoader;
 using UnityEngine;
@@ -12,16 +11,9 @@ public class LongLargoMain : MelonMod
         
     public static QueueManager QueueManager { get; private set; }
 
-    public static bool DebugMode { get; private set; }
-
     public override void OnInitializeMelon()
     {
         Debug.Log($"[{Info.Name}] Version {Info.Version} loaded!");
-        if (File.Exists(Path.Combine(PlaylistProvider.FolderPath, "LLDebug")))
-        {
-            DebugMode = true;
-        }
-
         LLSettings.OnLoad();
 
         PlaylistProvider = new PlaylistProvider();

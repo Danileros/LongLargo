@@ -1,10 +1,9 @@
 using System;
 using AudioMgr;
 using Il2Cpp;
-using Il2CppInterop.Runtime.Attributes;
+using LongLargo.Extensions;
 using LongLargo.Handlers;
 using LongLargo.Model;
-using MelonLoader;
 using UnityEngine;
 
 namespace LongLargo.PatchImplementations;
@@ -39,7 +38,7 @@ public static class GameAudioManagerImpl
         
         (clip, var playVanilla) = LongLargoMain.QueueManager.GetSituationClip(situationInfo.Situation);
         
-        LLogger.Debug($"GameAudioManagerImpl plays {situationInfo.SilenceType} clip {clip?.audioClip?.name ?? "ShortSilence"}");
+        LLogger.Debug($"GameAudioManagerImpl plays {situationInfo.Situation} clip {clip?.audioClip?.name ?? "ShortSilence"}");
         
         return PlayCLip(playVanilla, situationInfo, clip, go);
     }
@@ -76,12 +75,18 @@ public static class GameAudioManagerImpl
                 case SituationInfo.SilenceLength.None:
                     return true;
                 case SituationInfo.SilenceLength.Short:
-                    LongLargoMain.QueueManager.PlayHard(LongLargoMain.PlaylistProvider.LongSilence, 5f);
+                    LongLargoMain.QueueManager.PlayHard(LongLargoMain.PlaylistProvider.LongSilence, 3f);
                     return true;
                 case SituationInfo.SilenceLength.Long:
-                    LongLargoMain.QueueManager.PlayHard(LongLargoMain.PlaylistProvider.ShortSilence, 5f);
+                    LongLargoMain.QueueManager.PlayHard(LongLargoMain.PlaylistProvider.ShortSilence, 3f);
                     return true;
             }
+        }
+
+        // since Timberwolf combat is silenced by Vanilla, I think suppressing here it is better
+        if (LLSettings.settings.TimberwolfSuppress && (SituationType.Timberwolf).HasFlag(situationInfo.Situation))
+        {
+            return true;
         }
 
         return false;
@@ -94,7 +99,7 @@ public static class GameAudioManagerImpl
             || LLSettings.settings.TimeSuppress && (SituationType.TimeDawn | SituationType.TimeDusk).HasFlag(situation)
             || LLSettings.settings.StalkedSuppress && (SituationType.Stalked).HasFlag(situation)
             || LLSettings.settings.TimberwolfSuppress && (SituationType.Timberwolf).HasFlag(situation)
-            || LLSettings.settings.SuccessSuppress && (SituationType.Success | SituationType.Sorrow).HasFlag(situation))
+            || LLSettings.settings.ConditionSuppress && (SituationType.ConditionSuccess | SituationType.ConditionSorrow).HasFlag(situation))
         {
             return true;
         }
@@ -187,10 +192,10 @@ public static class GameAudioManagerImpl
                 }
                 break;
             case "Play_musicMood_HappySuccess":
-                situationInfo.Situation = SituationType.Success;
+                situationInfo.Situation = SituationType.ConditionSuccess;
                 break;
             case "Play_musicMood_Sorrow":
-                situationInfo.Situation = SituationType.Sorrow;
+                situationInfo.Situation = SituationType.ConditionSorrow;
                 break;
             case "Play_MusicTODDawn":
                 situationInfo.Situation = SituationType.TimeDawn;
@@ -208,11 +213,11 @@ public static class GameAudioManagerImpl
             // stop loop events
             case "Stop_musicMood_AnimalStalking":
                 situationInfo.Situation = SituationType.Disabled;
-                LongLargoMain.QueueManager.Stop(5f);
+                LongLargoMain.QueueManager.Stop(3f);
                 break;
             case "Stop_TimberwolfCombat":
                 situationInfo.Situation = SituationType.Disabled;
-                LongLargoMain.QueueManager.Stop(5f);
+                LongLargoMain.QueueManager.Stop(3f);
                 break;
             case "Stop_Weather_Blizzard":
             case "Stop_Weather_Clear":
@@ -227,7 +232,11 @@ public static class GameAudioManagerImpl
             case "Stop_Weather_PartlyCloudy":
             case "Stop_Weather_ToxicFog":
                 situationInfo.Situation = SituationType.Disabled;
-                LongLargoMain.QueueManager.Stop();
+                if (LongLargoMain.QueueManager.LastSituation.IsWeather())
+                {
+                    LongLargoMain.QueueManager.Stop();
+                }
+
                 LongLargoMain.QueueManager.ResetLastSoundtrack();
                 break;
                 
@@ -244,6 +253,7 @@ public static class GameAudioManagerImpl
             // case "Play_Weather_Blizzard":
                 
             // reasons to play Silence to avoid overlap
+            case "Play_Caves":
             case "Play_musicMood_Creepy":
             case "Play_musicMood_Hope":
             case "Play_musicMood_Hope02":
@@ -301,7 +311,7 @@ public static class GameAudioManagerImpl
         }
 
         var scene = GameManager.m_ActiveScene;
-        if (scene.Contains("Menu") || scene.Contains("Boot"))
+        if (scene == null || scene.Contains("Menu") || scene.Contains("Boot"))
         {
             return true;
         }

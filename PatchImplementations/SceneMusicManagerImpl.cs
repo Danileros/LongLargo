@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using Il2Cpp;
 using Il2CppInterop.Runtime.Attributes;
 using LongLargo.Handlers;
@@ -43,7 +42,14 @@ public class SceneMusicManagerImpl : MonoBehaviour
     public void OnDestroy()
     {
         LLogger.Debug("SceneMusicManagerImpl destroyed");
-        LongLargoMain.QueueManager.Stop();
+        try
+        {
+            LongLargoMain.QueueManager.Stop();
+        }
+        catch (Exception)
+        {
+            // Appears when exiting the game, no reason to worry
+        }
     }
 
     /// <summary>
@@ -86,7 +92,7 @@ public class SceneMusicManagerImpl : MonoBehaviour
         }
 
         var scene = GameManager.m_ActiveScene;
-        if (scene.Contains("Menu") || scene.Contains("Boot"))
+        if (scene == null || scene.Contains("Menu") || scene.Contains("Boot"))
         {
             return true;
         }

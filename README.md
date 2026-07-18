@@ -20,6 +20,7 @@ If you want to share your tracks—best solution is to create an assetbundle usi
 ## Known Issues
 
 * MelonLoader 0.7.2 + AudioManager 2.0.5 currently can't load custom soundtracks from folder. An ugly and memory-consuming workaround is used as temporary solution. Long Largo will stop being hungry on memory once it fixed. Until then, it is not recommended to upload gigabytes of lossless files to the LongLargo folder, so as not to overflow the RAM.
+* TLD bug: Timberwolf combat does not stops in some conditions (like escaping). It may stop LL from playing exploration music. It also the reason why I hadn't restored combat music. You are free to add custom timberwolf combat music, it's fully supported.
 
 ## Installation
 
