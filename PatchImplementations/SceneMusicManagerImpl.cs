@@ -44,7 +44,7 @@ public class SceneMusicManagerImpl : MonoBehaviour
         LLogger.Debug("SceneMusicManagerImpl destroyed");
         try
         {
-            LongLargoMain.QueueManager.Stop();
+            LongLargoMain.QueueManager.Stop(1f);
         }
         catch (Exception)
         {
@@ -92,7 +92,8 @@ public class SceneMusicManagerImpl : MonoBehaviour
         }
 
         var scene = GameManager.m_ActiveScene;
-        if (scene == null || scene.Contains("Menu") || scene.Contains("Boot"))
+        if (scene == null || scene.Contains("Menu") || scene.Contains("Boot")
+            || scene.Contains("Bunker") || scene == "MiningRegionMine") // Don't mess with tales
         {
             return true;
         }

@@ -1,4 +1,6 @@
 ﻿using System.Reflection;
+using AudioMgr;
+using Il2Cpp;
 using ModSettings;
 
 namespace LongLargo.Model;
@@ -9,6 +11,14 @@ internal class LongLargoSettings : JsonModSettings
 
     [Name("Mod Enabled")]
     public bool ModEnabled = true;
+    
+    [Name("Custom volume enabled")]
+    [Description("False if you want volume to be controlled by vanilla Music Volume.")]
+    public bool BgmVolumeEnabled = false;
+    
+    [Name("Long Largo Volume")]
+    [Description("Sets the music volume for modded tracks. Affected by MasterVolume, but not Music volume")]
+    public uint BgmVolume = 100;
 
     [Name("Debug mode")]
     [Description("Write more info in logs. Useful when you want to report a problem with mod.")]
@@ -91,22 +101,46 @@ internal class LongLargoSettings : JsonModSettings
 
     protected override void OnChange(FieldInfo field, object oldValue, object newValue)
     {
-        if (field.Name == nameof(ModEnabled)) 
+        if (field.Name is nameof(ModEnabled) or nameof(BgmVolumeEnabled)) 
         {
             Refresh();
         }
     }
-    
+
+    protected override void OnConfirm()
+    {
+        if (BgmVolumeEnabled)
+        {
+            var masterVolume = InterfaceManager.GetPanel<Panel_OptionsMenu>().State.m_MasterVolume;
+            LongLargoMain.QueueManager.SetVolume(masterVolume * BgmVolume / 100f);
+        }
+        else
+        {
+            LongLargoMain.QueueManager.SetVolume(VolumeMaster.GetVolume(AudioMaster.SourceType.BGM));
+        }
+        
+        base.OnConfirm();
+    }
+
     internal void Refresh()
     {
         SetFieldVisible(nameof(ModVanillaMusicChance), ModEnabled);
+        SetFieldVisible(nameof(BgmVolume), BgmVolumeEnabled && ModEnabled);
+        SetFieldVisible(nameof(BgmVolumeEnabled), ModEnabled);
+        SetFieldVisible(nameof(EnableUglyLoad), ModEnabled);
         SetFieldVisible(nameof(ExplorationSuppress), ModEnabled);
+        SetFieldVisible(nameof(ExplorationVanillaOnly), ModEnabled);
         SetFieldVisible(nameof(ExplorationDelay), ModEnabled);
         SetFieldVisible(nameof(WeatherSuppress), ModEnabled);
+        SetFieldVisible(nameof(WeatherVanillaOnly), ModEnabled);
         SetFieldVisible(nameof(TimeSuppress), ModEnabled);
+        SetFieldVisible(nameof(TimeVanillaOnly), ModEnabled);
         SetFieldVisible(nameof(StalkedSuppress), ModEnabled);
+        SetFieldVisible(nameof(StalkedVanillaOnly), ModEnabled);
         SetFieldVisible(nameof(TimberwolfSuppress), ModEnabled);
+        SetFieldVisible(nameof(TimberwolfVanillaOnly), ModEnabled);
         SetFieldVisible(nameof(ConditionSuppress), ModEnabled);
+        SetFieldVisible(nameof(ConditionVanillaOnly), ModEnabled);
     }
 }
 

@@ -18,6 +18,7 @@ public class QueueManager
 {
     private readonly SoundtrackInfo[] _soundtracks;
     private static Shot _shot;
+    private static VolumeMaster.OnVolumeChange _onVolumeChange;
     private bool isPaused = false;
     private object _lastToken;
 
@@ -41,11 +42,27 @@ public class QueueManager
                     {
                         AudioMaster.CreateMasterParent();
                         _shot = AudioMaster.CreatePlayerShot(AudioMaster.SourceType.BGM);
+                        _onVolumeChange = ResetVolume;
+                        VolumeMaster.onVolumeChange += _onVolumeChange; // Now I'm in control!
+                        ResetVolume();
                     }
                 }
             }
             
             return _shot;
+        }
+    }
+
+    public static void ResetVolume()
+    {
+        if (LLSettings.settings.BgmVolumeEnabled)
+        {
+            var masterVolume = InterfaceManager.GetPanel<Panel_OptionsMenu>().State.m_MasterVolume;
+            Shot.SetVolume(masterVolume * LLSettings.settings.BgmVolume / 100f);
+        }
+        else
+        {
+            Shot.SetVolume(VolumeMaster.GetVolume(AudioMaster.SourceType.BGM));
         }
     }
 
@@ -59,6 +76,11 @@ public class QueueManager
     {
         LastSoundtrack = null;
     }
+
+    public void SetVolume(float volume)
+    {
+        Shot.SetVolume(volume);
+    }
     
     /// <summary>
     /// Tries to play and gently refuses if something is playing already.
@@ -68,15 +90,14 @@ public class QueueManager
     public void PlaySoft(Clip clip, bool loop = false)
     {
         isPaused = false;
-        if (clip != null && !Shot._audioSource.isPlaying)
+        if (clip != null && !IsPlaying)
         {
             LLogger.Log($"Now playing: {clip.audioClip.name}");
-            Shot._audioSource.loop = loop;
+            Stop();
             Shot.AssignClip(clip);
             Shot.Play();
         }
     }
-    
 
     /// <summary>
     /// Tries to play scheduled and gently refuses if something is playing already.
@@ -107,7 +128,7 @@ public class QueueManager
         if (clip != null)
         {
             LLogger.Log($"Now playing hard: {clip.audioClip.name}");
-            Shot._audioSource.loop = loop;
+            Stop();
             Shot.AssignClip(clip);
             Shot.Play();
         }
@@ -239,7 +260,10 @@ public class QueueManager
     private IEnumerator PlayDelayedRoutine(Clip audioClip, float delay)
     {
         yield return new WaitForSeconds(delay);
-        PlayHard(audioClip);
+        if (IsPlaying && Shot._audioSource.clip.name == "ShortSilence")
+        {
+            PlayHard(audioClip);
+        }
     }
 
     private IEnumerator PlayAfterFade(Clip clip, float fadeOut)

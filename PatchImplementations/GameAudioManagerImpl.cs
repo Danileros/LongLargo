@@ -332,7 +332,8 @@ public static class GameAudioManagerImpl
         }
 
         var scene = GameManager.m_ActiveScene;
-        if (scene == null || scene.Contains("Menu") || scene.Contains("Boot"))
+        if (scene == null || scene.Contains("Menu") || scene.Contains("Boot")
+            || scene.Contains("Bunker") || scene == "MiningRegionMine") // Don't mess with tales
         {
             return true;
         }
