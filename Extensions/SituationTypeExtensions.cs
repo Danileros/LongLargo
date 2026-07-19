@@ -31,7 +31,6 @@ public static class SituationTypeExtensions
         return (SituationType.ConditionSorrow
                 | SituationType.ConditionSuccess).HasFlag(situationType);
     }
-    
 
     public static SituationType GetExplorationSituation()
     {

@@ -47,7 +47,7 @@ public static class GameAudioManagerImpl
             (clip, playVanilla) = LongLargoMain.QueueManager.GetSituationClip(situationInfo.Situation);
         }
 
-        LLogger.Debug($"GameAudioManagerImpl plays {situationInfo.Situation} clip {clip?.audioClip?.name ?? "ShortSilence"}");
+        LLogger.Debug($"[GameAudioManagerImpl] plays {situationInfo.Situation} clip {clip?.audioClip?.name ?? "ShortSilence"}");
         
         return PlayCLip(playVanilla, situationInfo, clip, go);
     }
@@ -57,7 +57,7 @@ public static class GameAudioManagerImpl
         if (!playVanilla && situationInfo.WithStringer)
         {
             // Play replaced stringer with delay, replace original event with stingerless
-            LLogger.Debug($"GameAudioManagerImpl replaces with stringerless {situationInfo.StingerlessEvent}");
+            LLogger.Debug($"[GameAudioManagerImpl] replaces with stringerless {situationInfo.StingerlessEvent}");
             LongLargoMain.QueueManager.PlaySoftDelayed(clip, situationInfo.Delay);
             GameAudioManager.PlaySound(situationInfo.StingerlessEvent, go);
             return false;
