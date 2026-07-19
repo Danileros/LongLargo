@@ -94,6 +94,7 @@ public class QueueManager
         {
             LLogger.Log($"Now playing: {clip.audioClip.name}");
             Stop();
+            Shot._audioSource.loop = loop;
             Shot.AssignClip(clip);
             Shot.Play();
         }
@@ -129,6 +130,7 @@ public class QueueManager
         {
             LLogger.Log($"Now playing hard: {clip.audioClip.name}");
             Stop();
+            Shot._audioSource.loop = loop;
             Shot.AssignClip(clip);
             Shot.Play();
         }
