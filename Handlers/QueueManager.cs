@@ -25,7 +25,7 @@ public class QueueManager
     public SituationType LastSituation { get; private set; }
 
     public SoundtrackInfo LastSoundtrack { get; private set; }
-    
+
     public bool IsPaused => isPaused;
 
     public bool IsPlaying => Shot._audioSource.isPlaying;
@@ -94,8 +94,8 @@ public class QueueManager
         {
             LLogger.Log($"Now playing: {clip.audioClip.name}");
             Stop();
-            Shot._audioSource.loop = loop;
             Shot.AssignClip(clip);
+            Shot._audioSource.loop = loop;
             Shot.Play();
         }
     }
@@ -108,7 +108,7 @@ public class QueueManager
     public void PlaySoftDelayed(Clip clip, float delay)
     {
         isPaused = false;
-        if (clip != null && !Shot._audioSource.isPlaying)
+        if (clip != null && !IsPlaying)
         {
             LLogger.Log($"Scheduled after {delay}: {clip.audioClip.name}");
             Shot._audioSource.loop = false;
@@ -130,8 +130,8 @@ public class QueueManager
         {
             LLogger.Log($"Now playing hard: {clip.audioClip.name}");
             Stop();
-            Shot._audioSource.loop = loop;
             Shot.AssignClip(clip);
+            Shot._audioSource.loop = loop;
             Shot.Play();
         }
     }
@@ -161,6 +161,7 @@ public class QueueManager
 
     public void Stop()
     {
+        LLogger.Debug("[QueueManager] Stop");
         isPaused = false;
         Shot._audioSource.loop = false;
         Shot.Stop();
@@ -172,7 +173,16 @@ public class QueueManager
 
     public void Stop(float fadeOut)
     {
+        LLogger.Debug("[QueueManager] Stop with fade out");
         MelonCoroutines.Start(this.StopRoutine(fadeOut));
+    }
+
+    public void StopDanger()
+    {
+        if (LastSituation == SituationType.Stalked || LastSituation == SituationType.Timberwolf)
+        {
+            Stop();
+        }
     }
 
     public void Pause()
@@ -200,6 +210,7 @@ public class QueueManager
     public (Clip, bool) GetExplorationClip()
     {
         var situation = SituationTypeExtensions.GetExplorationSituation();
+        LastSituation = situation;
         if (Disabled(situation))
         {
             return (LongLargoMain.PlaylistProvider.LongSilence, true);
@@ -219,12 +230,10 @@ public class QueueManager
         var soundtrack = ChooseRandomSoundtrack(soundtracks);
         if (soundtrack != null)
         {
-            LastSituation = situation;
             return (soundtrack, false);
         }
         else
         {
-            LastSituation = SituationType.Disabled;
             return (LongLargoMain.PlaylistProvider.LongSilence, true);
         }
     }
@@ -235,6 +244,7 @@ public class QueueManager
     /// <returns>(Clip, playVanilla)</returns>
     public (Clip, bool) GetSituationClip(SituationType situation)
     {
+        LastSituation = situation;
         if (Disabled(situation))
         {
             return (LongLargoMain.PlaylistProvider.ShortSilence, true);
@@ -249,12 +259,10 @@ public class QueueManager
         var soundtrack = ChooseRandomSoundtrack(soundtracks);
         if (soundtrack != null)
         {
-            LastSituation = situation;
             return (soundtrack, false);
         }
         else
         {
-            LastSituation = SituationType.Disabled;
             return (LongLargoMain.PlaylistProvider.ShortSilence, true);
         }
     }
