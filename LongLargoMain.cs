@@ -20,20 +20,8 @@ public class LongLargoMain : MelonMod
         QueueManager = new QueueManager(PlaylistProvider.Soundtracks);
     }
     
-    // public override void OnSceneWasLoaded(int buildIndex, string sceneName)
-    // {
-    //     if (sceneName == "Empty")
-    //     {
-    //         return;
-    //     }
-    //
-    //     if (sceneName.Contains("Boot") || sceneName.Contains("Menu"))
-    //     {
-    //         QueueManager.Pause();
-    //     }
-    //     else
-    //     {
-    //         QueueManager.Resume();
-    //     }
-    // }
+    public override void OnSceneWasLoaded(int buildIndex, string sceneName)
+    {
+        QueueManager.StopDanger();
+    }
 }
