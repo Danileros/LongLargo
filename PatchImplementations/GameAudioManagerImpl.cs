@@ -339,6 +339,14 @@ public static class GameAudioManagerImpl
         if (situationInfo.Situation.HasFlag(SituationType.Stalked) || situationInfo.Situation.HasFlag(SituationType.Timberwolf))
         {
             LongLargoMain.QueueManager.PlayHard(clip, true);
+            if (!playVanilla)
+            {
+                // TODO: debug
+                // <ActionPostEventEntry Id="2904596785" Name="musicMixer_StopSceneMusicFadeOut"/>
+                // <ActionPostEventEntry Id="3267898453" Name="musicMixer_StopWeatherMusicFadeOut"/>
+                GameAudioManager.PlaySound(2904596785U, go);
+                GameAudioManager.PlaySound(3267898453U, go);
+            }
         }
         else
         {
