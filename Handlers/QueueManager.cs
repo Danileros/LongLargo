@@ -21,6 +21,8 @@ public class QueueManager
     private static VolumeMaster.OnVolumeChange _onVolumeChange;
     private bool isPaused = false;
     private object _lastToken;
+    
+    public bool IsFading { get; private set; }
 
     public SituationType LastSituation { get; private set; }
 
@@ -40,11 +42,18 @@ public class QueueManager
                 {
                     if (!_shot)
                     {
-                        AudioMaster.CreateMasterParent();
-                        _shot = AudioMaster.CreatePlayerShot(AudioMaster.SourceType.BGM);
-                        _onVolumeChange = ResetVolume;
-                        VolumeMaster.onVolumeChange += _onVolumeChange; // Now I'm in control!
-                        ResetVolume();
+                        try
+                        {
+                            AudioMaster.CreateMasterParent();
+                            _shot = AudioMaster.CreatePlayerShot(AudioMaster.SourceType.BGM);
+                            _onVolumeChange = ResetVolume;
+                            VolumeMaster.onVolumeChange += _onVolumeChange; // Now I'm in control!
+                            ResetVolume();
+                        }
+                        catch (Exception)
+                        {
+                            // Sometimes appears when exiting the game by Alt+F4, no reason to worry
+                        }
                     }
                 }
             }
@@ -173,16 +182,39 @@ public class QueueManager
 
     public void Stop(float fadeOut)
     {
-        LLogger.Debug("[QueueManager] Stop with fade out");
-        MelonCoroutines.Start(this.StopRoutine(fadeOut));
+        if (!IsFading)
+        {
+            LLogger.Debug($"[QueueManager] Stop with fade out {fadeOut:N}");
+            MelonCoroutines.Start(this.StopRoutine(fadeOut));
+        }
+        else
+        {
+            LLogger.Debug($"[QueueManager] Stop rejected, already in process");
+        }
     }
 
-    public void StopDanger()
+    public void StopIfSituation(SituationType situations, float fadeOut = 0)
     {
-        if (LastSituation == SituationType.Stalked || LastSituation == SituationType.Timberwolf)
+        if (!IsPlaying)
         {
-            Stop();
+            return;
         }
+        
+        if (situations.HasFlag(LastSituation))
+        {
+            if (fadeOut > 0)
+            {
+                Stop(fadeOut);
+            }
+            else
+            {
+                Stop();
+            }
+
+            return;
+        }
+        
+        LLogger.Debug($"[QueueManager] Stop rejected for {situations}, current is {LastSituation}");
     }
 
     public void Pause()
@@ -278,7 +310,7 @@ public class QueueManager
 
     private IEnumerator PlayAfterFade(Clip clip, float fadeOut)
     {
-        yield return Shot._audioSource.FadeOut(fadeOut);
+        yield return StopRoutine(fadeOut);
         Shot.AssignClip(clip);
         Shot.Play();
     }
@@ -296,10 +328,18 @@ public class QueueManager
 
     private IEnumerator StopRoutine(float fadeOut)
     {
-        yield return Shot._audioSource.FadeOut(fadeOut);
-        isPaused = false;
-        Shot._audioSource.loop = false;
-        Shot.Stop();
+        IsFading = true;
+        try
+        {
+            yield return Shot._audioSource.FadeOut(fadeOut);
+            isPaused = false;
+            Shot._audioSource.loop = false;
+            Shot.Stop();
+        }
+        finally
+        {
+            IsFading = false;
+        }
     }
 
     private bool Disabled(SituationType situation)

@@ -1,4 +1,5 @@
-﻿using LongLargo.Handlers;
+﻿using LongLargo.Extensions;
+using LongLargo.Handlers;
 using LongLargo.Model;
 using MelonLoader;
 using UnityEngine;
@@ -22,6 +23,11 @@ public class LongLargoMain : MelonMod
     
     public override void OnSceneWasLoaded(int buildIndex, string sceneName)
     {
-        QueueManager.StopDanger();
+        if (sceneName == null || sceneName == "Empty" || sceneName.Contains("Menu") || sceneName.Contains("Boot"))
+        {
+            return;
+        }
+        
+        QueueManager.StopIfSituation(SituationTypeExtensions.GetDangers());
     }
 }

@@ -60,7 +60,7 @@ public static class GameAudioManagerImpl
         }
 
         var scene = GameManager.m_ActiveScene;
-        if (scene == null || scene.Contains("Menu") || scene.Contains("Boot")
+        if (scene == null || scene == "Empty" || scene.Contains("Menu") || scene.Contains("Boot")
             || scene.Contains("Bunker") || scene == "MiningRegionMine") // Don't mess with tales
         {
             return true;
@@ -182,17 +182,11 @@ public static class GameAudioManagerImpl
             // stop loop events
             case "Stop_musicMood_AnimalStalking":
                 situationInfo.Situation = SituationType.Disabled;
-                if (LongLargoMain.QueueManager.LastSituation == SituationType.Stalked)
-                {
-                    LongLargoMain.QueueManager.Stop(3f);
-                }
+                LongLargoMain.QueueManager.StopIfSituation(SituationType.Stalked, 3f);
                 break;
             case "Stop_TimberwolfCombat":
                 situationInfo.Situation = SituationType.Disabled;
-                if (LongLargoMain.QueueManager.LastSituation == SituationType.Timberwolf)
-                {
-                    LongLargoMain.QueueManager.Stop(3f);
-                }
+                LongLargoMain.QueueManager.StopIfSituation(SituationType.Timberwolf, 3f);
                 break;
             case "Stop_Weather_Blizzard":
             case "Stop_Weather_Clear":
@@ -209,7 +203,7 @@ public static class GameAudioManagerImpl
                 situationInfo.Situation = SituationType.Disabled;
                 if (LongLargoMain.QueueManager.LastSituation.IsWeather())
                 {
-                    LongLargoMain.QueueManager.Stop();
+                    LongLargoMain.QueueManager.Stop(3f);
                 }
 
                 LongLargoMain.QueueManager.ResetLastSoundtrack();

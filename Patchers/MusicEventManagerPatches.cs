@@ -1,7 +1,7 @@
 using HarmonyLib;
 using Il2Cpp;
-using LongLargo.Handlers;
-using LongLargo.Model;
+using Il2CppVLB;
+using LongLargo.PatchImplementations;
 
 namespace LongLargo.Patchers;
 
@@ -10,27 +10,31 @@ internal class MusicEventManagerPatches
     [HarmonyPatch(typeof(MusicEventManager), "CheckForBeingStalked")]
     internal class MusicEventManager_CheckForBeingStalked
     {
-        internal static bool Prefix()
+        internal static bool Prefix(MusicEventManager __instance)
         {
-            return !LLSettings.settings.StalkedSuppress;
+            return __instance.GetOrAddComponent<MusicEventManagerImpl>().CheckForBeingStalkedPre();
+        }
+        internal static void Postfix(MusicEventManager __instance)
+        {
+            __instance.GetOrAddComponent<MusicEventManagerImpl>().CheckForBeingStalkedPost();
         }
     }
     
     [HarmonyPatch(typeof(MusicEventManager), "CheckForHappySuccess")]
     internal class MusicEventManager_CheckForHappySuccess
     {
-        internal static bool Prefix()
+        internal static bool Prefix(MusicEventManager __instance)
         {
-            return !LLSettings.settings.ConditionSuppress;
+            return __instance.GetOrAddComponent<MusicEventManagerImpl>().CheckForHappySuccess();
         }
     }
     
     [HarmonyPatch(typeof(MusicEventManager), "CheckForSorrow")]
     internal class MusicEventManager_CheckForSorrow
     {
-        internal static bool Prefix()
+        internal static bool Prefix(MusicEventManager __instance)
         {
-            return !LLSettings.settings.StalkedSuppress;
+            return __instance.GetOrAddComponent<MusicEventManagerImpl>().CheckForSorrow();
         }
     }
 
@@ -39,7 +43,7 @@ internal class MusicEventManagerPatches
     {
         private static void Postfix(MusicEventManager __instance, ref bool hasPlayedBefore)
         {
-            LLogger.Debug($"[PlayLocationSound] {hasPlayedBefore}");
+            __instance.GetOrAddComponent<MusicEventManagerImpl>().PlayLocationSound(hasPlayedBefore);
         }
     }
 }
