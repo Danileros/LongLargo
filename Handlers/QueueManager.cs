@@ -20,7 +20,8 @@ public class QueueManager
     private static Shot _shot;
     private static VolumeMaster.OnVolumeChange _onVolumeChange;
     private bool isPaused = false;
-    private object _lastToken;
+    private object _lastPlayToken;
+    private object _lastFadeToken;
     
     public bool IsFading { get; private set; }
 
@@ -121,7 +122,7 @@ public class QueueManager
         {
             LLogger.Log($"Scheduled after {delay}: {clip.audioClip.name}");
             Shot._audioSource.loop = false;
-            _lastToken = MelonCoroutines.Start(this.PlayDelayedRoutine(clip, delay));
+            _lastPlayToken = MelonCoroutines.Start(this.PlayDelayedRoutine(clip, delay));
         }
     }
 
@@ -161,7 +162,7 @@ public class QueueManager
             }
             else
             {
-                _lastToken = MelonCoroutines.Start(this.PlayAfterFade(clip, fadeOut));
+                _lastPlayToken = MelonCoroutines.Start(this.PlayAfterFade(clip, fadeOut));
             }
         }
     }
@@ -172,18 +173,30 @@ public class QueueManager
         isPaused = false;
         Shot._audioSource.loop = false;
         Shot.Stop();
-        if (_lastToken != null)
+        IsFading = false;
+        if (_lastPlayToken != null)
         {
-            MelonCoroutines.Stop(_lastToken);
+            MelonCoroutines.Stop(_lastPlayToken);
+        }
+        
+        if (_lastFadeToken != null)
+        {
+            MelonCoroutines.Stop(_lastFadeToken);
         }
     }
 
     public void Stop(float fadeOut)
     {
+        if (!IsPlaying)
+        {
+            LLogger.Debug($"[QueueManager] Stop rejected, nothing to stop");
+            return;
+        }
+        
         if (!IsFading)
         {
             LLogger.Debug($"[QueueManager] Stop with fade out {fadeOut:N}");
-            MelonCoroutines.Start(this.StopRoutine(fadeOut));
+            _lastFadeToken = MelonCoroutines.Start(this.StopRoutine(fadeOut));
         }
         else
         {
@@ -314,17 +327,6 @@ public class QueueManager
         Shot.AssignClip(clip);
         Shot.Play(clip);
     }
-    
-    // private IEnumerator PlayRoutine(Clip audioClip, float delay)
-    // {
-    //      var time = AudioSettings.dspTime + delay;
-    //      var _endTime = time + audioClip.clipLength + delay;
-    //      Shot._audioSource.PlayDelayed(delay);
-    //      Shot.SetFieldValue("_playState", Shot.PlayState.Playing);
-    //      while (AudioSettings.dspTime < _endTime)
-    //          yield return (object) null;
-    //      this.Stop();
-    // }
 
     private IEnumerator StopRoutine(float fadeOut)
     {
@@ -332,9 +334,7 @@ public class QueueManager
         try
         {
             yield return Shot._audioSource.FadeOut(fadeOut);
-            isPaused = false;
-            Shot._audioSource.loop = false;
-            Shot.Stop();
+            Stop();
         }
         finally
         {
