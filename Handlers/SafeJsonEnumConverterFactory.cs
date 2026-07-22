@@ -4,6 +4,9 @@ using System.Text.Json.Serialization;
 
 namespace LongLargo.Handlers;
 
+/// <summary>
+/// Safe enum parser. Needed because I don't want to completely destroy PlaylistInfo just because user wrote 'TimeDust'
+/// </summary>
 public class SafeJsonEnumConverterFactory : JsonConverterFactory
 {
     // Determines if the type to convert is an Enum

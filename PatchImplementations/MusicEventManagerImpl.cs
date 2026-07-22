@@ -32,6 +32,7 @@ public class MusicEventManagerImpl : MonoBehaviour
     [HideFromIl2Cpp]
     public void CheckForBeingStalkedPost()
     {
+        // TODO: Need to find a proper way to start and finish Timberwolf combat because stop event is unreliable
         var isStalkedNew = _instance.m_WasBeingStalkedLastFrame;
         if (isStalkedNew != isStalked)
         {

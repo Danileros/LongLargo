@@ -47,7 +47,7 @@ public class PlaylistManager
             Directory.CreateDirectory(FolderPath);
         }
 
-        LoadSilence();
+        LoadSilence(); // TODO: Test if I can get rid of Silence by modifying IsPlaying 
         
         var loadedSoundtracks  = new List<SoundtrackInfo>();
         LoadLlAudio(loadedSoundtracks);
