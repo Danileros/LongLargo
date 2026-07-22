@@ -73,10 +73,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Remove="silence" />
-	</ItemGroup>
-
-	<ItemGroup>
 	  <None Remove="silence.unity3d" />
 	  <EmbeddedResource Include="silence.unity3d" />
 	</ItemGroup>

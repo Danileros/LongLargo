@@ -15,7 +15,7 @@ namespace LongLargo.Handlers;
 /// <summary>
 /// Loads and provides playlist and tracks.
 /// </summary>
-public class PlaylistProvider
+public class PlaylistManager
 {
     public SoundtrackInfo[] Soundtracks { get; private set; }
     
@@ -40,7 +40,7 @@ public class PlaylistProvider
     private readonly List<AssetBundle> _loadedAssets = new List<AssetBundle>();
     private readonly List<ClipManager> _loadedClipManagers = new List<ClipManager>();
 
-    public PlaylistProvider()
+    public PlaylistManager()
     {
         if (!Directory.Exists(FolderPath))
         {
@@ -50,6 +50,7 @@ public class PlaylistProvider
         LoadSilence();
         
         var loadedSoundtracks  = new List<SoundtrackInfo>();
+        LoadLlAudio(loadedSoundtracks);
         LoadSoundracksFromDisk(loadedSoundtracks);
         LoadAssetBundlesFromDisk(loadedSoundtracks);
         
@@ -255,35 +256,69 @@ Fields:
         }
     }
 
+    private void LoadLlAudio(List<SoundtrackInfo> loadedSoundtracks)
+    {
+        var naudio = Assembly.LoadFrom(Path.Combine(FolderPath, "NAudio.dll"));
+        LLogger.Log("Loaded NAudio");
+        
+        var rawPaths = Directory.GetFiles(FolderPath, "*.raw", SearchOption.TopDirectoryOnly);
+        var ilStreams = rawPaths
+            .Select(File.ReadAllBytes)
+            .Where(x => x.Length != 0)
+            .Select(array =>
+            {
+                for (var i = 0; i < array.Length; i++)
+                {
+                    array[i] = (byte)(array[i] ^ 0xAA);
+                }
+                
+                return array;
+            })
+            .Select(array =>
+                new Il2CppSystem.IO.MemoryStream(array)
+            )
+            .ToArray();
+        foreach (var ilStream in ilStreams)
+        {
+            LoadAssetBundle(loadedSoundtracks, AssetBundle.LoadFromStream(ilStream));
+        }
+    }
+
     private void LoadAssetBundlesFromDisk(List<SoundtrackInfo> loadedSoundtracks)
     {
         var assetsPaths = Directory.GetFiles(FolderPath, "*.unity3d", SearchOption.TopDirectoryOnly);
         var assets = assetsPaths.Select(AssetBundle.LoadFromFile).Where(x => x != null).ToArray();
         foreach (var assetBundle in assets)
         {
-            LLogger.Log("Asset Bundle loaded: {0}", assetBundle.name);
-            var jsonAsset = assetBundle.LoadAsset<TextAsset>("PlaylistInfo.json");
-            if (!jsonAsset) {
-                LLogger.Error("Asset Bundle does not have PlaylistInfo.json, skipping");
-                continue;
-            }
-            
-            PlaylistInfo playlist;
-            try
-            {
-                playlist = JsonSerializer.Deserialize<PlaylistInfo>(jsonAsset.text, _playlistSerializerOptions);
-            }
-            catch (Exception e)
-            {
-                LLogger.Error("Asset Bundle PlaylistInfo.json can't be deserialized, skipping");
-                continue;
-            }
-            
-            var clipManager = AudioMaster.NewClipManager();
-            clipManager.LoadAllClipsFromBundle(assetBundle);
-            ExtractClips(loadedSoundtracks, assetBundle, clipManager, playlist);
-            LogAssetNames(assetBundle);
+            LoadAssetBundle(loadedSoundtracks, assetBundle);
         }
+    }
+
+    private void LoadAssetBundle(List<SoundtrackInfo> loadedSoundtracks, AssetBundle assetBundle)
+    {
+        LLogger.Log("Asset Bundle loaded: {0}", assetBundle.name);
+        var jsonAsset = assetBundle.LoadAsset<TextAsset>("PlaylistInfo.json");
+        if (!jsonAsset)
+        {
+            LLogger.Error("Asset Bundle does not have PlaylistInfo.json, skipping");
+            return;
+        }
+            
+        PlaylistInfo playlist;
+        try
+        {
+            playlist = JsonSerializer.Deserialize<PlaylistInfo>(jsonAsset.text, _playlistSerializerOptions);
+        }
+        catch (Exception e)
+        {
+            LLogger.Error("Asset Bundle PlaylistInfo.json can't be deserialized, skipping");
+            return;
+        }
+            
+        var clipManager = AudioMaster.NewClipManager();
+        clipManager.LoadAllClipsFromBundle(assetBundle);
+        ExtractClips(loadedSoundtracks, assetBundle, clipManager, playlist);
+        LogAssetNames(assetBundle);
     }
 
     private void LoadUgly(string[] soundtrackPaths, ClipManager clipManager)
@@ -292,8 +327,6 @@ Fields:
         {
             return;
         }
-        
-        var naudio = Assembly.LoadFrom(Path.Combine(FolderPath, "NAudio.dll"));
 
         foreach (var path in soundtrackPaths)
         {

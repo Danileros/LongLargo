@@ -8,7 +8,7 @@ namespace LongLargo;
 
 public class LongLargoMain : MelonMod
 {
-    public static PlaylistProvider PlaylistProvider { get; private set; }
+    public static PlaylistManager PlaylistManager { get; private set; }
         
     public static QueueManager QueueManager { get; private set; }
 
@@ -17,8 +17,8 @@ public class LongLargoMain : MelonMod
         Debug.Log($"[{Info.Name}] Version {Info.Version} loaded!");
         LLSettings.OnLoad();
 
-        PlaylistProvider = new PlaylistProvider();
-        QueueManager = new QueueManager(PlaylistProvider.Soundtracks);
+        PlaylistManager = new PlaylistManager();
+        QueueManager = new QueueManager(PlaylistManager.Soundtracks);
     }
     
     public override void OnSceneWasLoaded(int buildIndex, string sceneName)

@@ -280,10 +280,10 @@ public static class GameAudioManagerImpl
                 case SituationInfo.SilenceLength.None:
                     return true;
                 case SituationInfo.SilenceLength.Short:
-                    LongLargoMain.QueueManager.PlayHard(LongLargoMain.PlaylistProvider.LongSilence, 3f);
+                    LongLargoMain.QueueManager.PlayHard(LongLargoMain.PlaylistManager.LongSilence, 3f);
                     return true;
                 case SituationInfo.SilenceLength.Long:
-                    LongLargoMain.QueueManager.PlayHard(LongLargoMain.PlaylistProvider.ShortSilence, 3f);
+                    LongLargoMain.QueueManager.PlayHard(LongLargoMain.PlaylistManager.ShortSilence, 3f);
                     return true;
             }
         }

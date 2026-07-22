@@ -105,7 +105,7 @@ public class QueueManager
             Stop();
             Shot.AssignClip(clip);
             Shot._audioSource.loop = loop;
-            Shot.Play();
+            Shot.Play(clip);
         }
     }
 
@@ -121,8 +121,6 @@ public class QueueManager
         {
             LLogger.Log($"Scheduled after {delay}: {clip.audioClip.name}");
             Shot._audioSource.loop = false;
-            Shot.AssignClip(LongLargoMain.PlaylistProvider.ShortSilence);
-            Shot.Play();
             _lastToken = MelonCoroutines.Start(this.PlayDelayedRoutine(clip, delay));
         }
     }
@@ -141,7 +139,7 @@ public class QueueManager
             Stop();
             Shot.AssignClip(clip);
             Shot._audioSource.loop = loop;
-            Shot.Play();
+            Shot.Play(clip);
         }
     }
 
@@ -159,7 +157,7 @@ public class QueueManager
             if (!IsPlaying)
             {
                 Shot.AssignClip(clip);
-                Shot.Play();
+                Shot.Play(clip);
             }
             else
             {
@@ -245,7 +243,7 @@ public class QueueManager
         LastSituation = situation;
         if (Disabled(situation))
         {
-            return (LongLargoMain.PlaylistProvider.LongSilence, true);
+            return (LongLargoMain.PlaylistManager.LongSilence, true);
         }
         
         var scene = GameManager.m_ActiveScene;
@@ -266,7 +264,7 @@ public class QueueManager
         }
         else
         {
-            return (LongLargoMain.PlaylistProvider.LongSilence, true);
+            return (LongLargoMain.PlaylistManager.LongSilence, true);
         }
     }
 
@@ -279,7 +277,7 @@ public class QueueManager
         LastSituation = situation;
         if (Disabled(situation))
         {
-            return (LongLargoMain.PlaylistProvider.ShortSilence, true);
+            return (LongLargoMain.PlaylistManager.ShortSilence, true);
         }
 
         var soundtracks = _soundtracks
@@ -295,14 +293,16 @@ public class QueueManager
         }
         else
         {
-            return (LongLargoMain.PlaylistProvider.ShortSilence, true);
+            return (LongLargoMain.PlaylistManager.ShortSilence, true);
         }
     }
 
     private IEnumerator PlayDelayedRoutine(Clip audioClip, float delay)
     {
+        Shot.AssignClip(LongLargoMain.PlaylistManager.ShortSilence);
+        Shot.Play(LongLargoMain.PlaylistManager.ShortSilence);
         yield return new WaitForSeconds(delay);
-        if (IsPlaying && Shot._audioSource.clip.name == "ShortSilence")
+        if (!IsPlaying || Shot._audioSource.clip.name == "ShortSilence")
         {
             PlayHard(audioClip);
         }
@@ -312,7 +312,7 @@ public class QueueManager
     {
         yield return StopRoutine(fadeOut);
         Shot.AssignClip(clip);
-        Shot.Play();
+        Shot.Play(clip);
     }
     
     // private IEnumerator PlayRoutine(Clip audioClip, float delay)
@@ -380,7 +380,7 @@ public class QueueManager
                 if (choosenOne < 0)
                 {
                     LastSoundtrack = soundtrack;
-                    return LongLargoMain.PlaylistProvider.GetClip(soundtrack);
+                    return LongLargoMain.PlaylistManager.GetClip(soundtrack);
                 }
             }
         }
