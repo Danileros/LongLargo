@@ -104,9 +104,7 @@ public class QueueManager
         {
             Stop();
             LLogger.Log($"[Queue] Now playing: {clip.audioClip.name}");
-            Shot.AssignClip(clip);
-            Shot._audioSource.loop = loop;
-            Shot.Play(clip);
+            PlayInternal(clip, loop);
         }
     }
 
@@ -139,9 +137,7 @@ public class QueueManager
         {
             Stop();
             LLogger.Log($"[Queue] Now playing hard: {clip.audioClip.name}");
-            Shot.AssignClip(clip);
-            Shot._audioSource.loop = loop;
-            Shot.Play(clip);
+            PlayInternal(clip, loop);
         }
     }
 
@@ -158,13 +154,32 @@ public class QueueManager
             LLogger.Log($"[Queue] Now playing hard with fade previous: {clip.audioClip.name}");
             if (!IsPlaying)
             {
-                Shot.AssignClip(clip);
-                Shot.Play(clip);
+                PlayInternal(clip, false);
             }
             else
             {
                 _lastPlayToken = MelonCoroutines.Start(this.PlayAfterFade(clip, fadeOut));
             }
+        }
+    }
+
+    private void PlayInternal(Clip clip, bool loop)
+    {
+        Shot.AssignClip(clip);
+        Shot._audioSource.loop = loop;
+        if (clip == LongLargoMain.PlaylistManager.LongSilence || clip == LongLargoMain.PlaylistManager.ShortSilence)
+        {
+            Shot.Play(); // no need to prefetch
+            return;
+        }
+            
+        if (loop)
+        {
+            _lastPlayToken = MelonCoroutines.Start(this.PlayDelayedRoutine(clip, 0.6f));
+        }
+        else
+        {
+            Shot.Play(clip);
         }
     }
 
@@ -324,7 +339,7 @@ public class QueueManager
     private IEnumerator PlayDelayedRoutine(Clip audioClip, float delay)
     {
         Shot.AssignClip(LongLargoMain.PlaylistManager.ShortSilence);
-        Shot.Play(LongLargoMain.PlaylistManager.ShortSilence);
+        Shot.Play();
         yield return new WaitForSeconds(delay);
         if (!IsPlaying || Shot._audioSource.clip.name == "ShortSilence")
         {
@@ -335,8 +350,7 @@ public class QueueManager
     private IEnumerator PlayAfterFade(Clip clip, float fadeOut)
     {
         yield return StopRoutine(fadeOut);
-        Shot.AssignClip(clip);
-        Shot.Play(clip);
+        PlayInternal(clip, false);
     }
 
     private IEnumerator StopRoutine(float fadeOut)

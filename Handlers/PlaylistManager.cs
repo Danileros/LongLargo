@@ -318,7 +318,6 @@ Fields:
         var clipManager = AudioMaster.NewClipManager();
         clipManager.LoadAllClipsFromBundle(assetBundle);
         ExtractClips(loadedSoundtracks, assetBundle, clipManager, playlist);
-        LogAssetNames(assetBundle);
     }
 
     private void LoadUgly(string[] soundtrackPaths, ClipManager clipManager)
@@ -387,13 +386,5 @@ Fields:
     private static string GetTrackName(string path)
     {
         return Path.GetFileNameWithoutExtension(path).ToLower(CultureInfo.CurrentCulture);
-    }
-
-    private static void LogAssetNames(AssetBundle assetBundle)
-    {
-        foreach (string assetName in assetBundle.GetAllAssetNames())
-        {
-            LLogger.Debug($"Assets: {assetName}");
-        }
     }
 }
