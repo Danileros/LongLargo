@@ -311,7 +311,7 @@ Fields:
         }
         catch (Exception e)
         {
-            LLogger.Error("Asset Bundle PlaylistInfo.json can't be deserialized, skipping");
+            LLogger.Error("Asset Bundle's PlaylistInfo.json can't be deserialized, skipping");
             return;
         }
             

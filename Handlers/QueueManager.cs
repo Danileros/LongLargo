@@ -102,8 +102,8 @@ public class QueueManager
         isPaused = false;
         if (clip != null && !IsPlaying)
         {
-            LLogger.Log($"Now playing: {clip.audioClip.name}");
             Stop();
+            LLogger.Log($"[Queue] Now playing: {clip.audioClip.name}");
             Shot.AssignClip(clip);
             Shot._audioSource.loop = loop;
             Shot.Play(clip);
@@ -111,7 +111,7 @@ public class QueueManager
     }
 
     /// <summary>
-    /// Tries to play scheduled and gently refuses if something is playing already.
+    /// Tries to play with delay and gently refuses if something is playing already.
     /// </summary>
     /// <param name="clip">Clip.</param>
     /// <param name="loop">true if it should be looped.</param>
@@ -120,7 +120,8 @@ public class QueueManager
         isPaused = false;
         if (clip != null && !IsPlaying)
         {
-            LLogger.Log($"Scheduled after {delay}: {clip.audioClip.name}");
+            Stop();
+            LLogger.Log($"[Queue] Scheduled after {delay}: {clip.audioClip.name}");
             Shot._audioSource.loop = false;
             _lastPlayToken = MelonCoroutines.Start(this.PlayDelayedRoutine(clip, delay));
         }
@@ -136,8 +137,8 @@ public class QueueManager
         isPaused = false;
         if (clip != null)
         {
-            LLogger.Log($"Now playing hard: {clip.audioClip.name}");
             Stop();
+            LLogger.Log($"[Queue] Now playing hard: {clip.audioClip.name}");
             Shot.AssignClip(clip);
             Shot._audioSource.loop = loop;
             Shot.Play(clip);
@@ -154,7 +155,7 @@ public class QueueManager
         isPaused = false;
         if (clip != null)
         {
-            LLogger.Log($"Now playing hard with fade: {clip.audioClip.name}");
+            LLogger.Log($"[Queue] Now playing hard with fade previous: {clip.audioClip.name}");
             if (!IsPlaying)
             {
                 Shot.AssignClip(clip);
@@ -169,7 +170,12 @@ public class QueueManager
 
     public void Stop()
     {
-        LLogger.Debug("[QueueManager] Stop");
+        if (LLSettings.settings.DebugMode)
+        {
+            LLogger.Debug("[Queue] Stopping");
+            LLogger.Debug(new System.Diagnostics.StackTrace(true).ToString());
+        }
+        
         isPaused = false;
         Shot._audioSource.loop = false;
         Shot.Stop();
@@ -189,18 +195,23 @@ public class QueueManager
     {
         if (!IsPlaying)
         {
-            LLogger.Debug($"[QueueManager] Stop rejected, nothing to stop");
+            LLogger.Debug($"[Queue] Stop rejected, nothing to stop");
             return;
         }
         
         if (!IsFading)
         {
-            LLogger.Debug($"[QueueManager] Stop with fade out {fadeOut:N}");
+            if (LLSettings.settings.DebugMode)
+            {
+                LLogger.Debug($"[Queue] Stopping with fade out {fadeOut:N}");
+                LLogger.Debug(new System.Diagnostics.StackTrace(true).ToString());
+            }
+            
             _lastFadeToken = MelonCoroutines.Start(this.StopRoutine(fadeOut));
         }
         else
         {
-            LLogger.Debug($"[QueueManager] Stop rejected, already in process");
+            LLogger.Debug($"[Queue] Stop rejected, already in process");
         }
     }
 
@@ -225,7 +236,7 @@ public class QueueManager
             return;
         }
         
-        LLogger.Debug($"[QueueManager] Stop rejected for {situations}, current is {LastSituation}");
+        LLogger.Debug($"[Queue] Stop rejected for {situations}, current is {LastSituation}");
     }
 
     public void Pause()

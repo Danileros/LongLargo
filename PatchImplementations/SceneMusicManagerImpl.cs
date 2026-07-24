@@ -43,7 +43,7 @@ public class SceneMusicManagerImpl : MonoBehaviour
 
     public void OnDestroy()
     {
-        LLogger.Debug("[SceneMusicManagerImpl] destroyed");
+        LLogger.Debug("[SceneMusicManager] destroyed");
         LongLargoMain.QueueManager.Stop(1f);
     }
 
@@ -54,7 +54,7 @@ public class SceneMusicManagerImpl : MonoBehaviour
     [HideFromIl2Cpp]
     public bool PlayExploreMusic()
     {
-        if (ShouldSkip())
+        if (ModDisabled())
         {
             return true;
         }
@@ -70,11 +70,9 @@ public class SceneMusicManagerImpl : MonoBehaviour
             return false;
         }
         
-        LLogger.Debug("[SceneMusicManagerImpl] playing explore music");
-        
         (var clip, var allowVanilla) = LongLargoMain.QueueManager.GetExplorationClip();
         
-        LLogger.Debug($"[SceneMusicManagerImpl] chosen clip {clip?.audioClip?.name ?? "LongSilence"}");
+        LLogger.Debug($"[SceneMusicManager] Choosing clip {clip?.audioClip?.name ?? "LongSilence"}");
         
         LongLargoMain.QueueManager.PlaySoft(clip);
         if (!allowVanilla)
@@ -89,7 +87,7 @@ public class SceneMusicManagerImpl : MonoBehaviour
         return allowVanilla;
     }
 
-    private static bool ShouldSkip()
+    private static bool ModDisabled()
     {
         if (!LLSettings.settings.ModEnabled)
         {

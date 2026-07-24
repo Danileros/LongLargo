@@ -18,12 +18,17 @@ public static class GameAudioManagerImpl
     /// <returns>false if we should suppress original music or sound.</returns>
     public static bool PlayMusic(string soundName, ref GameObject go)
     {
-        if (ShouldSkip())
+        if (ModDisabled())
         {
             return true;
         }
         
         var situationInfo = GetSituationByEvent(soundName);
+        if (situationInfo.WorthLogging)
+        {
+            LLogger.Log($"[GameAudioManager] Hooking event {soundName}");
+        }
+        
         if (MaybeIgnoreEvent(situationInfo))
         {
             return true;
@@ -47,12 +52,12 @@ public static class GameAudioManagerImpl
             (clip, playVanilla) = LongLargoMain.QueueManager.GetSituationClip(situationInfo.Situation);
         }
 
-        LLogger.Debug($"[GameAudioManagerImpl] plays {situationInfo.Situation} clip {clip?.audioClip?.name ?? "ShortSilence"}");
+        LLogger.Debug($"[GameAudioManager] Choosing {situationInfo.Situation} clip {clip?.audioClip?.name ?? "ShortSilence"}");
         
         return PlayCLip(playVanilla, situationInfo, clip, go);
     }
 
-    private static bool ShouldSkip()
+    private static bool ModDisabled()
     {
         if (!LLSettings.settings.ModEnabled)
         {
@@ -203,7 +208,7 @@ public static class GameAudioManagerImpl
                 situationInfo.Situation = SituationType.Disabled;
                 if (LongLargoMain.QueueManager.LastSituation.IsWeather())
                 {
-                    LongLargoMain.QueueManager.Stop(3f);
+                    LongLargoMain.QueueManager.Stop(1f);
                 }
 
                 LongLargoMain.QueueManager.ResetLastSoundtrack();
@@ -238,7 +243,7 @@ public static class GameAudioManagerImpl
             case "Play_musicTales_Outro":
             case "Play_SndMusAreaTransition1":
             case "Play_SndMusNewLocation":
-                LLogger.Debug("Playing Silence to avoid overlap");
+                LLogger.Debug("[GameAudioManager] Playing Silence to avoid overlap");
                 situationInfo.Situation = SituationType.Disabled;
                 situationInfo.SilenceType = SituationInfo.SilenceLength.Long;
                 break;
@@ -248,7 +253,7 @@ public static class GameAudioManagerImpl
             case "Play_musicTales_Outro_Stinger":
             case "Play_SndMusNewLocationShort":
             case "Play_musicTales_Bunker_Stinger":
-                LLogger.Debug("Playing short Silence to avoid overlap");
+                LLogger.Debug("[GameAudioManager] Playing short Silence to avoid overlap");
                 situationInfo.Situation = SituationType.Disabled;
                 situationInfo.SilenceType = SituationInfo.SilenceLength.Short;
                 break;
@@ -256,6 +261,7 @@ public static class GameAudioManagerImpl
             default:
                 // Not for us
                 situationInfo.Situation = SituationType.Disabled;
+                situationInfo.WorthLogging = false;
                 break;
         }
 
@@ -324,7 +330,7 @@ public static class GameAudioManagerImpl
         if (!playVanilla && situationInfo.WithStringer)
         {
             // Play replaced stringer with delay, replace original event with stingerless
-            LLogger.Debug($"[GameAudioManagerImpl] replaces with stringerless {situationInfo.StingerlessEvent}");
+            LLogger.Debug($"[GameAudioManager] Replacing event with {situationInfo.StingerlessEvent}");
             LongLargoMain.QueueManager.PlaySoftDelayed(clip, situationInfo.Delay);
             GameAudioManager.PlaySound(situationInfo.StingerlessEvent, go);
             return false;
@@ -370,5 +376,6 @@ public static class GameAudioManagerImpl
         public string StingerlessEvent;
         public float Delay = 0;
         public SilenceLength SilenceType = SilenceLength.None;
+        public bool WorthLogging = true;
     }
 }

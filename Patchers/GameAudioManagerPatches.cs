@@ -14,7 +14,7 @@ internal class GameAudioManagerPatches
     {
         public static bool Prefix(ref string soundID, ref GameObject go)
         {
-            LLogger.Log($"[PlayMusic] str soundID: {soundID}");
+            // LLogger.Log($"[PlayMusic] str soundID: {soundID}");
             return GameAudioManagerImpl.PlayMusic(soundID, ref go);
         }
     }
@@ -25,7 +25,7 @@ internal class GameAudioManagerPatches
         public static bool Prefix(ref uint soundID, ref GameObject go)
         {
             var eventName = EventIdProvider.GetEventName(soundID);
-            LLogger.Log($"[PlayMusic] int soundID: {eventName}");
+            // LLogger.Log($"[PlayMusic] int soundID: {eventName}");
             return GameAudioManagerImpl.PlayMusic(eventName, ref go);
         }
     }
@@ -36,7 +36,7 @@ internal class GameAudioManagerPatches
     {
         public static bool Prefix(ref Il2CppAK.Wwise.Event soundEvent, ref GameObject go)
         {
-            LLogger.Debug($"[PlaySound] ev soundID: {soundEvent.Name}");
+            // LLogger.Debug($"[PlaySound] ev soundID: {soundEvent.Name}");
             return GameAudioManagerImpl.PlayMusic(soundEvent.Name, ref go);
         }
     }
@@ -46,7 +46,7 @@ internal class GameAudioManagerPatches
     {
         public static bool Prefix(ref string soundID, ref GameObject go)
         {
-            LLogger.Debug($"[PlaySound] str soundID: {soundID}");
+            // LLogger.Debug($"[PlaySound] str soundID: {soundID}");
             return GameAudioManagerImpl.PlayMusic(soundID, ref go);
         }
     }
