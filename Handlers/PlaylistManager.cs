@@ -223,26 +223,26 @@ Fields:
         ""BlackrockPrisonSurvivalZone""
       ]
     Possible values:
-    AshCanyonRegion       	    Ash Canyon
-    BlackrockRegion             Blackrock
-    CanneryRegion 	            Bleak Inlet
-    TracksRegion 	            Broken Railroad
-    CoastalRegion 	            Coastal Highway
-    WhalingStationRegion 	    Desolation Point
-    MarshRegion          	    Forlorn Muskeg
-    RiverValleyRegion    	    Hushed River Valley
-    MountainTownRegion 	        Mountain Town
-    LakeRegion 	                Mystery Lake
-    HighwayTransitionZone 	    Old Island Connector
-    RuralRegion 	            Pleasant Valley
-    RavineTransitionZone 	    Raven Falls Railway Line (Ravine)
-    CrashMountainRegion 	    Timberwolf Mountain
-    DamRiverTransitionZoneB 	Winding River
-    LongRailTransitionZone      Far Range Branch Line
-    HubRegion                   Transfer Pass
-    AirfieldRegion              Forsaken Airfield
-    MiningRegion                Zone of Contamination
-    MountainPassRegion          Sundered Pass
+    ""AshCanyonRegion""				Ash Canyon
+    ""BlackrockRegion""				Blackrock
+    ""CanneryRegion""  				Bleak Inlet
+    ""TracksRegion""  				Broken Railroad
+    ""CoastalRegion""  				Coastal Highway
+    ""WhalingStationRegion""  		Desolation Point
+    ""MarshRegion""					Forlorn Muskeg
+    ""RiverValleyRegion""  			Hushed River Valley
+    ""MountainTownRegion""			Mountain Town
+    ""LakeRegion""					Mystery Lake
+    ""HighwayTransitionZone""  		Old Island Connector
+    ""RuralRegion""					Pleasant Valley
+    ""RavineTransitionZone""  		Raven Falls Railway Line (Ravine)
+    ""CrashMountainRegion""			Timberwolf Mountain
+    ""DamRiverTransitionZoneB""		Winding River
+    ""LongRailTransitionZone""		Far Range Branch Line
+    ""HubRegion""  					Transfer Pass
+    ""AirfieldRegion""				Forsaken Airfield
+    ""MiningRegion""  				Zone of Contamination
+    ""MountainPassRegion""			Sundered Pass
 ";
         
         using (var fs = new FileStream(jsonPath, FileMode.Create, FileAccess.Write))

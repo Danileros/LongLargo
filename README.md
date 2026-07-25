@@ -15,7 +15,7 @@ Long Largo is a mod with a single goal: to enhance your gaming experience by imp
 ## Custom music how-to
 Drop soundtracks you want to hear in-game to LongLargo folder in Mods. OGG preferred, MP3 and WAV also supported. They will be automatically registered and configured in PlaylistInfo.json on next game launch. Long Largo by default treats any musical clip as an exploration clip suitable for day and night. If you want to customize it, open PlaylistInfo.json with text editor or JSON editor and follow the built-in instructions. 
 
-If you want to share your tracks—best solution is to create an assetbundle using Unity designer. Put inside all tracks and PlaylistInfo.json. All TrackNames should be lowercase because filenames would be lowercased by asset builder.
+If you want to share your tracks—best solution is to create an assetbundle using Unity designer. Put inside all tracks and PlaylistInfo.json.
 
 ## Known Issues
 
@@ -30,6 +30,7 @@ If you want to share your tracks—best solution is to create an assetbundle usi
 
 - [ModSettings](https://github.com/DigitalzombieTLD/ModSettings/releases)
 - [AudioManager](https://github.com/DigitalzombieTLD/AudioManager/releases)
+
 
 * Install the latest AudioCore plugin (to Plugins folder, not Mods folder!):
 
