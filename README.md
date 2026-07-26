@@ -11,6 +11,8 @@ Long Largo is a mod with a single goal: to enhance your gaming experience by imp
 * Supports custom music.
 * Flexible playlist customization.
 * Allows to play exploration music more frequently.
+* Flexible setting.
+* Allows to control every musical event. You can even disable wolf/bear stalk sound, and much more!
 
 ## Custom music how-to
 Drop soundtracks you want to hear in-game to LongLargo folder in Mods. OGG preferred, MP3 and WAV also supported. They will be automatically registered and configured in PlaylistInfo.json on next game launch. Long Largo by default treats any musical clip as an exploration clip suitable for day and night. If you want to customize it, open PlaylistInfo.json with text editor or JSON editor and follow the built-in instructions. 
