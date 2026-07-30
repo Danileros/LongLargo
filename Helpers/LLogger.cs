@@ -1,6 +1,6 @@
-using LongLargo.Model;
+using LongLargo.Managers;
 
-namespace LongLargo.Handlers;
+namespace LongLargo.Helpers;
 
 /// <summary>
 /// LL Logging proxy.
@@ -19,7 +19,7 @@ public static class LLogger
     
     public static void Debug(string message)
     {
-        if (LLSettings.settings.DebugMode)
+        if (SettingsManager.Settings.DebugMode)
         {
             MelonLoader.MelonLogger.Msg(message);
         }

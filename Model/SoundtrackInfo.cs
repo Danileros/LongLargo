@@ -1,6 +1,6 @@
 using System;
 using System.Text.Json.Serialization;
-using LongLargo.Handlers;
+using LongLargo.Helpers;
 using UnityEngine;
 
 namespace LongLargo.Model;

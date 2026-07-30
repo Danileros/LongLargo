@@ -1,9 +1,9 @@
 ﻿using HarmonyLib;
 using Il2Cpp;
 using Il2CppVLB;
-using LongLargo.PatchImplementations;
+using LongLargo.Handlers;
 
-namespace LongLargo.Patchers;
+namespace LongLargo.Patches;
 
 internal class SceneMusicManagerPatches
 {
@@ -13,7 +13,7 @@ internal class SceneMusicManagerPatches
     {
         private static void Postfix(SceneMusicManager __instance)
         {
-            __instance.gameObject.GetOrAddComponent<SceneMusicManagerImpl>();
+            __instance.gameObject.GetOrAddComponent<SceneMusicManagerHandler>();
         }
     }
 
@@ -23,7 +23,7 @@ internal class SceneMusicManagerPatches
     {
         private static bool Prefix(SceneMusicManager __instance)
         {
-            return __instance.gameObject.GetComponent<SceneMusicManagerImpl>().PlayExploreMusic();
+            return __instance.gameObject.GetComponent<SceneMusicManagerHandler>().PlayExploreMusic();
         }
     }
 }

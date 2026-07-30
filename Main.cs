@@ -1,12 +1,13 @@
 ﻿using LongLargo.Extensions;
-using LongLargo.Handlers;
+using LongLargo.Helpers;
+using LongLargo.Managers;
 using LongLargo.Model;
 using MelonLoader;
 using UnityEngine;
 
 namespace LongLargo;
 
-public class LongLargoMain : MelonMod
+public class Main : MelonMod
 {
     public static PlaylistManager PlaylistManager { get; private set; }
         
@@ -15,7 +16,7 @@ public class LongLargoMain : MelonMod
     public override void OnInitializeMelon()
     {
         Debug.Log($"[{Info.Name}] Version {Info.Version} loaded!");
-        LLSettings.OnLoad();
+        SettingsManager.OnLoad();
 
         PlaylistManager = new PlaylistManager();
         QueueManager = new QueueManager(PlaylistManager.Soundtracks);
@@ -23,11 +24,11 @@ public class LongLargoMain : MelonMod
     
     public override void OnSceneWasLoaded(int buildIndex, string sceneName)
     {
-        if (sceneName == null || sceneName == "Empty" || sceneName.Contains("Menu") || sceneName.Contains("Boot"))
+        if (ScenesHelper.IsForbidden(sceneName))
         {
             return;
         }
-        
+
         QueueManager.StopIfSituation(SituationTypeExtensions.GetDangers());
     }
 }

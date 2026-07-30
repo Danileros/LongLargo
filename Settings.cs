@@ -3,9 +3,9 @@ using AudioMgr;
 using Il2Cpp;
 using ModSettings;
 
-namespace LongLargo.Model;
+namespace LongLargo;
 
-internal class LongLargoSettings : JsonModSettings 
+internal class Settings : JsonModSettings 
 {
     [Section("General Options")]
 
@@ -59,9 +59,9 @@ internal class LongLargoSettings : JsonModSettings
     [Description("If Yes, only vanilla exploration tracks would play.")]
     public bool WeatherVanillaOnly = false;
 
-    [Section("Time")]
+    [Section("Time of day")]
         
-    [Name("Suppress Time soundtracks")]
+    [Name("Suppress Time of day soundtracks")]
     [Description("If Yes, a dusk and dawn tracks would never play.")]
     public bool TimeSuppress = false;
 
@@ -112,13 +112,13 @@ internal class LongLargoSettings : JsonModSettings
         if (BgmVolumeEnabled)
         {
             var masterVolume = InterfaceManager.GetPanel<Panel_OptionsMenu>().State.m_MasterVolume;
-            LongLargoMain.QueueManager.SetVolume(masterVolume * BgmVolume / 100f);
+            Main.QueueManager.SetVolume(masterVolume * BgmVolume / 100f);
         }
         else
         {
-            LongLargoMain.QueueManager.SetVolume(VolumeMaster.GetVolume(AudioMaster.SourceType.BGM));
+            Main.QueueManager.SetVolume(VolumeMaster.GetVolume(AudioMaster.SourceType.BGM));
         }
-        
+
         base.OnConfirm();
     }
 
@@ -141,16 +141,5 @@ internal class LongLargoSettings : JsonModSettings
         SetFieldVisible(nameof(TimberwolfVanillaOnly), ModEnabled);
         SetFieldVisible(nameof(ConditionSuppress), ModEnabled);
         SetFieldVisible(nameof(ConditionVanillaOnly), ModEnabled);
-    }
-}
-
-internal static class LLSettings
-{
-    public static LongLargoSettings settings = new LongLargoSettings();
-
-    public static void OnLoad()
-    {
-        settings.AddToModSettings("Long Largo", MenuType.Both);
-        settings.Refresh();
     }
 }

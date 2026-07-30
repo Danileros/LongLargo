@@ -1,15 +1,13 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using AudioMgr;
 using Il2Cpp;
 using LongLargo.Extensions;
+using LongLargo.Helpers;
 using LongLargo.Model;
 using MelonLoader;
 using UnityEngine;
 
-namespace LongLargo.Handlers;
+namespace LongLargo.Managers;
 
 /// <summary>
 /// Handles soundtracks queue. Chooses which track to play by itself.
@@ -65,10 +63,10 @@ public class QueueManager
 
     public static void ResetVolume()
     {
-        if (LLSettings.settings.BgmVolumeEnabled)
+        if (SettingsManager.Settings.BgmVolumeEnabled)
         {
             var masterVolume = InterfaceManager.GetPanel<Panel_OptionsMenu>().State.m_MasterVolume;
-            Shot.SetVolume(masterVolume * LLSettings.settings.BgmVolume / 100f);
+            Shot.SetVolume(masterVolume * SettingsManager.Settings.BgmVolume / 100f);
         }
         else
         {
@@ -167,7 +165,7 @@ public class QueueManager
     {
         Shot.AssignClip(clip);
         Shot._audioSource.loop = loop;
-        if (clip == LongLargoMain.PlaylistManager.LongSilence || clip == LongLargoMain.PlaylistManager.ShortSilence)
+        if (clip == Main.PlaylistManager.LongSilence || clip == Main.PlaylistManager.ShortSilence)
         {
             Shot.Play(); // no need to prefetch
             return;
@@ -185,7 +183,7 @@ public class QueueManager
 
     public void Stop()
     {
-        if (LLSettings.settings.DebugMode)
+        if (SettingsManager.Settings.DebugMode)
         {
             LLogger.Debug("[Queue] Stopping");
             LLogger.Debug(new System.Diagnostics.StackTrace(true).ToString());
@@ -216,7 +214,7 @@ public class QueueManager
         
         if (!IsFading)
         {
-            if (LLSettings.settings.DebugMode)
+            if (SettingsManager.Settings.DebugMode)
             {
                 LLogger.Debug($"[Queue] Stopping with fade out {fadeOut:N}");
                 LLogger.Debug(new System.Diagnostics.StackTrace(true).ToString());
@@ -256,7 +254,7 @@ public class QueueManager
 
     public void Pause()
     {
-        if (LongLargoMain.QueueManager.IsPlaying)
+        if (Main.QueueManager.IsPlaying)
         {
             isPaused = true;
             Shot._audioSource.Pause();
@@ -282,7 +280,7 @@ public class QueueManager
         LastSituation = situation;
         if (Disabled(situation))
         {
-            return (LongLargoMain.PlaylistManager.LongSilence, true);
+            return (Main.PlaylistManager.LongSilence, true);
         }
         
         var scene = GameManager.m_ActiveScene;
@@ -303,7 +301,7 @@ public class QueueManager
         }
         else
         {
-            return (LongLargoMain.PlaylistManager.LongSilence, true);
+            return (Main.PlaylistManager.LongSilence, true);
         }
     }
 
@@ -316,7 +314,7 @@ public class QueueManager
         LastSituation = situation;
         if (Disabled(situation))
         {
-            return (LongLargoMain.PlaylistManager.ShortSilence, true);
+            return (Main.PlaylistManager.ShortSilence, true);
         }
 
         var soundtracks = _soundtracks
@@ -332,13 +330,13 @@ public class QueueManager
         }
         else
         {
-            return (LongLargoMain.PlaylistManager.ShortSilence, true);
+            return (Main.PlaylistManager.ShortSilence, true);
         }
     }
 
     private IEnumerator PlayDelayedRoutine(Clip audioClip, float delay)
     {
-        Shot.AssignClip(LongLargoMain.PlaylistManager.ShortSilence);
+        Shot.AssignClip(Main.PlaylistManager.ShortSilence);
         Shot.Play();
         yield return new WaitForSeconds(delay);
         if (!IsPlaying || Shot._audioSource.clip.name == "ShortSilence")
@@ -370,26 +368,26 @@ public class QueueManager
     private bool Disabled(SituationType situation)
     {
         return
-            LLSettings.settings.ExplorationVanillaOnly
+            SettingsManager.Settings.ExplorationVanillaOnly
                 && (SituationType.ExplorationNight | SituationType.ExplorationDay 
                                                    | SituationType.ExplorationAurora).HasFlag(situation)
-            || LLSettings.settings.WeatherVanillaOnly
+            || SettingsManager.Settings.WeatherVanillaOnly
                 && (SituationType.WeatherBlizzard | SituationType.WeatherClear 
                                                   | SituationType.WeatherFog 
                                                   | SituationType.WeatherSnow).HasFlag(situation)
-            || LLSettings.settings.TimeVanillaOnly
+            || SettingsManager.Settings.TimeVanillaOnly
                 && (SituationType.TimeDawn | SituationType.TimeDusk).HasFlag(situation)
-            || LLSettings.settings.StalkedVanillaOnly
+            || SettingsManager.Settings.StalkedVanillaOnly
                 && (SituationType.Stalked).HasFlag(situation)
-            || LLSettings.settings.TimberwolfVanillaOnly
+            || SettingsManager.Settings.TimberwolfVanillaOnly
                 && (SituationType.Timberwolf).HasFlag(situation)
-            || LLSettings.settings.ConditionVanillaOnly
+            || SettingsManager.Settings.ConditionVanillaOnly
                 && (SituationType.ConditionSuccess | SituationType.ConditionSorrow).HasFlag(situation);
     }
 
     private Clip ChooseRandomSoundtrack(ICollection<SoundtrackInfo> soundtracks)
     {
-        var vanillaChance = LLSettings.settings.ModVanillaMusicChance;
+        var vanillaChance = SettingsManager.Settings.ModVanillaMusicChance;
         var sum = soundtracks.Sum(s => s.Chance) + vanillaChance;
         var choosenOne = UnityEngine.Random.Range(0, sum);
         if (choosenOne < vanillaChance)
@@ -405,7 +403,7 @@ public class QueueManager
                 if (choosenOne < 0)
                 {
                     LastSoundtrack = soundtrack;
-                    return LongLargoMain.PlaylistManager.GetClip(soundtrack);
+                    return Main.PlaylistManager.GetClip(soundtrack);
                 }
             }
         }

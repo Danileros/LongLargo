@@ -1,16 +1,13 @@
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Text.Json;
 using AudioMgr;
+using LongLargo.Helpers;
 using LongLargo.Model;
 using NAudio.Wave;
 using UnityEngine;
 
-namespace LongLargo.Handlers;
+namespace LongLargo.Managers;
 
 /// <summary>
 /// Loads and provides playlist and tracks.
@@ -102,7 +99,7 @@ public class PlaylistManager
         var clipManager = AudioMaster.NewClipManager();
         try
         {
-            if (LLSettings.settings.EnableUglyLoad)
+            if (SettingsManager.Settings.EnableUglyLoad)
             {
                 LoadUgly(soundtrackPaths, clipManager);
             }

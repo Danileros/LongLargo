@@ -1,34 +1,33 @@
-using System;
 using Il2Cpp;
 using Il2CppInterop.Runtime.Attributes;
-using LongLargo.Handlers;
-using LongLargo.Model;
+using LongLargo.Helpers;
+using LongLargo.Managers;
 using MelonLoader;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace LongLargo.PatchImplementations;
+namespace LongLargo.Handlers;
 
 [RegisterTypeInIl2Cpp]
-public class SceneMusicManagerImpl : MonoBehaviour
+public class SceneMusicManagerHandler : MonoBehaviour
 {
     private SceneMusicManager _instance;
     private float _delayRange;
     private float _minimalDelay = 60f;
 
-    public SceneMusicManagerImpl(IntPtr intPtr)  : base(intPtr) { }
+    public SceneMusicManagerHandler(IntPtr intPtr)  : base(intPtr) { }
 
     public void Awake()
     {
         _instance = gameObject.GetComponent<SceneMusicManager>();
         _delayRange = _instance.m_MaxSecondsBetweenExploreMusic - _instance.m_MinSecondsBetweenExploreMusic;
-        if (!LLSettings.settings.ModEnabled)
+        if (!SettingsManager.Settings.ModEnabled)
         {
             return;
         }
 
         LLogger.Debug("[SceneMusicManagerImpl] awakens");
-        var delayModifier = LLSettings.settings.ExplorationDelay;
+        var delayModifier = SettingsManager.Settings.ExplorationDelay;
         if (delayModifier != 100)
         {
             var modifier = delayModifier / 100f;
@@ -44,7 +43,7 @@ public class SceneMusicManagerImpl : MonoBehaviour
     public void OnDestroy()
     {
         LLogger.Debug("[SceneMusicManager] destroyed");
-        LongLargoMain.QueueManager.Stop(1f);
+        Main.QueueManager.Stop(1f);
     }
 
     /// <summary>
@@ -59,22 +58,22 @@ public class SceneMusicManagerImpl : MonoBehaviour
             return true;
         }
 
-        if (LLSettings.settings.ExplorationSuppress)
+        if (SettingsManager.Settings.ExplorationSuppress)
         {
             _instance.ResetExploreMusicTimer();
             return false;
         }
 
-        if (LongLargoMain.QueueManager.IsPlaying)
+        if (Main.QueueManager.IsPlaying)
         {
             return false;
         }
         
-        (var clip, var allowVanilla) = LongLargoMain.QueueManager.GetExplorationClip();
+        (var clip, var allowVanilla) = Main.QueueManager.GetExplorationClip();
         
         LLogger.Debug($"[SceneMusicManager] Choosing clip {clip?.audioClip?.name ?? "LongSilence"}");
         
-        LongLargoMain.QueueManager.PlaySoft(clip);
+        Main.QueueManager.PlaySoft(clip);
         if (!allowVanilla)
         {
             //_instance.ResetExploreMusicTimer();
@@ -89,14 +88,13 @@ public class SceneMusicManagerImpl : MonoBehaviour
 
     private static bool ModDisabled()
     {
-        if (!LLSettings.settings.ModEnabled)
+        if (!SettingsManager.Settings.ModEnabled)
         {
             return true;
         }
 
         var scene = GameManager.m_ActiveScene;
-        if (scene == null || scene == "Empty" || scene.Contains("Menu") || scene.Contains("Boot")
-            || scene.Contains("Bunker") || scene == "MiningRegionMine") // Don't mess with tales
+        if (ScenesHelper.IsForbidden(scene) || ScenesHelper.IsTales(scene)) // Don't mess with tales
         {
             return true;
         }

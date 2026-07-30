@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace LongLargo.Handlers;
+﻿namespace LongLargo.Helpers;
 
 /// <summary>
 /// Get event name or id.

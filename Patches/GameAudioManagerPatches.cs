@@ -1,11 +1,10 @@
-using System;
 using HarmonyLib;
 using Il2Cpp;
 using LongLargo.Handlers;
-using LongLargo.PatchImplementations;
+using LongLargo.Helpers;
 using UnityEngine;
 
-namespace LongLargo.Patchers;
+namespace LongLargo.Patches;
 
 internal class GameAudioManagerPatches
 {
@@ -15,7 +14,7 @@ internal class GameAudioManagerPatches
         public static bool Prefix(ref string soundID, ref GameObject go)
         {
             // LLogger.Log($"[PlayMusic] str soundID: {soundID}");
-            return GameAudioManagerImpl.PlayMusic(soundID, ref go);
+            return GameAudioManagerHandler.PlayMusic(soundID, ref go);
         }
     }
 
@@ -26,7 +25,7 @@ internal class GameAudioManagerPatches
         {
             var eventName = EventIdProvider.GetEventName(soundID);
             // LLogger.Log($"[PlayMusic] int soundID: {eventName}");
-            return GameAudioManagerImpl.PlayMusic(eventName, ref go);
+            return GameAudioManagerHandler.PlayMusic(eventName, ref go);
         }
     }
      
@@ -37,7 +36,7 @@ internal class GameAudioManagerPatches
         public static bool Prefix(ref Il2CppAK.Wwise.Event soundEvent, ref GameObject go)
         {
             // LLogger.Debug($"[PlaySound] ev soundID: {soundEvent.Name}");
-            return GameAudioManagerImpl.PlayMusic(soundEvent.Name, ref go);
+            return GameAudioManagerHandler.PlayMusic(soundEvent.Name, ref go);
         }
     }
         
@@ -47,7 +46,7 @@ internal class GameAudioManagerPatches
         public static bool Prefix(ref string soundID, ref GameObject go)
         {
             // LLogger.Debug($"[PlaySound] str soundID: {soundID}");
-            return GameAudioManagerImpl.PlayMusic(soundID, ref go);
+            return GameAudioManagerHandler.PlayMusic(soundID, ref go);
         }
     }
 }

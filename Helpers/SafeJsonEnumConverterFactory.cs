@@ -1,8 +1,7 @@
-using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace LongLargo.Handlers;
+namespace LongLargo.Helpers;
 
 /// <summary>
 /// Safe enum parser. Needed because I don't want to completely destroy PlaylistInfo just because user wrote 'TimeDust'

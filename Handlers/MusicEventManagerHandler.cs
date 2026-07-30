@@ -1,32 +1,25 @@
-using System;
 using Il2Cpp;
 using Il2CppInterop.Runtime.Attributes;
-using LongLargo.Handlers;
-using LongLargo.Model;
+using LongLargo.Helpers;
+using LongLargo.Managers;
 using MelonLoader;
 using UnityEngine;
 
-namespace LongLargo.PatchImplementations;
+namespace LongLargo.Handlers;
 
 [RegisterTypeInIl2Cpp]
-public class MusicEventManagerImpl : MonoBehaviour
+public class MusicEventManagerHandler : MonoBehaviour
 {
     private MusicEventManager _instance;
     
     private bool isStalked = false;
     private bool isAttacked = false;
 
-    public MusicEventManagerImpl(IntPtr intPtr)  : base(intPtr) { }
+    public MusicEventManagerHandler(IntPtr intPtr)  : base(intPtr) { }
 
     public void Awake()
     {
         _instance = gameObject.GetComponent<MusicEventManager>();
-    }
-    
-    [HideFromIl2Cpp]
-    public bool CheckForBeingStalkedPre()
-    {
-        return !LLSettings.settings.StalkedSuppress;
     }
     
     [HideFromIl2Cpp]
@@ -51,13 +44,13 @@ public class MusicEventManagerImpl : MonoBehaviour
     [HideFromIl2Cpp]
     public bool CheckForHappySuccess()
     {
-        return !LLSettings.settings.ConditionSuppress;
+        return !SettingsManager.Settings.ConditionSuppress;
     }
 
     [HideFromIl2Cpp]
     public bool CheckForSorrow()
     {
-        return !LLSettings.settings.StalkedSuppress;
+        return !SettingsManager.Settings.StalkedSuppress;
     }
 
     [HideFromIl2Cpp]

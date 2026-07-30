@@ -1,11 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFramework>net6</TargetFramework>
-		<LangVersion>10</LangVersion>
+		<TargetFramework>net6.0</TargetFramework>
+		<LangVersion>Latest</LangVersion>
+		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>disable</Nullable>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+		<DebugType>none</DebugType>
+		<RootNamespace>LongLargo</RootNamespace>
 	</PropertyGroup>
 
 	<PropertyGroup>
@@ -84,6 +86,8 @@
 		<DebugType>pdbonly</DebugType>
 	</PropertyGroup>
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-	  <Exec Command="copy /Y &quot;$(SolutionDir)bin\Debug\net6\$(ProjectName).dll&quot; &quot;$(ModsPath)\$(ProjectName).dll&quot;" />
+		<Exec Condition="'$(Configuration)'=='Debug'" Command="copy /Y &quot;$(SolutionDir)bin\Debug\net6.0\$(ProjectName).dll&quot; &quot;$(ModsPath)\$(ProjectName).dll&quot;" />
+		<Exec Condition="'$(Configuration)'=='Release'" Command="if not exist &quot;$(SolutionDir)Release&quot; mkdir &quot;$(SolutionDir)Release&quot;" />
+		<Exec Condition="'$(Configuration)'=='Release'" Command="copy /Y &quot;$(SolutionDir)bin\Release\net6.0\$(ProjectName).dll&quot; &quot;$(SolutionDir)Release\$(ProjectName).dll&quot;" />
 	</Target>
 </Project>
