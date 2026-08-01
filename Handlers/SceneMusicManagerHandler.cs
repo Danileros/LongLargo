@@ -1,5 +1,6 @@
 using Il2Cpp;
 using Il2CppInterop.Runtime.Attributes;
+using LongLargo.Extensions;
 using LongLargo.Helpers;
 using LongLargo.Managers;
 using MelonLoader;
@@ -53,7 +54,7 @@ public class SceneMusicManagerHandler : MonoBehaviour
     [HideFromIl2Cpp]
     public bool PlayExploreMusic()
     {
-        if (ModDisabled())
+        if (Main.IsModDisabled())
         {
             return true;
         }
@@ -69,36 +70,21 @@ public class SceneMusicManagerHandler : MonoBehaviour
             return false;
         }
         
-        (var clip, var allowVanilla) = Main.QueueManager.GetExplorationClip();
+        var situation = SituationTypeExtensions.GetExplorationSituation();
+        (var soundtrack, var allowVanilla) = Main.QueueManager.GetExplorationSoundtrack(situation);
         
-        LLogger.Debug($"[SceneMusicManager] Choosing clip {clip?.audioClip?.name ?? "LongSilence"}");
+        LLogger.Debug($"[SceneMusicManager] Choosing clip {soundtrack?.TrackName ?? "LongSilence"}");
         
-        Main.QueueManager.PlaySoft(clip);
+        Main.QueueManager.PlaySoft(soundtrack, situation);
         if (!allowVanilla)
         {
             //_instance.ResetExploreMusicTimer();
             // Player can add LONG track so we should take it's length into equation instead of vanilla's fixed 240  
-            var duration = (clip?.clipLength ?? 0f) < 60 ? 60f : (float)clip.clipLength;
+            var duration = (soundtrack?.Clip?.clipLength ?? 0f) < 60 ? 60f : (float)soundtrack.Clip.clipLength;
             _instance.m_TimeToPlayNextExploreMusic
                 = Time.time + duration + _minimalDelay + Random.Range(0, _delayRange);
         }
         
         return allowVanilla;
-    }
-
-    private static bool ModDisabled()
-    {
-        if (!SettingsManager.Settings.ModEnabled)
-        {
-            return true;
-        }
-
-        var scene = GameManager.m_ActiveScene;
-        if (ScenesHelper.IsForbidden(scene) || ScenesHelper.IsTales(scene)) // Don't mess with tales
-        {
-            return true;
-        }
-
-        return false;
     }
 }

@@ -17,8 +17,8 @@ public class PlaylistManager
     public SoundtrackInfo[] Soundtracks { get; private set; }
     
     // We will play this with default music to track overlaping
-    public Clip LongSilence { get; private set; }
-    public Clip ShortSilence { get; private set; }
+    public SoundtrackInfo LongSilence { get; private set; }
+    public SoundtrackInfo ShortSilence { get; private set; }
     
     internal static string FolderName { get; } = "LongLargo";
     internal static string FolderPath { get; } = Application.dataPath + "/../Mods/" + FolderName;
@@ -54,17 +54,17 @@ public class PlaylistManager
         Soundtracks = loadedSoundtracks.ToArray();
     }
 
-    /// <summary>
-    /// Get audioclip for soundtrack.
-    /// </summary>
-    /// <param name="soundtrack">Soundtrack info.</param>
-    /// <returns>Clip.</returns>
-    public Clip GetClip(SoundtrackInfo soundtrack)
-    {
-        var assetIndex = this._loadedAssets.FindIndex(x => soundtrack.AssetBundle == x);
-        var clipManager = _loadedClipManagers[assetIndex];
-        return clipManager.GetClip(soundtrack.TrackName);
-    }
+    // /// <summary>
+    // /// Get audioclip for soundtrack.
+    // /// </summary>
+    // /// <param name="soundtrack">Soundtrack info.</param>
+    // /// <returns>Clip.</returns>
+    // public Clip GetClip(SoundtrackInfo soundtrack)
+    // {
+    //     var assetIndex = this._loadedAssets.FindIndex(x => soundtrack.AssetBundle == x);
+    //     var clipManager = _loadedClipManagers[assetIndex];
+    //     return clipManager.GetClip(soundtrack.TrackName);
+    // }
 
     // Technical tracks with no sound.
     private void LoadSilence()
@@ -81,8 +81,24 @@ public class PlaylistManager
         var silenceManager = AudioMaster.NewClipManager();
         silenceManager.LoadAudioclip("ShortSilence", assetBundle.LoadAsset<AudioClip>("shortsilence.ogg"));
         silenceManager.LoadAudioclip("LongSilence", assetBundle.LoadAsset<AudioClip>("longsilence.ogg"));
-        ShortSilence = silenceManager.GetClip("ShortSilence");  // for stingers
-        LongSilence = silenceManager.GetClip("LongSilence");    // for music
+        var shortSilenceClip = silenceManager.GetClip("ShortSilence");  // for stingers
+        var longSilenceClip = silenceManager.GetClip("LongSilence");    // for music
+        ShortSilence = new SoundtrackInfo()
+        {
+            TrackName = "shortsilence",
+            AssetBundle = assetBundle,
+            SituationsRestrictsTo = SituationType.Disabled,
+            Clip = shortSilenceClip,
+            LocationsTypeRestrictTo = LocationType.Any,
+        };
+        LongSilence = new SoundtrackInfo()
+        {
+            TrackName = "longsilence",
+            AssetBundle = assetBundle,
+            SituationsRestrictsTo = SituationType.Disabled,
+            Clip = longSilenceClip,
+            LocationsTypeRestrictTo = LocationType.Any,
+        };
     }
     
     // Load local soundtracks provided by user.
@@ -366,9 +382,11 @@ Fields:
         foreach (var soundtrackInfo in playlist.SoundtrackInfos)
         {
             soundtrackInfo.AssetBundle = assetBundle;
-            if (clipManager.GetClip(soundtrackInfo.TrackName) != null)
+            var clip = clipManager.GetClip(soundtrackInfo.TrackName);
+            if (clip != null)
             {
                 ++i;
+                soundtrackInfo.Clip = clip;
                 loadedSoundtracks.Add(soundtrackInfo);
             }
             else

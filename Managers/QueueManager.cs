@@ -93,79 +93,86 @@ public class QueueManager
     /// <summary>
     /// Tries to play and gently refuses if something is playing already.
     /// </summary>
-    /// <param name="clip">Clip.</param>
+    /// <param name="soundtrack">Soundtrack.</param>
+    /// <param name="situation">Situation.</param>
     /// <param name="loop">true if it should be looped.</param>
-    public void PlaySoft(Clip clip, bool loop = false)
+    public void PlaySoft(SoundtrackInfo soundtrack, SituationType situation, bool loop = false)
     {
         isPaused = false;
-        if (clip != null && !IsPlaying)
+        if (soundtrack != null && !IsPlaying)
         {
             Stop();
-            LLogger.Log($"[Queue] Now playing: {clip.audioClip.name}");
-            PlayInternal(clip, loop);
+            LLogger.Log($"[Queue] Now playing: {soundtrack.TrackName}");
+            PlayInternal(soundtrack, situation, loop);
         }
     }
 
     /// <summary>
     /// Tries to play with delay and gently refuses if something is playing already.
     /// </summary>
-    /// <param name="clip">Clip.</param>
-    /// <param name="loop">true if it should be looped.</param>
-    public void PlaySoftDelayed(Clip clip, float delay)
+    /// <param name="soundtrack">Soundtrack.</param>
+    /// <param name="situation">Situation.</param>
+    /// <param name="delay">Delay to start.</param>
+    public void PlaySoftDelayed(SoundtrackInfo soundtrack, SituationType situation, float delay)
     {
         isPaused = false;
-        if (clip != null && !IsPlaying)
+        if (soundtrack != null && !IsPlaying)
         {
             Stop();
-            LLogger.Log($"[Queue] Scheduled after {delay}: {clip.audioClip.name}");
+            LLogger.Log($"[Queue] Scheduled after {delay}: {soundtrack.TrackName}");
             Shot._audioSource.loop = false;
-            _lastPlayToken = MelonCoroutines.Start(this.PlayDelayedRoutine(clip, delay));
+            _lastPlayToken = MelonCoroutines.Start(this.PlayDelayedRoutine(soundtrack, situation, delay));
         }
     }
 
     /// <summary>
     /// Stops whatever we play already and plays.
     /// </summary>
-    /// <param name="clip">Clip.</param>
+    /// <param name="soundtrack">Soundtrack.</param>
+    /// <param name="situation">Situation.</param>
     /// <param name="loop">true if it should be looped.</param>
-    public void PlayHard(Clip clip, bool loop = false)
+    public void PlayHard(SoundtrackInfo soundtrack, SituationType situation, bool loop = false)
     {
         isPaused = false;
-        if (clip != null)
+        if (soundtrack != null)
         {
             Stop();
-            LLogger.Log($"[Queue] Now playing hard: {clip.audioClip.name}");
-            PlayInternal(clip, loop);
+            LLogger.Log($"[Queue] Now playing hard: {soundtrack.TrackName}");
+            PlayInternal(soundtrack, situation, loop);
         }
     }
 
     /// <summary>
     /// Stops whatever we play already and plays.
     /// </summary>
-    /// <param name="clip">Clip.</param>
+    /// <param name="soundtrack">Soundtrack.</param>
+    /// <param name="situation">Situation.</param>
     /// <param name="fadeOut">time to fade out current track (if any).</param>
-    public void PlayHard(Clip clip, float fadeOut)
+    public void PlayHard(SoundtrackInfo soundtrack, SituationType situation, float fadeOut)
     {
         isPaused = false;
-        if (clip != null)
+        if (soundtrack != null)
         {
-            LLogger.Log($"[Queue] Now playing hard with fade previous: {clip.audioClip.name}");
+            LLogger.Log($"[Queue] Now playing hard with fade previous: {soundtrack.TrackName}");
             if (!IsPlaying)
             {
-                PlayInternal(clip, false);
+                PlayInternal(soundtrack, situation, false);
             }
             else
             {
-                _lastPlayToken = MelonCoroutines.Start(this.PlayAfterFade(clip, fadeOut));
+                _lastPlayToken = MelonCoroutines.Start(this.PlayAfterFade(soundtrack, situation, fadeOut));
             }
         }
     }
 
-    private void PlayInternal(Clip clip, bool loop)
+    private void PlayInternal(SoundtrackInfo soundtrack, SituationType situation, bool loop)
     {
+        var clip = soundtrack.Clip;
+        LastSoundtrack = soundtrack;
+        LastSituation = situation;
         Shot.AssignClip(clip);
         Shot._audioSource.loop = loop;
-        if (clip == Main.PlaylistManager.LongSilence || clip == Main.PlaylistManager.ShortSilence)
+        if (soundtrack == Main.PlaylistManager.LongSilence || soundtrack == Main.PlaylistManager.ShortSilence)
         {
             Shot.Play(); // no need to prefetch
             return;
@@ -173,7 +180,7 @@ public class QueueManager
             
         if (loop)
         {
-            _lastPlayToken = MelonCoroutines.Start(this.PlayDelayedRoutine(clip, 0.6f));
+            _lastPlayToken = MelonCoroutines.Start(this.PlayDelayedRoutine(soundtrack, situation, 0.6f));
         }
         else
         {
@@ -273,12 +280,10 @@ public class QueueManager
     /// <summary>
     /// Gets random exploration clip.
     /// </summary>
-    /// <returns>(Clip, playVanilla)</returns>
-    public (Clip, bool) GetExplorationClip(bool notVanilla = false)
+    /// <returns>(SoundtrackInfo, playVanilla)</returns>
+    public (SoundtrackInfo, bool) GetExplorationSoundtrack(SituationType situation, bool notVanilla = false)
     {
-        var situation = SituationTypeExtensions.GetExplorationSituation();
-        LastSituation = situation;
-        if (Disabled(situation))
+        if (IsVanillaOnly(situation))
         {
             return (Main.PlaylistManager.LongSilence, true);
         }
@@ -306,13 +311,12 @@ public class QueueManager
     }
 
     /// <summary>
-    /// Gets random situation clip.
+    /// Gets random situation soundtrack.
     /// </summary>
-    /// <returns>(Clip, playVanilla)</returns>
-    public (Clip, bool) GetSituationClip(SituationType situation)
+    /// <returns>(SoundtrackInfo, playVanilla)</returns>
+    public (SoundtrackInfo, bool) GetSituationSoundtrack(SituationType situation, bool notVanilla = false)
     {
-        LastSituation = situation;
-        if (Disabled(situation))
+        if (IsVanillaOnly(situation))
         {
             return (Main.PlaylistManager.ShortSilence, true);
         }
@@ -323,7 +327,7 @@ public class QueueManager
                 && s.SituationsRestrictsTo.HasFlag(situation))
             .ToArray();
 
-        var soundtrack = ChooseRandomSoundtrack(soundtracks);
+        var soundtrack = ChooseRandomSoundtrack(soundtracks, notVanilla);
         if (soundtrack != null)
         {
             return (soundtrack, false);
@@ -334,14 +338,13 @@ public class QueueManager
         }
     }
 
-    public Clip GetClipByName(string name)
+    public SoundtrackInfo GetSoundtrackByName(string name)
     {
         if(string.IsNullOrEmpty(name))
         {
             return null;
         }
 
-        LastSituation = SituationType.Disabled;
         name = name.ToLower();
         var filteredTracks = _soundtracks.AsEnumerable();
         if (name.Contains(':'))
@@ -366,14 +369,14 @@ public class QueueManager
         var exactMatch = filteredTracks.FirstOrDefault(t => t.TrackName == name);
         if (exactMatch != null)
         {
-            return Main.PlaylistManager.GetClip(exactMatch);
+            return exactMatch;
         }
         else
         {
             var substringMatch = filteredTracks.FirstOrDefault(t => t.TrackName.Contains(name));
             if (substringMatch != null)
             {
-                return Main.PlaylistManager.GetClip(substringMatch);
+                return substringMatch;
             }
             else
             {
@@ -382,21 +385,21 @@ public class QueueManager
         }
     }
 
-    private IEnumerator PlayDelayedRoutine(Clip audioClip, float delay)
+    private IEnumerator PlayDelayedRoutine(SoundtrackInfo soundtrack, SituationType situation, float delay)
     {
-        Shot.AssignClip(Main.PlaylistManager.ShortSilence);
+        Shot.AssignClip(Main.PlaylistManager.ShortSilence.Clip);
         Shot.Play();
         yield return new WaitForSeconds(delay);
         if (!IsPlaying || Shot._audioSource.clip.name == "ShortSilence")
         {
-            PlayHard(audioClip);
+            PlayHard(soundtrack, situation);
         }
     }
 
-    private IEnumerator PlayAfterFade(Clip clip, float fadeOut)
+    private IEnumerator PlayAfterFade(SoundtrackInfo soundtrack, SituationType situation, float fadeOut)
     {
         yield return StopRoutine(fadeOut);
-        PlayInternal(clip, false);
+        PlayInternal(soundtrack, situation, false);
     }
 
     private IEnumerator StopRoutine(float fadeOut)
@@ -413,7 +416,7 @@ public class QueueManager
         }
     }
 
-    private bool Disabled(SituationType situation)
+    private bool IsVanillaOnly(SituationType situation)
     {
         return
             SettingsManager.Settings.ExplorationVanillaOnly
@@ -427,13 +430,13 @@ public class QueueManager
                 && (SituationType.TimeDawn | SituationType.TimeDusk).HasFlag(situation)
             || SettingsManager.Settings.StalkedVanillaOnly
                 && (SituationType.Stalked).HasFlag(situation)
-            || SettingsManager.Settings.TimberwolfVanillaOnly
+            || SettingsManager.Settings.TimberwolfSuppress
                 && (SituationType.Timberwolf).HasFlag(situation)
             || SettingsManager.Settings.ConditionVanillaOnly
                 && (SituationType.ConditionSuccess | SituationType.ConditionSorrow).HasFlag(situation);
     }
 
-    private Clip ChooseRandomSoundtrack(ICollection<SoundtrackInfo> soundtracks, bool notVanilla = false)
+    private SoundtrackInfo ChooseRandomSoundtrack(ICollection<SoundtrackInfo> soundtracks, bool notVanilla = false)
     {
         var vanillaChance = notVanilla ? 0 : SettingsManager.Settings.ModVanillaMusicChance;
         var sum = soundtracks.Sum(s => s.Chance) + vanillaChance;
@@ -450,8 +453,7 @@ public class QueueManager
                 choosenOne -= soundtrack.Chance;
                 if (choosenOne < 0)
                 {
-                    LastSoundtrack = soundtrack;
-                    return Main.PlaylistManager.GetClip(soundtrack);
+                    return soundtrack;
                 }
             }
         }

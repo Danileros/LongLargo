@@ -18,7 +18,7 @@ public static class GameAudioManagerHandler
     /// <returns>false if we should suppress original music or sound.</returns>
     public static bool PlayMusic(string soundName, ref GameObject go)
     {
-        if (ModDisabled())
+        if (Main.IsModDisabled())
         {
             return true;
         }
@@ -40,37 +40,21 @@ public static class GameAudioManagerHandler
             return false;
         }
         
-        Clip clip;
+        SoundtrackInfo soundtrack;
         bool playVanilla;
 
         if (situationInfo.Situation.IsExploration())
         {
-            (clip, playVanilla) = Main.QueueManager.GetExplorationClip();
+            (soundtrack, playVanilla) = Main.QueueManager.GetExplorationSoundtrack(situationInfo.Situation);
         }
         else
         {
-            (clip, playVanilla) = Main.QueueManager.GetSituationClip(situationInfo.Situation);
+            (soundtrack, playVanilla) = Main.QueueManager.GetSituationSoundtrack(situationInfo.Situation);
         }
 
-        LLogger.Debug($"[GameAudioManager] Choosing {situationInfo.Situation} clip {clip?.audioClip?.name ?? "ShortSilence"}");
+        LLogger.Debug($"[GameAudioManager] Choosing {situationInfo.Situation} clip {soundtrack?.TrackName ?? "ShortSilence"}");
         
-        return PlayCLip(playVanilla, situationInfo, clip, go);
-    }
-
-    private static bool ModDisabled()
-    {
-        if (!SettingsManager.Settings.ModEnabled)
-        {
-            return true;
-        }
-
-        var scene = GameManager.m_ActiveScene;
-        if (ScenesHelper.IsForbidden(scene) || ScenesHelper.IsTales(scene)) // Don't mess with tales
-        {
-            return true;
-        }
-
-        return false;
+        return PlayCLip(playVanilla, situationInfo, soundtrack, go);
     }
 
     private static SituationInfo GetSituationByEvent(string soundName)
@@ -285,10 +269,10 @@ public static class GameAudioManagerHandler
                 case SituationInfo.SilenceLength.None:
                     return true;
                 case SituationInfo.SilenceLength.Short:
-                    Main.QueueManager.PlayHard(Main.PlaylistManager.LongSilence, 3f);
+                    Main.QueueManager.PlayHard(Main.PlaylistManager.LongSilence, situationInfo.Situation, 3f);
                     return true;
                 case SituationInfo.SilenceLength.Long:
-                    Main.QueueManager.PlayHard(Main.PlaylistManager.ShortSilence, 3f);
+                    Main.QueueManager.PlayHard(Main.PlaylistManager.ShortSilence, situationInfo.Situation, 3f);
                     return true;
             }
         }
@@ -324,20 +308,20 @@ public static class GameAudioManagerHandler
         return false;
     }
 
-    private static bool PlayCLip(bool playVanilla, SituationInfo situationInfo, Clip clip, GameObject go)
+    private static bool PlayCLip(bool playVanilla, SituationInfo situationInfo, SoundtrackInfo soundtrack, GameObject go)
     {
         if (!playVanilla && situationInfo.WithStringer)
         {
             // Play replaced stringer with delay, replace original event with stingerless
             LLogger.Debug($"[GameAudioManager] Replacing event with {situationInfo.StingerlessEvent}");
-            Main.QueueManager.PlaySoftDelayed(clip, situationInfo.Delay);
+            Main.QueueManager.PlaySoftDelayed(soundtrack, situationInfo.Situation, situationInfo.Delay);
             GameAudioManager.PlaySound(situationInfo.StingerlessEvent, go);
             return false;
         }
 
         if (situationInfo.Situation.HasFlag(SituationType.Stalked) || situationInfo.Situation.HasFlag(SituationType.Timberwolf))
         {
-            Main.QueueManager.PlayHard(clip, true);
+            Main.QueueManager.PlayHard(soundtrack, situationInfo.Situation, true);
             if (!playVanilla)
             {
                 // TODO: debug
@@ -349,7 +333,7 @@ public static class GameAudioManagerHandler
         }
         else
         {
-            Main.QueueManager.PlaySoft(clip);
+            Main.QueueManager.PlaySoft(soundtrack, situationInfo.Situation);
         }
         
         return playVanilla;

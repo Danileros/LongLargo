@@ -1,5 +1,6 @@
 using System;
 using System.Text.Json.Serialization;
+using AudioMgr;
 using LongLargo.Helpers;
 using UnityEngine;
 
@@ -15,6 +16,12 @@ public class SoundtrackInfo
     /// </summary>
     [JsonIgnore]
     public AssetBundle AssetBundle { get; set; } = null;
+    
+    /// <summary>
+    /// Clip.
+    /// </summary>
+    [JsonIgnore]
+    public Clip Clip { get; set; } = null;
     
     /// <summary>
     /// Track name (must be not empty and unique).
@@ -45,4 +52,9 @@ public class SoundtrackInfo
     /// If empty, plays at any location.
     /// </summary>
     public string[] LocationRestrictTo { get; set; } = Array.Empty<string>();
+    
+    /// <summary>
+    /// Only for Timberwolf combat loop.
+    /// </summary>
+    public string StopTrackName { get; set; } = string.Empty;
 }

@@ -85,10 +85,6 @@ internal class Settings : JsonModSettings
     [Description("If Yes, you will fight timberwolves without custom soundtracks.")]
     public bool TimberwolfSuppress = false;
 
-    [Name("Vanilla only Timberwolf soundtracks")]
-    [Description("If Yes, only vanilla tracks would play.")]
-    public bool TimberwolfVanillaOnly = false;
-
     [Section("Condition")]
         
     [Name("Suppress Success/Sorrow soundtracks")]
@@ -138,7 +134,6 @@ internal class Settings : JsonModSettings
         SetFieldVisible(nameof(StalkedSuppress), ModEnabled);
         SetFieldVisible(nameof(StalkedVanillaOnly), ModEnabled);
         SetFieldVisible(nameof(TimberwolfSuppress), ModEnabled);
-        SetFieldVisible(nameof(TimberwolfVanillaOnly), ModEnabled);
         SetFieldVisible(nameof(ConditionSuppress), ModEnabled);
         SetFieldVisible(nameof(ConditionVanillaOnly), ModEnabled);
     }
