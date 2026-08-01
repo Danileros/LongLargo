@@ -1,3 +1,5 @@
+using LongLargo.Model;
+
 namespace LongLargo.Helpers;
 
 public static class ScenesHelper
@@ -10,5 +12,30 @@ public static class ScenesHelper
     public static bool IsTales(string sceneName)
     {
         return sceneName.Contains("Bunker") || sceneName == "MiningRegionMine";
+    }
+    
+    public static LocationType GetLocationType(string sceneName)
+    {
+        if (sceneName.EndsWith("Region"))
+        {
+            return LocationType.Region;
+        }
+
+        if (sceneName.Contains("TransitionZone"))
+        {
+            return LocationType.TransitionZone;
+        }
+
+        if (sceneName.Contains("Cave"))
+        {
+            return LocationType.Cave;
+        }
+
+        if (sceneName.Contains("Mine"))
+        {
+            return LocationType.Mine;
+        }
+
+        return LocationType.Building;
     }
 }

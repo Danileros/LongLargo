@@ -45,11 +45,11 @@ public static class GameAudioManagerHandler
 
         if (situationInfo.Situation.IsExploration())
         {
-            (soundtrack, playVanilla) = Main.QueueManager.GetExplorationSoundtrack(situationInfo.Situation);
+            (soundtrack, playVanilla) = Main.PlaylistManager.GetExplorationSoundtrack(situationInfo.Situation);
         }
         else
         {
-            (soundtrack, playVanilla) = Main.QueueManager.GetSituationSoundtrack(situationInfo.Situation);
+            (soundtrack, playVanilla) = Main.PlaylistManager.GetSituationSoundtrack(situationInfo.Situation);
         }
 
         LLogger.Debug($"[GameAudioManager] Choosing {situationInfo.Situation} clip {soundtrack?.TrackName ?? "ShortSilence"}");
@@ -170,11 +170,11 @@ public static class GameAudioManagerHandler
             // stop loop events
             case "Stop_musicMood_AnimalStalking":
                 situationInfo.Situation = SituationType.Disabled;
-                Main.QueueManager.StopIfSituation(SituationType.Stalked, 3f);
+                Main.AudioPlayer.StopIfSituation(SituationType.Stalked, 3f);
                 break;
             case "Stop_TimberwolfCombat":
                 situationInfo.Situation = SituationType.Disabled;
-                Main.QueueManager.StopIfSituation(SituationType.Timberwolf, 3f);
+                Main.AudioPlayer.StopIfSituation(SituationType.Timberwolf, 3f);
                 break;
             case "Stop_Weather_Blizzard":
             case "Stop_Weather_Clear":
@@ -189,12 +189,12 @@ public static class GameAudioManagerHandler
             case "Stop_Weather_PartlyCloudy":
             case "Stop_Weather_ToxicFog":
                 situationInfo.Situation = SituationType.Disabled;
-                if (Main.QueueManager.LastSituation.IsWeather())
+                if (Main.AudioPlayer.LastSituation.IsWeather())
                 {
-                    Main.QueueManager.Stop(1f);
+                    Main.AudioPlayer.Stop(1f);
                 }
 
-                Main.QueueManager.ResetLastSoundtrack();
+                Main.AudioPlayer.ResetLastSoundtrack();
                 break;
                 
             //// I did not need 
@@ -269,10 +269,10 @@ public static class GameAudioManagerHandler
                 case SituationInfo.SilenceLength.None:
                     return true;
                 case SituationInfo.SilenceLength.Short:
-                    Main.QueueManager.PlayHard(Main.PlaylistManager.LongSilence, situationInfo.Situation, 3f);
+                    Main.AudioPlayer.PlayHard(Main.PlaylistManager.LongSilence, situationInfo.Situation, 3f);
                     return true;
                 case SituationInfo.SilenceLength.Long:
-                    Main.QueueManager.PlayHard(Main.PlaylistManager.ShortSilence, situationInfo.Situation, 3f);
+                    Main.AudioPlayer.PlayHard(Main.PlaylistManager.ShortSilence, situationInfo.Situation, 3f);
                     return true;
             }
         }
@@ -299,7 +299,7 @@ public static class GameAudioManagerHandler
         }
 
         // Check if we're already playing something custom
-        if (Main.QueueManager.IsPlaying
+        if (Main.AudioPlayer.IsPlaying
             && situation != SituationType.Stalked && situation != SituationType.Timberwolf)
         {
             return true;
@@ -314,14 +314,14 @@ public static class GameAudioManagerHandler
         {
             // Play replaced stringer with delay, replace original event with stingerless
             LLogger.Debug($"[GameAudioManager] Replacing event with {situationInfo.StingerlessEvent}");
-            Main.QueueManager.PlaySoftDelayed(soundtrack, situationInfo.Situation, situationInfo.Delay);
+            Main.AudioPlayer.PlaySoftDelayed(soundtrack, situationInfo.Situation, situationInfo.Delay);
             GameAudioManager.PlaySound(situationInfo.StingerlessEvent, go);
             return false;
         }
 
         if (situationInfo.Situation.HasFlag(SituationType.Stalked) || situationInfo.Situation.HasFlag(SituationType.Timberwolf))
         {
-            Main.QueueManager.PlayHard(soundtrack, situationInfo.Situation, true);
+            Main.AudioPlayer.PlayHard(soundtrack, situationInfo.Situation, true);
             if (!playVanilla)
             {
                 // TODO: debug
@@ -333,7 +333,7 @@ public static class GameAudioManagerHandler
         }
         else
         {
-            Main.QueueManager.PlaySoft(soundtrack, situationInfo.Situation);
+            Main.AudioPlayer.PlaySoft(soundtrack, situationInfo.Situation);
         }
         
         return playVanilla;

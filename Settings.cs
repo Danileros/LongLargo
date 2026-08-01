@@ -108,11 +108,11 @@ internal class Settings : JsonModSettings
         if (BgmVolumeEnabled)
         {
             var masterVolume = InterfaceManager.GetPanel<Panel_OptionsMenu>().State.m_MasterVolume;
-            Main.QueueManager.SetVolume(masterVolume * BgmVolume / 100f);
+            Main.AudioPlayer.SetVolume(masterVolume * BgmVolume / 100f);
         }
         else
         {
-            Main.QueueManager.SetVolume(VolumeMaster.GetVolume(AudioMaster.SourceType.BGM));
+            Main.AudioPlayer.SetVolume(VolumeMaster.GetVolume(AudioMaster.SourceType.BGM));
         }
 
         base.OnConfirm();

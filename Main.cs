@@ -12,7 +12,7 @@ public class Main : MelonMod
 {
     public static PlaylistManager PlaylistManager { get; private set; }
         
-    public static QueueManager QueueManager { get; private set; }
+    public static AudioPlayer AudioPlayer { get; private set; }
 
     public override void OnInitializeMelon()
     {
@@ -20,7 +20,7 @@ public class Main : MelonMod
         SettingsManager.OnLoad();
 
         PlaylistManager = new PlaylistManager();
-        QueueManager = new QueueManager(PlaylistManager.Soundtracks);
+        AudioPlayer = new AudioPlayer();
         AddConsoleCommands();
     }
     
@@ -31,7 +31,7 @@ public class Main : MelonMod
             return;
         }
 
-        QueueManager.StopIfSituation(SituationTypeExtensions.GetDangers());
+        AudioPlayer.StopIfSituation(SituationTypeExtensions.GetDangers());
     }
 
     public static bool IsModDisabled()
@@ -52,7 +52,7 @@ public class Main : MelonMod
     
     private static void AddConsoleCommands()
     {
-        uConsole.RegisterCommand("ll_stop", new Action(() => QueueManager.Stop()));
+        uConsole.RegisterCommand("ll_stop", new Action(() => AudioPlayer.Stop()));
         uConsole.RegisterCommand("ll_playlist", new Action(CommandShowPlaylist));
         uConsole.RegisterCommand("ll_play", new Action(CommandPlay));
         uConsole.RegisterCommand("ll_play_next", new Action(CommandPlayNext));
@@ -91,29 +91,29 @@ public class Main : MelonMod
         }
 
         var trackName = uConsole.GetString();
-        var soundtrack = QueueManager.GetSoundtrackByName(trackName);
+        var soundtrack = PlaylistManager.GetSoundtrackByName(trackName);
         if (soundtrack == null)
         {
             uConsole.Log($"No track found with name {trackName}");
             return;
         }
             
-        QueueManager.PlayHard(soundtrack, SituationType.Disabled);
+        AudioPlayer.PlayHard(soundtrack, SituationType.Disabled);
         uConsole.Log($"Now playing: {soundtrack.TrackName}");
     }
     
     private static void CommandPlayNext()
     {
         var (soundtrack, _)
-            = QueueManager.GetExplorationSoundtrack(SituationTypeExtensions.GetExplorationSituation(),true);
-        QueueManager.PlayHard(soundtrack, SituationType.Disabled);
+            = PlaylistManager.GetExplorationSoundtrack(SituationTypeExtensions.GetExplorationSituation(),true);
+        AudioPlayer.PlayHard(soundtrack, SituationType.Disabled);
         uConsole.Log($"Now playing: {soundtrack.TrackName}");
     }
     
     private static void CommandSilence()
     {
         var soundtrack = PlaylistManager.ShortSilence;
-        QueueManager.PlayHard(soundtrack, SituationType.Disabled);
+        AudioPlayer.PlayHard(soundtrack, SituationType.Disabled);
         uConsole.Log($"Now playing: {soundtrack.TrackName}");
     }
 }

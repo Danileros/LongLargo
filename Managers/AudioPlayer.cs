@@ -12,9 +12,8 @@ namespace LongLargo.Managers;
 /// <summary>
 /// Handles soundtracks queue. Chooses which track to play by itself.
 /// </summary>
-public class QueueManager
+public class AudioPlayer
 {
-    private readonly SoundtrackInfo[] _soundtracks;
     private static Shot _shot;
     private static VolumeMaster.OnVolumeChange _onVolumeChange;
     private bool isPaused = false;
@@ -37,7 +36,7 @@ public class QueueManager
         {
             if (!_shot)
             {
-                lock (typeof(QueueManager))
+                lock (typeof(AudioPlayer))
                 {
                     if (!_shot)
                     {
@@ -72,11 +71,6 @@ public class QueueManager
         {
             Shot.SetVolume(VolumeMaster.GetVolume(AudioMaster.SourceType.BGM));
         }
-    }
-
-    public QueueManager(SoundtrackInfo[] soundtracks)
-    {
-        _soundtracks = soundtracks ?? throw new ArgumentNullException(nameof(soundtracks));
     }
 
     // Forget last soundtrack (to enable playing same track again)
@@ -261,7 +255,7 @@ public class QueueManager
 
     public void Pause()
     {
-        if (Main.QueueManager.IsPlaying)
+        if (Main.AudioPlayer.IsPlaying)
         {
             isPaused = true;
             Shot._audioSource.Pause();
@@ -274,114 +268,6 @@ public class QueueManager
         {
             isPaused = false;
             Shot._audioSource.UnPause();
-        }
-    }
-    
-    /// <summary>
-    /// Gets random exploration clip.
-    /// </summary>
-    /// <returns>(SoundtrackInfo, playVanilla)</returns>
-    public (SoundtrackInfo, bool) GetExplorationSoundtrack(SituationType situation, bool notVanilla = false)
-    {
-        if (IsVanillaOnly(situation))
-        {
-            return (Main.PlaylistManager.LongSilence, true);
-        }
-        
-        var scene = GameManager.m_ActiveScene;
-        var locationType = GetLocationType(scene);
-
-        var soundtracks = _soundtracks
-            .Where(s =>
-                s != LastSoundtrack
-                && s.SituationsRestrictsTo.HasFlag(situation)
-                && s.LocationsTypeRestrictTo.HasFlag(locationType)
-                && (s.LocationRestrictTo is null or { Length: 0 } || s.LocationRestrictTo.Contains(scene)))
-            .ToArray();
-
-        var soundtrack = ChooseRandomSoundtrack(soundtracks, notVanilla);
-        if (soundtrack != null)
-        {
-            return (soundtrack, false);
-        }
-        else
-        {
-            return (Main.PlaylistManager.LongSilence, true);
-        }
-    }
-
-    /// <summary>
-    /// Gets random situation soundtrack.
-    /// </summary>
-    /// <returns>(SoundtrackInfo, playVanilla)</returns>
-    public (SoundtrackInfo, bool) GetSituationSoundtrack(SituationType situation, bool notVanilla = false)
-    {
-        if (IsVanillaOnly(situation))
-        {
-            return (Main.PlaylistManager.ShortSilence, true);
-        }
-
-        var soundtracks = _soundtracks
-            .Where(s =>
-                s != LastSoundtrack
-                && s.SituationsRestrictsTo.HasFlag(situation))
-            .ToArray();
-
-        var soundtrack = ChooseRandomSoundtrack(soundtracks, notVanilla);
-        if (soundtrack != null)
-        {
-            return (soundtrack, false);
-        }
-        else
-        {
-            return (Main.PlaylistManager.ShortSilence, true);
-        }
-    }
-
-    public SoundtrackInfo GetSoundtrackByName(string name)
-    {
-        if(string.IsNullOrEmpty(name))
-        {
-            return null;
-        }
-
-        name = name.ToLower();
-        var filteredTracks = _soundtracks.AsEnumerable();
-        if (name.Contains(':'))
-        {
-            var split = name.Split(':');
-            var asset = split[0];
-            if (split[0] == "local")
-            {
-                filteredTracks = filteredTracks.Where(t => t.AssetBundle == null);
-            }
-            else
-            {
-                filteredTracks = filteredTracks
-                    .Where(t => 
-                        t.AssetBundle != null
-                        && Path.GetFileNameWithoutExtension(t.AssetBundle.name).ToLower() == asset);
-            }
-            
-            name = split[1];
-        }
-
-        var exactMatch = filteredTracks.FirstOrDefault(t => t.TrackName == name);
-        if (exactMatch != null)
-        {
-            return exactMatch;
-        }
-        else
-        {
-            var substringMatch = filteredTracks.FirstOrDefault(t => t.TrackName.Contains(name));
-            if (substringMatch != null)
-            {
-                return substringMatch;
-            }
-            else
-            {
-                return null;
-            }
         }
     }
 
@@ -414,75 +300,5 @@ public class QueueManager
         {
             IsFading = false;
         }
-    }
-
-    private bool IsVanillaOnly(SituationType situation)
-    {
-        return
-            SettingsManager.Settings.ExplorationVanillaOnly
-                && (SituationType.ExplorationNight | SituationType.ExplorationDay 
-                                                   | SituationType.ExplorationAurora).HasFlag(situation)
-            || SettingsManager.Settings.WeatherVanillaOnly
-                && (SituationType.WeatherBlizzard | SituationType.WeatherClear 
-                                                  | SituationType.WeatherFog 
-                                                  | SituationType.WeatherSnow).HasFlag(situation)
-            || SettingsManager.Settings.TimeVanillaOnly
-                && (SituationType.TimeDawn | SituationType.TimeDusk).HasFlag(situation)
-            || SettingsManager.Settings.StalkedVanillaOnly
-                && (SituationType.Stalked).HasFlag(situation)
-            || SettingsManager.Settings.TimberwolfSuppress
-                && (SituationType.Timberwolf).HasFlag(situation)
-            || SettingsManager.Settings.ConditionVanillaOnly
-                && (SituationType.ConditionSuccess | SituationType.ConditionSorrow).HasFlag(situation);
-    }
-
-    private SoundtrackInfo ChooseRandomSoundtrack(ICollection<SoundtrackInfo> soundtracks, bool notVanilla = false)
-    {
-        var vanillaChance = notVanilla ? 0 : SettingsManager.Settings.ModVanillaMusicChance;
-        var sum = soundtracks.Sum(s => s.Chance) + vanillaChance;
-        var choosenOne = UnityEngine.Random.Range(0, sum);
-        if (choosenOne < vanillaChance)
-        {
-            return null; // vanilla
-        }
-        else
-        {
-            choosenOne -= vanillaChance;
-            foreach (var soundtrack in soundtracks)
-            {
-                choosenOne -= soundtrack.Chance;
-                if (choosenOne < 0)
-                {
-                    return soundtrack;
-                }
-            }
-        }
-        
-        return null;
-    }
-
-    private LocationType GetLocationType(string scene)
-    {
-        if (scene.EndsWith("Region"))
-        {
-            return LocationType.Region;
-        }
-
-        if (scene.Contains("TransitionZone"))
-        {
-            return LocationType.TransitionZone;
-        }
-
-        if (scene.Contains("Cave"))
-        {
-            return LocationType.Cave;
-        }
-
-        if (scene.Contains("Mine"))
-        {
-            return LocationType.Mine;
-        }
-
-        return LocationType.Building;
     }
 }

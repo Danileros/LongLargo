@@ -44,7 +44,7 @@ public class SceneMusicManagerHandler : MonoBehaviour
     public void OnDestroy()
     {
         LLogger.Debug("[SceneMusicManager] destroyed");
-        Main.QueueManager.Stop(1f);
+        Main.AudioPlayer.Stop(1f);
     }
 
     /// <summary>
@@ -65,17 +65,17 @@ public class SceneMusicManagerHandler : MonoBehaviour
             return false;
         }
 
-        if (Main.QueueManager.IsPlaying)
+        if (Main.AudioPlayer.IsPlaying)
         {
             return false;
         }
         
         var situation = SituationTypeExtensions.GetExplorationSituation();
-        (var soundtrack, var allowVanilla) = Main.QueueManager.GetExplorationSoundtrack(situation);
+        (var soundtrack, var allowVanilla) = Main.PlaylistManager.GetExplorationSoundtrack(situation);
         
         LLogger.Debug($"[SceneMusicManager] Choosing clip {soundtrack?.TrackName ?? "LongSilence"}");
         
-        Main.QueueManager.PlaySoft(soundtrack, situation);
+        Main.AudioPlayer.PlaySoft(soundtrack, situation);
         if (!allowVanilla)
         {
             //_instance.ResetExploreMusicTimer();
