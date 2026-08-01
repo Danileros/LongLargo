@@ -39,10 +39,21 @@ public class PackManagerHandler : MonoBehaviour
     }
 
     [HideFromIl2Cpp]
-    public void RefreshDebug(PackManager packManager)
+    public void Refresh(PackManager packManager)
     {
         _instance = packManager;
 
+        RefreshDebug();
+        RefreshProximity();
+    }
+
+    private void RefreshProximity()
+    {
+        throw new NotImplementedException();
+    }
+
+    private void RefreshDebug()
+    {
         var debugLines = InterfaceManager.GetPanel<Panel_HUD>().m_Label_DebugLines;
         debugLines.gameObject.SetActive(isDebugMode);
         if (isDebugMode)
@@ -70,7 +81,7 @@ public class PackManagerHandler : MonoBehaviour
             debugLines.text = sb.ToString();
         }
     }
-    
+
     private UILabel GetOrCreateDebug()
     {
         if (_debugLabel != null)

@@ -19,7 +19,7 @@ internal class PackManagerPatches
                 _handler = __instance.GetOrAddComponent<PackManagerHandler>();
             }
 
-            _handler.RefreshDebug(__instance);
+            _handler.Refresh(__instance);
         }
     }
 }
