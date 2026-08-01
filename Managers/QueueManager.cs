@@ -274,7 +274,7 @@ public class QueueManager
     /// Gets random exploration clip.
     /// </summary>
     /// <returns>(Clip, playVanilla)</returns>
-    public (Clip, bool) GetExplorationClip()
+    public (Clip, bool) GetExplorationClip(bool notVanilla = false)
     {
         var situation = SituationTypeExtensions.GetExplorationSituation();
         LastSituation = situation;
@@ -294,7 +294,7 @@ public class QueueManager
                 && (s.LocationRestrictTo is null or { Length: 0 } || s.LocationRestrictTo.Contains(scene)))
             .ToArray();
 
-        var soundtrack = ChooseRandomSoundtrack(soundtracks);
+        var soundtrack = ChooseRandomSoundtrack(soundtracks, notVanilla);
         if (soundtrack != null)
         {
             return (soundtrack, false);
@@ -331,6 +331,54 @@ public class QueueManager
         else
         {
             return (Main.PlaylistManager.ShortSilence, true);
+        }
+    }
+
+    public Clip GetClipByName(string name)
+    {
+        if(string.IsNullOrEmpty(name))
+        {
+            return null;
+        }
+
+        LastSituation = SituationType.Disabled;
+        name = name.ToLower();
+        var filteredTracks = _soundtracks.AsEnumerable();
+        if (name.Contains(':'))
+        {
+            var split = name.Split(':');
+            var asset = split[0];
+            if (split[0] == "local")
+            {
+                filteredTracks = filteredTracks.Where(t => t.AssetBundle == null);
+            }
+            else
+            {
+                filteredTracks = filteredTracks
+                    .Where(t => 
+                        t.AssetBundle != null
+                        && Path.GetFileNameWithoutExtension(t.AssetBundle.name).ToLower() == asset);
+            }
+            
+            name = split[1];
+        }
+
+        var exactMatch = filteredTracks.FirstOrDefault(t => t.TrackName == name);
+        if (exactMatch != null)
+        {
+            return Main.PlaylistManager.GetClip(exactMatch);
+        }
+        else
+        {
+            var substringMatch = filteredTracks.FirstOrDefault(t => t.TrackName.Contains(name));
+            if (substringMatch != null)
+            {
+                return Main.PlaylistManager.GetClip(substringMatch);
+            }
+            else
+            {
+                return null;
+            }
         }
     }
 
@@ -385,9 +433,9 @@ public class QueueManager
                 && (SituationType.ConditionSuccess | SituationType.ConditionSorrow).HasFlag(situation);
     }
 
-    private Clip ChooseRandomSoundtrack(ICollection<SoundtrackInfo> soundtracks)
+    private Clip ChooseRandomSoundtrack(ICollection<SoundtrackInfo> soundtracks, bool notVanilla = false)
     {
-        var vanillaChance = SettingsManager.Settings.ModVanillaMusicChance;
+        var vanillaChance = notVanilla ? 0 : SettingsManager.Settings.ModVanillaMusicChance;
         var sum = soundtracks.Sum(s => s.Chance) + vanillaChance;
         var choosenOne = UnityEngine.Random.Range(0, sum);
         if (choosenOne < vanillaChance)
