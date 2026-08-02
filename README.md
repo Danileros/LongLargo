@@ -6,7 +6,7 @@ A MelonLoader mod for **The Long Dark** survival mode.
 
 Long Largo is a mod with a single goal: to enhance your gaming experience by improving the music. **The Long Dark** features a vast array of musical tracks, yet you rarely hear most of them in Survival Mode—and that is precisely what this mod aims to change. Long Largo restores music from the story campaign and integrates it into your playthrough. It does far more than a simple background music player; every track is carefully selected to match specific in-game situations and locations, ensuring the best possible emotional impact. And the mod doesn't stop there: it also allows you to add your own music and customize the settings to your liking.
 
-* 66 forgotten tracks restored.
+* 67 forgotten tracks restored.
 * Careful selection of music to match the in-game situation.
 * Supports custom music.
 * Flexible playlist customization.
@@ -15,7 +15,7 @@ Long Largo is a mod with a single goal: to enhance your gaming experience by imp
 * Allows to control every musical event. You can even disable wolf/bear stalk sound, and much more!
 
 ## Custom music how-to
-Drop soundtracks you want to hear in-game to LongLargo folder in Mods. OGG preferred, MP3 and WAV also supported. They will be automatically registered and configured in PlaylistInfo.json on next game launch. Long Largo by default treats any musical clip as an exploration clip suitable for day and night. If you want to customize it, open PlaylistInfo.json with text editor or JSON editor and follow the built-in instructions. 
+Drop soundtracks you want to hear in-game to LongLargo folder in Mods. MP3 and WAV supported. They will be automatically registered and configured in PlaylistInfo.json on next game launch. Long Largo by default treats any musical clip as an exploration clip suitable for day and night. If you want to customize it, open PlaylistInfo.json with text editor or JSON editor and follow the built-in instructions. 
 
 If you want to share your tracks—best solution is to create an assetbundle using Unity designer. Put inside all tracks and PlaylistInfo.json.
 

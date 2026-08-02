@@ -37,6 +37,12 @@ public static class GameAudioManagerHandler
         // Check for suppress music settings
         if (MaybeSupressEvent(situationInfo.Situation))
         {
+            if (situationInfo.Situation.IsWeather() && !string.IsNullOrEmpty(situationInfo.StingerlessEvent))
+            {
+                LLogger.Debug($"[GameAudioManager] Replacing event with {situationInfo.StingerlessEvent}");
+                GameAudioManager.PlaySound(situationInfo.StingerlessEvent, go);
+            }
+
             return false;
         }
         

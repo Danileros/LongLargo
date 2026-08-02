@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Runtime.InteropServices;
 using AudioMgr;
 using Il2Cpp;
 using LongLargo.Extensions;
@@ -19,14 +20,15 @@ public class AudioPlayer
     private bool isPaused = false;
     private object _lastPlayToken;
     private object _lastFadeToken;
-    
+    private object _loopToken;
+
     public bool IsFading { get; private set; }
 
     public SituationType LastSituation { get; private set; }
 
     public SoundtrackInfo LastSoundtrack { get; private set; }
 
-    public bool IsPaused => isPaused;
+    public bool IsPaused => !IsPlaying && Shot._audioSource.time > 0f;
 
     public bool IsPlaying => Shot._audioSource.isPlaying;
 
@@ -109,12 +111,10 @@ public class AudioPlayer
     /// <param name="delay">Delay to start.</param>
     public void PlaySoftDelayed(SoundtrackInfo soundtrack, SituationType situation, float delay)
     {
-        isPaused = false;
         if (soundtrack != null && !IsPlaying)
         {
             Stop();
             LLogger.Log($"[Queue] Scheduled after {delay}: {soundtrack.TrackName}");
-            Shot._audioSource.loop = false;
             _lastPlayToken = MelonCoroutines.Start(this.PlayDelayedRoutine(soundtrack, situation, delay));
         }
     }
@@ -127,7 +127,6 @@ public class AudioPlayer
     /// <param name="loop">true if it should be looped.</param>
     public void PlayHard(SoundtrackInfo soundtrack, SituationType situation, bool loop = false)
     {
-        isPaused = false;
         if (soundtrack != null)
         {
             Stop();
@@ -144,7 +143,6 @@ public class AudioPlayer
     /// <param name="fadeOut">time to fade out current track (if any).</param>
     public void PlayHard(SoundtrackInfo soundtrack, SituationType situation, float fadeOut)
     {
-        isPaused = false;
         if (soundtrack != null)
         {
             LLogger.Log($"[Queue] Now playing hard with fade previous: {soundtrack.TrackName}");
@@ -165,7 +163,6 @@ public class AudioPlayer
         LastSoundtrack = soundtrack;
         LastSituation = situation;
         Shot.AssignClip(clip);
-        Shot._audioSource.loop = loop;
         if (soundtrack == Main.PlaylistManager.LongSilence || soundtrack == Main.PlaylistManager.ShortSilence)
         {
             Shot.Play(); // no need to prefetch
@@ -173,6 +170,20 @@ public class AudioPlayer
         }
 
         Shot.Play(clip);
+        if (loop)
+        {
+            _loopToken = MelonCoroutines.Start(PlayNextIteration());
+        }
+    }
+
+    private IEnumerator PlayNextIteration()
+    {
+        while (IsPlaying || IsPaused)
+        {
+            yield return null;
+        }
+        
+        PlayInternal(LastSoundtrack, LastSituation, true);
     }
 
     public void Stop()
@@ -183,8 +194,6 @@ public class AudioPlayer
             LLogger.Debug(new System.Diagnostics.StackTrace(true).ToString());
         }
         
-        isPaused = false;
-        Shot._audioSource.loop = false;
         Shot.Stop();
         IsFading = false;
         if (_lastPlayToken != null)
@@ -196,10 +205,20 @@ public class AudioPlayer
         {
             MelonCoroutines.Stop(_lastFadeToken);
         }
+        
+        if (_loopToken != null)
+        {
+            MelonCoroutines.Stop(_loopToken);
+        }
     }
 
     public void Stop(float fadeOut)
     {
+        if (_loopToken != null)
+        {
+            MelonCoroutines.Stop(_loopToken);
+        }
+        
         if (!IsPlaying)
         {
             LLogger.Debug($"[Queue] Stop rejected, nothing to stop");
@@ -250,7 +269,6 @@ public class AudioPlayer
     {
         if (Main.AudioPlayer.IsPlaying)
         {
-            isPaused = true;
             Shot._audioSource.Pause();
         }
     }
@@ -259,7 +277,6 @@ public class AudioPlayer
     {
         if (isPaused)
         {
-            isPaused = false;
             Shot._audioSource.UnPause();
         }
     }

@@ -30,7 +30,7 @@ public class PackProximityManager
         if (!SettingsManager.Settings.TimberwolfSuppress)
         {
             (_soundtrack, _) = Main.PlaylistManager.GetSituationSoundtrack(SituationType.Timberwolf, true);
-            Main.AudioPlayer.PlayHard(_soundtrack, SituationType.Timberwolf, false);
+            Main.AudioPlayer.PlayHard(_soundtrack, SituationType.Timberwolf, true);
             GameAudioManager.PlaySound(2904596785U, go);
             GameAudioManager.PlaySound(3267898453U, go);
         }
@@ -118,7 +118,7 @@ public class PackProximityManager
             if (dinstance < DistanceCombat)
             {
                 // In combat proximity again
-                Main.AudioPlayer.PlayHard(_soundtrack, SituationType.Timberwolf, false);
+                Main.AudioPlayer.PlayHard(_soundtrack, SituationType.Timberwolf, true);
                 GameAudioManager.PlaySound(2904596785U, _go);
                 GameAudioManager.PlaySound(3267898453U, _go);
                 FadeoutTimer = 0;

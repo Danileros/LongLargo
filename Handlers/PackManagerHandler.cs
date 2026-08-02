@@ -1,6 +1,7 @@
 using System.Text;
 using Il2Cpp;
 using Il2CppInterop.Runtime.Attributes;
+using LongLargo.Utils;
 using MelonLoader;
 using UnityEngine;
 
@@ -48,28 +49,38 @@ public class PackManagerHandler : MonoBehaviour
 
     private float GetDistance()
     {
-        if (Main.PackProximityManager.IsInCombat)
+        if (Main.PackProximityManager.IsInCombat
+            && !GameManager.m_IsPaused
+            && !GameManager.s_IsGameplaySuspended
+            && !GameManager.s_IsAISuspended)
         {
-            var distance = 99999f;
-            var playerPosition = GameManager.m_vpFPSPlayer.transform.position;
-            foreach (var packinfo in _instance.m_PackAnimalGroupByLeader)
+            try
             {
-                var group = packinfo.Value;
-                foreach (var animal in group.m_Members)
+                var distance = 99999f;
+                var playerPosition = GameManager.m_vpFPSPlayer.transform.position;
+                foreach (var packinfo in _instance.m_PackAnimalGroupByLeader)
                 {
-                    var animalPosition = animal.transform.position;
-                    var newDistance = Vector3.Distance(playerPosition, animalPosition);
-                    if (newDistance < distance)
+                    var group = packinfo.Value;
+                    foreach (var animal in group.m_Members)
                     {
-                        distance = newDistance;
+                        var animalPosition = animal.transform.position;
+                        var newDistance = Vector3.Distance(playerPosition, animalPosition);
+                        if (newDistance < distance)
+                        {
+                            distance = newDistance;
+                        }
                     }
                 }
-            }
 
-            return distance;
+                return distance;
+            }
+            catch (Exception e)
+            {
+                LLogger.Error("Can't calculate timberwolf distance");
+            }
         }
         
-        return float.MaxValue;
+        return 99999f;
     }
 
     private void RefreshDebug(float proximity)

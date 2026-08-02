@@ -61,6 +61,7 @@ public class Main : MelonMod
         uConsole.RegisterCommand("ll_play", new Action(CommandPlay));
         uConsole.RegisterCommand("ll_play_next", new Action(CommandPlayNext));
         uConsole.RegisterCommand("ll_silence", new Action(CommandSilence));
+        uConsole.RegisterCommand("ll_stinger_weather", new Action(CommandStingerWeather));
     }
 
     private static void CommandShowPlaylist()
@@ -119,5 +120,38 @@ public class Main : MelonMod
         var soundtrack = PlaylistManager.ShortSilence;
         AudioPlayer.PlayHard(soundtrack, SituationType.Disabled);
         uConsole.Log($"Now playing: {soundtrack.TrackName}");
+    }
+
+    private static void CommandStingerWeather()
+    {
+        var stage = GameManager.GetWeatherComponent().GetWeatherStage();
+        switch (stage)
+        {
+            case WeatherStage.LightSnow:
+            case WeatherStage.HeavySnow:
+                GameAudioManager.PlaySound("Play_Weather_Clear_withStinger45", GameManager.GetVpFPSPlayer().gameObject);
+                return;
+            case WeatherStage.PartlyCloudy:
+            case WeatherStage.Cloudy:
+            case WeatherStage.Clear:
+                GameAudioManager.PlaySound("Play_Weather_Clear_withStinger60", GameManager.GetVpFPSPlayer().gameObject);
+                return;
+            case WeatherStage.ClearAurora:
+                GameAudioManager.PlaySound("Play_Weather_ClearAurora_withStinger60", GameManager.GetVpFPSPlayer().gameObject);
+                return;
+            case WeatherStage.Blizzard:
+                GameAudioManager.PlaySound("Play_Weather_Blizzard_withStinger60", GameManager.GetVpFPSPlayer().gameObject);
+                return;
+            case WeatherStage.LightFog:
+                GameAudioManager.PlaySound("Play_Weather_LightFog_withStinger45", GameManager.GetVpFPSPlayer().gameObject);
+                return;
+            case WeatherStage.DenseFog:
+                GameAudioManager.PlaySound("Play_Weather_DenseFog_withStinger45", GameManager.GetVpFPSPlayer().gameObject);
+                return;
+            case WeatherStage.ToxicFog:
+            case WeatherStage.ElectrostaticFog:
+                GameAudioManager.PlaySound("Play_Weather_ElectrostaticFog", GameManager.GetVpFPSPlayer().gameObject);
+                return;
+        }
     }
 }
