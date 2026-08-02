@@ -1,8 +1,6 @@
 using System.Text;
 using Il2Cpp;
 using Il2CppInterop.Runtime.Attributes;
-using LongLargo.Helpers;
-using LongLargo.Managers;
 using MelonLoader;
 using UnityEngine;
 
@@ -43,37 +41,60 @@ public class PackManagerHandler : MonoBehaviour
     {
         _instance = packManager;
 
-        RefreshDebug();
-        RefreshProximity();
+        var distance = GetDistance();
+        Main.PackProximityManager.UpdateMusic(distance);
+        RefreshDebug(distance);
     }
 
-    private void RefreshProximity()
+    private float GetDistance()
     {
-        throw new NotImplementedException();
+        if (Main.PackProximityManager.IsInCombat)
+        {
+            var distance = 99999f;
+            var playerPosition = GameManager.m_vpFPSPlayer.transform.position;
+            foreach (var packinfo in _instance.m_PackAnimalGroupByLeader)
+            {
+                var group = packinfo.Value;
+                foreach (var animal in group.m_Members)
+                {
+                    var animalPosition = animal.transform.position;
+                    var newDistance = Vector3.Distance(playerPosition, animalPosition);
+                    if (newDistance < distance)
+                    {
+                        distance = newDistance;
+                    }
+                }
+            }
+
+            return distance;
+        }
+        
+        return float.MaxValue;
     }
 
-    private void RefreshDebug()
+    private void RefreshDebug(float proximity)
     {
         var debugLines = InterfaceManager.GetPanel<Panel_HUD>().m_Label_DebugLines;
         debugLines.gameObject.SetActive(isDebugMode);
         if (isDebugMode)
         {
-            var mCamera = GameManager.m_vpFPSCamera.m_Camera.transform;
+            var player = GameManager.m_vpFPSPlayer.transform;
             var sb = new StringBuilder();
-            sb.AppendLine("Pack debug info:");
+            sb.AppendLine($"Proximity: {proximity:F2}");
+            sb.AppendLine($"Fadeout timer: {Main.PackProximityManager.FadeoutTimer}");
             
             foreach (var packinfo in _instance.m_PackAnimalGroupByLeader)
             {
                 var leader = packinfo.Key;
                 var group = packinfo.Value;
                 var lPos = leader.transform.position;
-                var lDistance = Vector3.Distance(mCamera.position, lPos);
+                var lDistance = Vector3.Distance(player.position, lPos);
                 sb.AppendLine($"Leader: {lDistance:F4} | {leader.m_PackMode}");
                 sb.AppendLine($"Pack:   {group.m_TargetAwarenessTime:F4} | {group.m_PackMoraleModifier}");
                 foreach (var animal in group.m_Members)
                 {
                     var aPos = animal.transform.position;
-                    var aDistance = Vector3.Distance(mCamera.position, aPos);
+                    var aDistance = Vector3.Distance(player.position, aPos);
                     sb.AppendLine($"Animal: {aDistance:F4} | {animal.m_StayWithinRadius}");
                 }
             }

@@ -1,4 +1,4 @@
-﻿namespace LongLargo.Helpers;
+﻿namespace LongLargo.Utils;
 
 /// <summary>
 /// Get event name or id.

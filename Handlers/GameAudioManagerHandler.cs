@@ -1,9 +1,9 @@
 using AudioMgr;
 using Il2Cpp;
 using LongLargo.Extensions;
-using LongLargo.Helpers;
 using LongLargo.Managers;
 using LongLargo.Model;
+using LongLargo.Utils;
 using UnityEngine;
 
 namespace LongLargo.Handlers;
@@ -23,7 +23,7 @@ public static class GameAudioManagerHandler
             return true;
         }
         
-        var situationInfo = GetSituationByEvent(soundName);
+        var situationInfo = GetSituationByEvent(soundName, go);
         if (situationInfo.WorthLogging)
         {
             LLogger.Log($"[GameAudioManager] Hooking event {soundName}");
@@ -57,7 +57,7 @@ public static class GameAudioManagerHandler
         return PlayCLip(playVanilla, situationInfo, soundtrack, go);
     }
 
-    private static SituationInfo GetSituationByEvent(string soundName)
+    private static SituationInfo GetSituationByEvent(string soundName, GameObject go)
     {
         SituationInfo situationInfo = new SituationInfo();
         switch (soundName)
@@ -165,7 +165,8 @@ public static class GameAudioManagerHandler
                 situationInfo.Situation = SituationType.Stalked;
                 break;
             case "Play_TimberwolfCombat":
-                situationInfo.Situation = SituationType.Timberwolf;
+                // situationInfo.Situation = SituationType.Timberwolf;
+                situationInfo.Situation = Main.PackProximityManager.OnPlayCombat(go);
                 break;
             // stop loop events
             case "Stop_musicMood_AnimalStalking":
@@ -173,8 +174,9 @@ public static class GameAudioManagerHandler
                 Main.AudioPlayer.StopIfSituation(SituationType.Stalked, 3f);
                 break;
             case "Stop_TimberwolfCombat":
-                situationInfo.Situation = SituationType.Disabled;
-                Main.AudioPlayer.StopIfSituation(SituationType.Timberwolf, 3f);
+                situationInfo.Situation = Main.PackProximityManager.OnStopCombat();
+                // situationInfo.Situation = SituationType.Disabled;
+                // Main.AudioPlayer.StopIfSituation(SituationType.Timberwolf, 3f);
                 break;
             case "Stop_Weather_Blizzard":
             case "Stop_Weather_Clear":

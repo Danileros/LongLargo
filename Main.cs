@@ -1,8 +1,8 @@
 ﻿using Il2Cpp;
 using LongLargo.Extensions;
-using LongLargo.Helpers;
 using LongLargo.Managers;
 using LongLargo.Model;
+using LongLargo.Utils;
 using MelonLoader;
 using UnityEngine;
 
@@ -13,6 +13,8 @@ public class Main : MelonMod
     public static PlaylistManager PlaylistManager { get; private set; }
         
     public static AudioPlayer AudioPlayer { get; private set; }
+        
+    public static PackProximityManager PackProximityManager { get; private set; }
 
     public override void OnInitializeMelon()
     {
@@ -21,17 +23,19 @@ public class Main : MelonMod
 
         PlaylistManager = new PlaylistManager();
         AudioPlayer = new AudioPlayer();
+        PackProximityManager = new PackProximityManager();
         AddConsoleCommands();
     }
     
     public override void OnSceneWasLoaded(int buildIndex, string sceneName)
     {
+        PackProximityManager.OnLeaveCombat();
+        AudioPlayer.StopIfSituation(SituationType.Stalked);
+        
         if (ScenesHelper.IsForbidden(sceneName))
         {
             return;
         }
-
-        AudioPlayer.StopIfSituation(SituationTypeExtensions.GetDangers());
     }
 
     public static bool IsModDisabled()

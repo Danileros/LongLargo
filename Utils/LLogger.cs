@@ -1,6 +1,6 @@
 using LongLargo.Managers;
 
-namespace LongLargo.Helpers;
+namespace LongLargo.Utils;
 
 /// <summary>
 /// LL Logging proxy.

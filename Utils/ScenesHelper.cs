@@ -1,6 +1,6 @@
 using LongLargo.Model;
 
-namespace LongLargo.Helpers;
+namespace LongLargo.Utils;
 
 public static class ScenesHelper
 {

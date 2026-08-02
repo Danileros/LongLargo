@@ -1,7 +1,7 @@
 using HarmonyLib;
 using Il2Cpp;
 using LongLargo.Handlers;
-using LongLargo.Helpers;
+using LongLargo.Utils;
 using UnityEngine;
 
 namespace LongLargo.Patches;

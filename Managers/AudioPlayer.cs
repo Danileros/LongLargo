@@ -2,8 +2,8 @@ using System.Collections;
 using AudioMgr;
 using Il2Cpp;
 using LongLargo.Extensions;
-using LongLargo.Helpers;
 using LongLargo.Model;
+using LongLargo.Utils;
 using MelonLoader;
 using UnityEngine;
 
@@ -171,15 +171,8 @@ public class AudioPlayer
             Shot.Play(); // no need to prefetch
             return;
         }
-            
-        if (loop)
-        {
-            _lastPlayToken = MelonCoroutines.Start(this.PlayDelayedRoutine(soundtrack, situation, 0.6f));
-        }
-        else
-        {
-            Shot.Play(clip);
-        }
+
+        Shot.Play(clip);
     }
 
     public void Stop()
@@ -271,14 +264,14 @@ public class AudioPlayer
         }
     }
 
-    private IEnumerator PlayDelayedRoutine(SoundtrackInfo soundtrack, SituationType situation, float delay)
+    private IEnumerator PlayDelayedRoutine(SoundtrackInfo soundtrack, SituationType situation, float delay, bool loop = false)
     {
         Shot.AssignClip(Main.PlaylistManager.ShortSilence.Clip);
         Shot.Play();
         yield return new WaitForSeconds(delay);
         if (!IsPlaying || Shot._audioSource.clip.name == "ShortSilence")
         {
-            PlayHard(soundtrack, situation);
+            PlayInternal(soundtrack, situation, loop);
         }
     }
 

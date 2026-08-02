@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using AudioMgr;
 using Il2Cpp;
+using LongLargo.Model;
 using ModSettings;
 
 namespace LongLargo;
@@ -43,11 +44,10 @@ internal class Settings : JsonModSettings
     [Description("If Yes, only vanilla exploration tracks would play.")]
     public bool ExplorationVanillaOnly = false;
     
-
     [Name("Exploration music delay")]
-    [Description("Delay between Exploration soundtracks, percents.")]
+    [Description("Delay between Exploration soundtracks, percents. Vanilla is 100, recommended is 50.")]
     [Slider(1, 200)]
-    public uint ExplorationDelay = 100;
+    public uint ExplorationDelay = 50;
 
     [Section("Weather")]
         
@@ -113,6 +113,16 @@ internal class Settings : JsonModSettings
         else
         {
             Main.AudioPlayer.SetVolume(VolumeMaster.GetVolume(AudioMaster.SourceType.BGM));
+        }
+
+        if (StalkedSuppress)
+        {
+            Main.AudioPlayer.StopIfSituation(SituationType.Stalked);
+        }
+
+        if (TimberwolfSuppress)
+        {
+            Main.AudioPlayer.StopIfSituation(SituationType.Timberwolf);
         }
 
         base.OnConfirm();

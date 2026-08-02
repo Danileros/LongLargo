@@ -1,7 +1,7 @@
 using System;
 using System.Text.Json.Serialization;
 using AudioMgr;
-using LongLargo.Helpers;
+using LongLargo.Utils;
 using UnityEngine;
 
 namespace LongLargo.Model;

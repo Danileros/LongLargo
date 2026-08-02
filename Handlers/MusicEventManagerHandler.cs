@@ -1,7 +1,7 @@
 using Il2Cpp;
 using Il2CppInterop.Runtime.Attributes;
-using LongLargo.Helpers;
 using LongLargo.Managers;
+using LongLargo.Utils;
 using MelonLoader;
 using UnityEngine;
 
