@@ -1,25 +1,23 @@
 using System.Text;
 using Il2Cpp;
+using LongLargo.Interfaces;
 using LongLargo.Model;
 using UnityEngine;
 
 namespace LongLargo.Managers;
 
-/// <summary>
-/// Timberwolf situation is too complicated, we should maintain it separately.
-/// </summary>
-public class PackProximityManager
+public class PackProximityManager : IPackProximityManager
 {
     private const float TimeNotInCombatBeforeFade = 60;
     private const float DistanceCombat = 50;
     private const float DistanceFadeInstant = 150;
-    
-    public bool IsInCombat { get; private set; } = false;
-    public float FadeoutTimer { get; private set; } = 0;
 
     private float nextUpdate = 0;
     private SoundtrackInfo _soundtrack;
     private GameObject _go;
+    
+    public bool IsInCombat { get; private set; } = false;
+    public float FadeoutTimer { get; private set; } = 0;
 
     /// <summary>
     /// Executes on Play_TimberwolfCombat event, pack morale hud activates.
@@ -73,10 +71,10 @@ public class PackProximityManager
     /// <summary>
     /// Executes on scene change.
     /// </summary>
-    public void OnLeaveCombat()
+    public void ForceLeaveCombat()
     {
         IsInCombat = false;
-        Main.AudioPlayer.StopIfSituation(SituationType.Timberwolf, 3f);
+        Main.AudioPlayer.StopIfSituation(SituationType.Timberwolf, 1f);
     }
 
     /// <summary>

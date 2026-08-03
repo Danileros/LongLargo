@@ -16,7 +16,8 @@ public static class ScenesHelper
     
     public static LocationType GetLocationType(string sceneName)
     {
-        if (sceneName.EndsWith("Region"))
+        if (sceneName.EndsWith("Region")
+            || sceneName.EndsWith("SurvivalZone")) // BlackrockPrisonSurvivalZone is a part of BlackrockRegion for me
         {
             return LocationType.Region;
         }

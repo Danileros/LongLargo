@@ -1,5 +1,6 @@
 ﻿using Il2Cpp;
 using LongLargo.Extensions;
+using LongLargo.Interfaces;
 using LongLargo.Managers;
 using LongLargo.Model;
 using LongLargo.Utils;
@@ -10,11 +11,14 @@ namespace LongLargo;
 
 public class Main : MelonMod
 {
-    public static PlaylistManager PlaylistManager { get; private set; }
-        
-    public static AudioPlayer AudioPlayer { get; private set; }
-        
-    public static PackProximityManager PackProximityManager { get; private set; }
+    // To get soundtracks
+    public static IPlaylistManager PlaylistManager { get; private set; }
+    
+    // To play soundtracks
+    public static IAudioPlayer AudioPlayer { get; private set; }
+    
+    // Timberwolf combat special 
+    public static IPackProximityManager PackProximityManager { get; private set; }
 
     public override void OnInitializeMelon()
     {
@@ -29,13 +33,9 @@ public class Main : MelonMod
     
     public override void OnSceneWasLoaded(int buildIndex, string sceneName)
     {
-        PackProximityManager.OnLeaveCombat();
+        // Stops playing danger music
+        PackProximityManager.ForceLeaveCombat();
         AudioPlayer.StopIfSituation(SituationType.Stalked);
-        
-        if (ScenesHelper.IsForbidden(sceneName))
-        {
-            return;
-        }
     }
 
     public static bool IsModDisabled()

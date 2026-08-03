@@ -35,6 +35,4 @@ public static class AudioSourceExtensions
         audioSource.Stop ();
         audioSource.volume = startVolume;
     }
-    
-    
 }

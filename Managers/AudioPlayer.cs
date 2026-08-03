@@ -1,8 +1,8 @@
 using System.Collections;
-using System.Runtime.InteropServices;
 using AudioMgr;
 using Il2Cpp;
 using LongLargo.Extensions;
+using LongLargo.Interfaces;
 using LongLargo.Model;
 using LongLargo.Utils;
 using MelonLoader;
@@ -10,29 +10,19 @@ using UnityEngine;
 
 namespace LongLargo.Managers;
 
-/// <summary>
-/// Handles soundtracks queue. Chooses which track to play by itself.
-/// </summary>
-public class AudioPlayer
+public class AudioPlayer : IAudioPlayer
 {
-    private static Shot _shot;
-    private static VolumeMaster.OnVolumeChange _onVolumeChange;
-    private bool isPaused = false;
-    private object _lastPlayToken;
-    private object _lastFadeToken;
-    private object _loopToken;
-
-    public bool IsFading { get; private set; }
-
-    public SituationType LastSituation { get; private set; }
+    public SituationType LastSituation { get; private set; } = SituationType.Disabled;
 
     public SoundtrackInfo LastSoundtrack { get; private set; }
+
+    public bool IsFading { get; private set; }
 
     public bool IsPaused => !IsPlaying && Shot._audioSource.time > 0f;
 
     public bool IsPlaying => Shot._audioSource.isPlaying;
 
-    public static Shot Shot
+    private static Shot Shot
     {
         get
         {
@@ -61,6 +51,12 @@ public class AudioPlayer
             return _shot;
         }
     }
+    
+    private static Shot _shot;
+    private static VolumeMaster.OnVolumeChange _onVolumeChange;
+    private object _lastPlayToken;
+    private object _lastFadeToken;
+    private object _loopToken;
 
     public static void ResetVolume()
     {
@@ -75,7 +71,6 @@ public class AudioPlayer
         }
     }
 
-    // Forget last soundtrack (to enable playing same track again)
     public void ResetLastSoundtrack()
     {
         LastSoundtrack = null;
@@ -86,15 +81,8 @@ public class AudioPlayer
         Shot.SetVolume(volume);
     }
     
-    /// <summary>
-    /// Tries to play and gently refuses if something is playing already.
-    /// </summary>
-    /// <param name="soundtrack">Soundtrack.</param>
-    /// <param name="situation">Situation.</param>
-    /// <param name="loop">true if it should be looped.</param>
     public void PlaySoft(SoundtrackInfo soundtrack, SituationType situation, bool loop = false)
     {
-        isPaused = false;
         if (soundtrack != null && !IsPlaying)
         {
             Stop();
@@ -103,12 +91,6 @@ public class AudioPlayer
         }
     }
 
-    /// <summary>
-    /// Tries to play with delay and gently refuses if something is playing already.
-    /// </summary>
-    /// <param name="soundtrack">Soundtrack.</param>
-    /// <param name="situation">Situation.</param>
-    /// <param name="delay">Delay to start.</param>
     public void PlaySoftDelayed(SoundtrackInfo soundtrack, SituationType situation, float delay)
     {
         if (soundtrack != null && !IsPlaying)
@@ -119,12 +101,6 @@ public class AudioPlayer
         }
     }
 
-    /// <summary>
-    /// Stops whatever we play already and plays.
-    /// </summary>
-    /// <param name="soundtrack">Soundtrack.</param>
-    /// <param name="situation">Situation.</param>
-    /// <param name="loop">true if it should be looped.</param>
     public void PlayHard(SoundtrackInfo soundtrack, SituationType situation, bool loop = false)
     {
         if (soundtrack != null)
@@ -135,12 +111,6 @@ public class AudioPlayer
         }
     }
 
-    /// <summary>
-    /// Stops whatever we play already and plays.
-    /// </summary>
-    /// <param name="soundtrack">Soundtrack.</param>
-    /// <param name="situation">Situation.</param>
-    /// <param name="fadeOut">time to fade out current track (if any).</param>
     public void PlayHard(SoundtrackInfo soundtrack, SituationType situation, float fadeOut)
     {
         if (soundtrack != null)
@@ -155,35 +125,6 @@ public class AudioPlayer
                 _lastPlayToken = MelonCoroutines.Start(this.PlayAfterFade(soundtrack, situation, fadeOut));
             }
         }
-    }
-
-    private void PlayInternal(SoundtrackInfo soundtrack, SituationType situation, bool loop)
-    {
-        var clip = soundtrack.Clip;
-        LastSoundtrack = soundtrack;
-        LastSituation = situation;
-        Shot.AssignClip(clip);
-        if (soundtrack == Main.PlaylistManager.LongSilence || soundtrack == Main.PlaylistManager.ShortSilence)
-        {
-            Shot.Play(); // no need to prefetch
-            return;
-        }
-
-        Shot.Play(clip);
-        if (loop)
-        {
-            _loopToken = MelonCoroutines.Start(PlayNextIteration());
-        }
-    }
-
-    private IEnumerator PlayNextIteration()
-    {
-        while (IsPlaying || IsPaused)
-        {
-            yield return null;
-        }
-        
-        PlayInternal(LastSoundtrack, LastSituation, true);
     }
 
     public void Stop()
@@ -243,13 +184,13 @@ public class AudioPlayer
 
     public void StopIfSituation(SituationType situations, float fadeOut = 0)
     {
-        if (!IsPlaying)
-        {
-            return;
-        }
-        
         if (situations.HasFlag(LastSituation))
         {
+            if (!IsPlaying)
+            {
+                return;
+            }
+
             if (fadeOut > 0)
             {
                 Stop(fadeOut);
@@ -275,10 +216,39 @@ public class AudioPlayer
 
     public void Resume()
     {
-        if (isPaused)
+        if (IsPaused)
         {
             Shot._audioSource.UnPause();
         }
+    }
+
+    private void PlayInternal(SoundtrackInfo soundtrack, SituationType situation, bool loop)
+    {
+        var clip = soundtrack.Clip;
+        LastSoundtrack = soundtrack;
+        LastSituation = situation;
+        Shot.AssignClip(clip);
+        if (soundtrack == Main.PlaylistManager.LongSilence || soundtrack == Main.PlaylistManager.ShortSilence)
+        {
+            Shot.Play(); // no need to prefetch
+            return;
+        }
+
+        Shot.Play(clip);
+        if (loop)
+        {
+            _loopToken = MelonCoroutines.Start(PlayNextIteration());
+        }
+    }
+
+    private IEnumerator PlayNextIteration()
+    {
+        while (IsPlaying || IsPaused)
+        {
+            yield return null;
+        }
+        
+        PlayInternal(LastSoundtrack, LastSituation, true);
     }
 
     private IEnumerator PlayDelayedRoutine(SoundtrackInfo soundtrack, SituationType situation, float delay, bool loop = false)
