@@ -3,6 +3,7 @@ using AudioMgr;
 using Il2Cpp;
 using LongLargo.Model;
 using ModSettings;
+using UnityEngine;
 
 namespace LongLargo;
 
@@ -33,6 +34,13 @@ internal class Settings : JsonModSettings
     [Description("Chance to play Vanilla soundtrack. 200 would make Vanilla play twice more often than modded.")]
     [Slider(0, 400)]
     public uint ModVanillaMusicChance = 100;
+    
+    
+    [Name("Play next")]
+    public KeyCode KeyPlayNext = KeyCode.None;
+    
+    [Name("Stop")]
+    public KeyCode KeyStop = KeyCode.None;
 
     [Section("Exploration")]
 

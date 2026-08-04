@@ -228,6 +228,9 @@ public class AudioPlayer : IAudioPlayer
         LastSoundtrack = soundtrack;
         LastSituation = situation;
         Shot.AssignClip(clip);
+        
+        uConsole.Log($"[LL] Now playing: {soundtrack.TrackName}");
+        
         if (soundtrack == Main.PlaylistManager.LongSilence || soundtrack == Main.PlaylistManager.ShortSilence)
         {
             Shot.Play(); // no need to prefetch

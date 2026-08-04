@@ -38,6 +38,23 @@ public class Main : MelonMod
         AudioPlayer.StopIfSituation(SituationType.Stalked);
     }
 
+    public override void OnUpdate()
+    {
+        base.OnUpdate();
+
+        var keyPlayNext = SettingsManager.Settings.KeyPlayNext;
+        if (keyPlayNext != KeyCode.None && Input.GetKeyDown(keyPlayNext))
+        {
+            CommandPlayNext();
+        }
+
+        var keyPlayStop = SettingsManager.Settings.KeyStop;
+        if (keyPlayStop != KeyCode.None && Input.GetKeyDown(keyPlayStop))
+        {
+            AudioPlayer.Stop();
+        }
+    }
+
     public static bool IsModDisabled()
     {
         if (!SettingsManager.Settings.ModEnabled)
@@ -99,12 +116,11 @@ public class Main : MelonMod
         var soundtrack = PlaylistManager.GetSoundtrackByName(trackName);
         if (soundtrack == null)
         {
-            uConsole.Log($"No track found with name {trackName}");
+            uConsole.Log($"[LL] No track found with name {trackName}");
             return;
         }
             
         AudioPlayer.PlayHard(soundtrack, SituationType.Disabled);
-        uConsole.Log($"Now playing: {soundtrack.TrackName}");
     }
     
     private static void CommandPlayNext()
@@ -112,14 +128,12 @@ public class Main : MelonMod
         var (soundtrack, _)
             = PlaylistManager.GetExplorationSoundtrack(SituationTypeExtensions.GetExplorationSituation(),true);
         AudioPlayer.PlayHard(soundtrack, SituationType.Disabled);
-        uConsole.Log($"Now playing: {soundtrack.TrackName}");
     }
     
     private static void CommandSilence()
     {
         var soundtrack = PlaylistManager.ShortSilence;
         AudioPlayer.PlayHard(soundtrack, SituationType.Disabled);
-        uConsole.Log($"Now playing: {soundtrack.TrackName}");
     }
 
     private static void CommandStingerWeather()

@@ -34,6 +34,15 @@ Do you remember when fighting timberwolves wasn't a silent affair? It’s time t
 
 Everything discussed so far isn't a decision I’m making unilaterally as the developer. You can also add your own music for absolutely any of the situations mentioned above—and control the atmosphere the game creates for you yourself. It’s all in your hands. Create your own playlists and share them!
 
+## Console commands
+
+Long Largo also supports manual control via in-game console. Here is a list of commands:
+
+* ll_playlist - shows all tracks.
+* ll_play - plays track by name.
+* ll_play_next - plays next Exploration track.
+* ll_stop - stops current track.
+
 ## Custom music how-to
 Drop soundtracks you want to hear in-game to LongLargo folder in Mods. MP3 and WAV supported. They will be automatically registered and configured in PlaylistInfo.json on next game launch. Long Largo by default treats any musical clip as an exploration clip suitable for day and night. If you want to customize it, open PlaylistInfo.json with text editor or JSON editor and follow the built-in instructions. 
 
