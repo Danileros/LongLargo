@@ -41,6 +41,9 @@ internal class Settings : JsonModSettings
     
     [Name("Stop")]
     public KeyCode KeyStop = KeyCode.None;
+    
+    [Name("Repeat last")]
+    public KeyCode KeyPlayLast = KeyCode.None;
 
     [Section("Exploration")]
 

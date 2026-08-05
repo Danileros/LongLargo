@@ -56,5 +56,5 @@ public class SoundtrackInfo
     /// <summary>
     /// Only for Timberwolf combat loop.
     /// </summary>
-    public string StopTrackName { get; set; } = string.Empty;
+    public string StopTrackName { get; set; } = null;
 }

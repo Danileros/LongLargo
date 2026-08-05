@@ -54,6 +54,7 @@ public class AudioPlayer : IAudioPlayer
     
     private static Shot _shot;
     private static VolumeMaster.OnVolumeChange _onVolumeChange;
+    private static float _masterVolume;
     private object _lastPlayToken;
     private object _lastFadeToken;
     private object _loopToken;
@@ -62,7 +63,16 @@ public class AudioPlayer : IAudioPlayer
     {
         if (SettingsManager.Settings.BgmVolumeEnabled)
         {
-            var masterVolume = InterfaceManager.GetPanel<Panel_OptionsMenu>().State.m_MasterVolume;
+            try
+            {
+                _masterVolume = InterfaceManager.GetPanel<Panel_OptionsMenu>().State.m_MasterVolume;
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
+            var masterVolume = _masterVolume;
             Shot.SetVolume(masterVolume * SettingsManager.Settings.BgmVolume / 100f);
         }
         else
@@ -118,10 +128,12 @@ public class AudioPlayer : IAudioPlayer
             LLogger.Log($"[Queue] Now playing hard with fade previous: {soundtrack.TrackName}");
             if (!IsPlaying)
             {
+                Stop();
                 PlayInternal(soundtrack, situation, false);
             }
             else
             {
+                StopAllCoroutines();
                 _lastPlayToken = MelonCoroutines.Start(this.PlayAfterFade(soundtrack, situation, fadeOut));
             }
         }
@@ -136,21 +148,7 @@ public class AudioPlayer : IAudioPlayer
         }
         
         Shot.Stop();
-        IsFading = false;
-        if (_lastPlayToken != null)
-        {
-            MelonCoroutines.Stop(_lastPlayToken);
-        }
-        
-        if (_lastFadeToken != null)
-        {
-            MelonCoroutines.Stop(_lastFadeToken);
-        }
-        
-        if (_loopToken != null)
-        {
-            MelonCoroutines.Stop(_loopToken);
-        }
+        StopAllCoroutines();
     }
 
     public void Stop(float fadeOut)
@@ -158,6 +156,7 @@ public class AudioPlayer : IAudioPlayer
         if (_loopToken != null)
         {
             MelonCoroutines.Stop(_loopToken);
+            _loopToken = null;
         }
         
         if (!IsPlaying)
@@ -184,7 +183,7 @@ public class AudioPlayer : IAudioPlayer
 
     public void StopIfSituation(SituationType situations, float fadeOut = 0)
     {
-        if (situations.HasFlag(LastSituation))
+        if (situations.HasFlag(LastSituation) && LastSituation != SituationType.Disabled)
         {
             if (!IsPlaying)
             {
@@ -222,8 +221,27 @@ public class AudioPlayer : IAudioPlayer
         }
     }
 
+    private void StopAllCoroutines()
+    {
+        StopCoroutine(ref _lastPlayToken);
+        StopCoroutine(ref _loopToken);
+        StopCoroutine(ref _lastFadeToken);
+        IsFading = false;
+        ResetVolume();
+    }
+
+    private void StopCoroutine(ref object token)
+    {
+        if (token != null)
+        {
+            MelonCoroutines.Stop(token);
+            token = null;
+        }
+    }
+
     private void PlayInternal(SoundtrackInfo soundtrack, SituationType situation, bool loop)
     {
+        ResetVolume();
         var clip = soundtrack.Clip;
         LastSoundtrack = soundtrack;
         LastSituation = situation;
@@ -276,7 +294,7 @@ public class AudioPlayer : IAudioPlayer
         IsFading = true;
         try
         {
-            yield return Shot._audioSource.FadeOut(fadeOut);
+            yield return FadeOut(fadeOut);
             Stop();
         }
         finally
@@ -284,4 +302,32 @@ public class AudioPlayer : IAudioPlayer
             IsFading = false;
         }
     }
+    
+     /// <summary>
+     /// Stops with fade.
+     /// </summary>
+     /// <param name="fadeTime">Time to fade sound completely.</param>
+     /// <returns>Reason to use MelonCoroutines.</returns>
+     public IEnumerator FadeOut(float fadeTime)
+     {
+         var startVolume = Shot._audioSource.volume;
+         var startTime = Time.time;
+         var time = 0f;
+         
+         // sounds a bit better than linear
+         while (time < fadeTime)
+         {
+             time = Time.time - startTime;
+             Shot._audioSource.volume = startVolume * (float)(Math.Cos(time / fadeTime * Math.PI) + 1) / 2.0f;
+             yield return null;
+         }
+         
+         //// linear
+         // while (audioSource.volume > 0) {
+         //     audioSource.volume -= startVolume * Time.deltaTime / fadeTime;
+         //     yield return null;
+         // }
+         
+         Stop();
+     }
 }

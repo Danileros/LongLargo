@@ -53,6 +53,12 @@ public class Main : MelonMod
         {
             AudioPlayer.Stop();
         }
+
+        var keyPlayLast = SettingsManager.Settings.KeyPlayLast;
+        if (keyPlayLast != KeyCode.None && Input.GetKeyDown(keyPlayLast))
+        {
+            CommandPlayLast();
+        }
     }
 
     public static bool IsModDisabled()
@@ -73,12 +79,18 @@ public class Main : MelonMod
     
     private static void AddConsoleCommands()
     {
-        uConsole.RegisterCommand("ll_stop", new Action(() => AudioPlayer.Stop()));
+        uConsole.RegisterCommand("ll_stop", new Action(CommandStop));
         uConsole.RegisterCommand("ll_playlist", new Action(CommandShowPlaylist));
         uConsole.RegisterCommand("ll_play", new Action(CommandPlay));
         uConsole.RegisterCommand("ll_play_next", new Action(CommandPlayNext));
+        uConsole.RegisterCommand("ll_play_last", new Action(CommandPlayLast));
         uConsole.RegisterCommand("ll_silence", new Action(CommandSilence));
         uConsole.RegisterCommand("ll_stinger_weather", new Action(CommandStingerWeather));
+    }
+
+    private static void CommandStop()
+    {
+        AudioPlayer.Stop();
     }
 
     private static void CommandShowPlaylist()
@@ -128,6 +140,11 @@ public class Main : MelonMod
         var (soundtrack, _)
             = PlaylistManager.GetExplorationSoundtrack(SituationTypeExtensions.GetExplorationSituation(),true);
         AudioPlayer.PlayHard(soundtrack, SituationType.Disabled);
+    }
+    
+    private static void CommandPlayLast()
+    {
+        AudioPlayer.PlayHard(AudioPlayer.LastSoundtrack, SituationType.Disabled);
     }
     
     private static void CommandSilence()
