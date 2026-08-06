@@ -157,5 +157,9 @@ internal class Settings : JsonModSettings
         SetFieldVisible(nameof(TimberwolfSuppress), ModEnabled);
         SetFieldVisible(nameof(ConditionSuppress), ModEnabled);
         SetFieldVisible(nameof(ConditionVanillaOnly), ModEnabled);
+        SetFieldVisible(nameof(KeyPlayNext), ModEnabled);
+        SetFieldVisible(nameof(KeyStop), ModEnabled);
+        SetFieldVisible(nameof(KeyPlayLast), ModEnabled);
+        
     }
 }

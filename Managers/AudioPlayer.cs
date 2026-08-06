@@ -12,6 +12,8 @@ namespace LongLargo.Managers;
 
 public class AudioPlayer : IAudioPlayer
 {
+    private float LastTime = Time.time;
+        
     public SituationType LastSituation { get; private set; } = SituationType.Disabled;
 
     public SoundtrackInfo LastSoundtrack { get; private set; }
@@ -57,7 +59,7 @@ public class AudioPlayer : IAudioPlayer
     private static float _masterVolume;
     private object _lastPlayToken;
     private object _lastFadeToken;
-    private object _loopToken;
+    // private object _loopToken;
 
     public static void ResetVolume()
     {
@@ -73,11 +75,11 @@ public class AudioPlayer : IAudioPlayer
             }
 
             var masterVolume = _masterVolume;
-            Shot.SetVolume(masterVolume * SettingsManager.Settings.BgmVolume / 100f);
+            Shot._audioSource.volume = masterVolume * SettingsManager.Settings.BgmVolume / 100f;
         }
         else
         {
-            Shot.SetVolume(VolumeMaster.GetVolume(AudioMaster.SourceType.BGM));
+            Shot._audioSource.volume = VolumeMaster.GetVolume(AudioMaster.SourceType.BGM);
         }
     }
 
@@ -88,7 +90,7 @@ public class AudioPlayer : IAudioPlayer
 
     public void SetVolume(float volume)
     {
-        Shot.SetVolume(volume);
+        Shot._audioSource.volume = volume;
     }
     
     public void PlaySoft(SoundtrackInfo soundtrack, SituationType situation, bool loop = false)
@@ -107,7 +109,9 @@ public class AudioPlayer : IAudioPlayer
         {
             Stop();
             LLogger.Log($"[Queue] Scheduled after {delay}: {soundtrack.TrackName}");
-            _lastPlayToken = MelonCoroutines.Start(this.PlayDelayedRoutine(soundtrack, situation, delay));
+            
+            //_lastPlayToken = MelonCoroutines.Start(this.PlayDelayedRoutine(soundtrack, situation, delay));
+            PlayInternal(soundtrack, situation, false, delay);
         }
     }
 
@@ -147,17 +151,18 @@ public class AudioPlayer : IAudioPlayer
             LLogger.Debug(new System.Diagnostics.StackTrace(true).ToString());
         }
         
-        Shot.Stop();
+        Shot._audioSource.Stop();
+        Shot._audioSource.loop = false;
         StopAllCoroutines();
     }
 
     public void Stop(float fadeOut)
     {
-        if (_loopToken != null)
-        {
-            MelonCoroutines.Stop(_loopToken);
-            _loopToken = null;
-        }
+        // if (_loopToken != null)
+        // {
+        //     MelonCoroutines.Stop(_loopToken);
+        //     _loopToken = null;
+        // }
         
         if (!IsPlaying)
         {
@@ -221,10 +226,26 @@ public class AudioPlayer : IAudioPlayer
         }
     }
 
+    public string DebugData()
+    {
+        var time = Shot._audioSource.time;
+        var duration = LastSoundtrack?.Clip?.clipLength ?? 0;
+        var playtime = IsPlaying ? $"{time/60:00}:{time%60:00}/{duration/60:00}:{duration%60:00}" : "N/A";
+        return $"IsPlaying:  {IsPlaying}\n" +
+               $"IsFading:   {IsFading}\n" +
+               $"IsPaused:   {IsPaused}\n" +
+               $"Looped:     {Shot._audioSource.loop}\n" +
+               $"Situation:  {LastSituation}\n" +
+               $"Soundtrack: {LastSoundtrack?.TrackName ?? "none"}\n" +
+               $"Delay:      {Time.time - LastTime:F1}\n" +
+               $"Time:       {playtime}";
+
+    }
+
     private void StopAllCoroutines()
     {
         StopCoroutine(ref _lastPlayToken);
-        StopCoroutine(ref _loopToken);
+        // StopCoroutine(ref _loopToken);
         StopCoroutine(ref _lastFadeToken);
         IsFading = false;
         ResetVolume();
@@ -239,49 +260,53 @@ public class AudioPlayer : IAudioPlayer
         }
     }
 
-    private void PlayInternal(SoundtrackInfo soundtrack, SituationType situation, bool loop)
+    private void PlayInternal(SoundtrackInfo soundtrack, SituationType situation, bool loop, float delay = 0.6f)
     {
         ResetVolume();
         var clip = soundtrack.Clip;
         LastSoundtrack = soundtrack;
         LastSituation = situation;
-        Shot.AssignClip(clip);
+        LastTime = Time.time;
+        Shot._audioSource.Stop();
+        Shot._audioSource.clip = clip.audioClip;
         
         uConsole.Log($"[LL] Now playing: {soundtrack.TrackName}");
         
+        Shot._audioSource.loop = loop;
         if (soundtrack == Main.PlaylistManager.LongSilence || soundtrack == Main.PlaylistManager.ShortSilence)
         {
-            Shot.Play(); // no need to prefetch
+            Shot._audioSource.Play(); // no need to prefetch
             return;
         }
 
-        Shot.Play(clip);
-        if (loop)
-        {
-            _loopToken = MelonCoroutines.Start(PlayNextIteration());
-        }
+        Shot._audioSource.PlayScheduled(AudioSettings.dspTime + delay);
+        // if (loop)
+        // {
+        //     _loopToken = MelonCoroutines.Start(PlayNextIteration());
+        // }
     }
 
-    private IEnumerator PlayNextIteration()
-    {
-        while (IsPlaying || IsPaused)
-        {
-            yield return null;
-        }
-        
-        PlayInternal(LastSoundtrack, LastSituation, true);
-    }
+    // private IEnumerator PlayNextIteration()
+    // {
+    //     while (IsPlaying || IsPaused)
+    //     {
+    //         yield return null;
+    //     }
+    //     
+    //     PlayInternal(LastSoundtrack, LastSituation, true);
+    // }
 
-    private IEnumerator PlayDelayedRoutine(SoundtrackInfo soundtrack, SituationType situation, float delay, bool loop = false)
-    {
-        Shot.AssignClip(Main.PlaylistManager.ShortSilence.Clip);
-        Shot.Play();
-        yield return new WaitForSeconds(delay);
-        if (!IsPlaying || Shot._audioSource.clip.name == "ShortSilence")
-        {
-            PlayInternal(soundtrack, situation, loop);
-        }
-    }
+    // private IEnumerator PlayDelayedRoutine(SoundtrackInfo soundtrack, SituationType situation, float delay, bool loop = false)
+    // {
+    //     Shot._audioSource.Stop();
+    //     Shot._audioSource.clip = Main.PlaylistManager.ShortSilence.Clip.audioClip;
+    //     Shot._audioSource.Play();
+    //     yield return new WaitForSeconds(delay);
+    //     if (!IsPlaying || Shot._audioSource.clip.name == "ShortSilence")
+    //     {
+    //         PlayInternal(soundtrack, situation, loop);
+    //     }
+    // }
 
     private IEnumerator PlayAfterFade(SoundtrackInfo soundtrack, SituationType situation, float fadeOut)
     {
@@ -318,7 +343,7 @@ public class AudioPlayer : IAudioPlayer
          while (time < fadeTime)
          {
              time = Time.time - startTime;
-             Shot._audioSource.volume = startVolume * (float)(Math.Cos(time / fadeTime * Math.PI) + 1) / 2.0f;
+             SetVolume(startVolume * (float)(Math.Cos(time / fadeTime * Math.PI) + 1) / 2.0f);
              yield return null;
          }
          
