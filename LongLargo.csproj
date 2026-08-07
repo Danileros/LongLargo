@@ -79,6 +79,14 @@
 	  <EmbeddedResource Include="silence.unity3d" />
 	</ItemGroup>
 
+	<ItemGroup>
+		<Compile Remove="Release\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Remove="Release\**" />
+	</ItemGroup>
+
 	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
 		<DebugType>full</DebugType>
 	</PropertyGroup>

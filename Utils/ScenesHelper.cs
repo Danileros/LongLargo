@@ -22,6 +22,16 @@ public static class ScenesHelper
             return LocationType.Region;
         }
 
+        if (sceneName.Contains("MineTransitionZone"))
+        {
+            return LocationType.Mine;
+        }
+
+        if (sceneName.Contains("CaveTransitionZone"))
+        {
+            return LocationType.Cave;
+        }
+
         if (sceneName.Contains("TransitionZone"))
         {
             return LocationType.TransitionZone;
