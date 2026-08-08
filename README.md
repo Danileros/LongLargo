@@ -17,7 +17,6 @@ Short list of features:
 * Allows to control every musical event.
 * ... And you can even disable wolf stalking sound, of course!
 
-
 ## Exploration music overhaul
 
 The base game contains a vast number of music tracks that exist in the game files but never actually play. One of Long Largo’s primary missions is to bring these tracks back and seamlessly integrate them into the gameplay. While the base game features only one music track per location, Long Largo adds another 52! All of these tracks were composed specifically for the game and fit its atmosphere perfectly. Moreover, each track is tailored to specific in-game situations: some play only during the day, others at night, and some during the aurora. Certain tracks play outdoors, while others are reserved for caves and mines. Some tracks are exclusive to specific regions tied to the events of Wintermute. Furthermore, the vanilla game played music too infrequently—logically due to the rather limited selection of tracks. Since the playlist has become significantly more diverse, the option to play music more often has been added. All of this greatly enhances the enjoyment of the game and occasionally evokes a sense of nostalgia for the main storyline.
@@ -28,7 +27,7 @@ The vanilla game also features musical stingers. These are short tracks that pla
 
 ## Feeling dangerous
 
-Do you remember when fighting timberwolves wasn't a silent affair? It’s time to refresh that gameplay experience! The combat music for these encounters hasn't just been restored—it now features a dedicated system that adapts the score to the situation, reflecting the many ways you can resolve a confrontation with timberwolves in Survival Mode. And yes, the music for stalking by regular wolves is also controlled this way!
+Do you remember when fighting timberwolves wasn't a silent affair? It’s time to refresh that gameplay experience! The combat music for these encounters hasn't just been restored—it now features a dedicated system that adapts the score to the situation, reflecting the many ways you can resolve a confrontation with timberwolves in Survival Mode.
 
 ## Create your own atmosphere
 
@@ -47,6 +46,10 @@ Long Largo also supports manual control via in-game console. Here is a list of c
 Drop soundtracks you want to hear in-game to LongLargo folder in Mods. MP3 and WAV supported. They will be automatically registered and configured in PlaylistInfo.json on next game launch. Long Largo by default treats any musical clip as an exploration clip suitable for day and night. If you want to customize it, open PlaylistInfo.json with text editor or JSON editor and follow the built-in instructions. 
 
 If you want to share your tracks—best solution is to create an assetbundle using Unity designer. Put inside all tracks and PlaylistInfo.json.
+
+## AI Disclaimer
+
+No code or music was developed using AI. All decisions, all code are mine and only mine. All the content you'll get with the mod is created by people. The only exception I make is generating a sketch for the mod logo. Sometimes. And even then, I finish them by hand. They're not part of the mod anyway.
 
 ## Known Issues
 
