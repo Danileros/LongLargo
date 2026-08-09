@@ -260,7 +260,7 @@ public class AudioPlayer : IAudioPlayer
         }
     }
 
-    private void PlayInternal(SoundtrackInfo soundtrack, SituationType situation, bool loop, float delay = 0.6f)
+    private void PlayInternal(SoundtrackInfo soundtrack, SituationType situation, bool loop, float delay = 0.0f)
     {
         ResetVolume();
         var clip = soundtrack.Clip;
@@ -273,12 +273,14 @@ public class AudioPlayer : IAudioPlayer
         uConsole.Log($"[LL] Now playing: {soundtrack.TrackName}");
         
         Shot._audioSource.loop = loop;
-        if (soundtrack == Main.PlaylistManager.LongSilence || soundtrack == Main.PlaylistManager.ShortSilence)
+        if (delay <= 0.001f
+            || soundtrack == Main.PlaylistManager.LongSilence
+            || soundtrack == Main.PlaylistManager.ShortSilence)
         {
-            Shot._audioSource.Play(); // no need to prefetch
+            Shot._audioSource.Play();
             return;
         }
-
+        
         Shot._audioSource.PlayScheduled(AudioSettings.dspTime + delay);
         // if (loop)
         // {

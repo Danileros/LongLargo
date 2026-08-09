@@ -234,6 +234,8 @@ public static class GameAudioManagerHandler
             case "Play_musicTales_Outro":
             case "Play_SndMusAreaTransition1":
             case "Play_SndMusNewLocation":
+            case "Play_musicScene_AshCanyon_Enter":
+            case "Play_musicScene_Hub_Enter":
                 LLogger.Debug("[GameAudioManager] Playing Silence to avoid overlap");
                 situationInfo.Situation = SituationType.Disabled;
                 situationInfo.SilenceType = SituationInfo.SilenceLength.Long;
