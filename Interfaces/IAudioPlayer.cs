@@ -98,4 +98,10 @@ public interface IAudioPlayer
     /// Unpauses.
     /// </summary>
     void Resume();
+
+    /// <summary>
+    /// Debug output.
+    /// </summary>
+    /// <returns>Debug text.</returns>
+    string DebugData();
 }

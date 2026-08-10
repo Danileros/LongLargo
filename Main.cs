@@ -19,6 +19,8 @@ public class Main : MelonMod
     
     // Timberwolf combat special 
     public static IPackProximityManager PackProximityManager { get; private set; }
+    
+    public static DebugManagerProxy DebugManager { get; private set; }
 
     public override void OnInitializeMelon()
     {
@@ -28,6 +30,7 @@ public class Main : MelonMod
         PlaylistManager = new PlaylistManager();
         AudioPlayer = new AudioPlayer();
         PackProximityManager = new PackProximityManager();
+        DebugManager = new DebugManagerProxy();
         AddConsoleCommands();
     }
     
@@ -86,6 +89,7 @@ public class Main : MelonMod
         uConsole.RegisterCommand("ll_play_last", new Action(CommandPlayLast));
         uConsole.RegisterCommand("ll_silence", new Action(CommandSilence));
         uConsole.RegisterCommand("ll_stinger_weather", new Action(CommandStingerWeather));
+        DebugManager.RegisterDebugCommand("ll_debug_audio", AudioPlayer.DebugData);
     }
 
     private static void CommandStop()
