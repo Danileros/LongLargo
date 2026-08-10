@@ -37,37 +37,51 @@ public static class SituationTypeExtensions
         return SituationType.Stalked
                | SituationType.Timberwolf;
     }
+
+    public static bool HasFlagSafe(this SituationType situationType, SituationType flag)
+    {
+        return flag != SituationType.Disabled && situationType.HasFlag(flag);
+    }
     
     public static bool IsWeather(this SituationType situationType)
     {
-        return SituationTypeExtensions.GetWeathers().HasFlag(situationType);
+        return SituationTypeExtensions.GetWeathers().HasFlagSafe(situationType);
     }
     
     public static bool IsTime(this SituationType situationType)
     {
-        return SituationTypeExtensions.GetTimes().HasFlag(situationType);
+        return SituationTypeExtensions.GetTimes().HasFlagSafe(situationType);
     }
     
     public static bool IsExploration(this SituationType situationType)
     {
-        return SituationTypeExtensions.GetExplorations().HasFlag(situationType);
+        return SituationTypeExtensions.GetExplorations().HasFlagSafe(situationType);
     }
     
     public static bool IsCondition(this SituationType situationType)
     {
-        return SituationTypeExtensions.GetConditions().HasFlag(situationType);
+        return SituationTypeExtensions.GetConditions().HasFlagSafe(situationType);
     }
     
     public static bool IsDanger(this SituationType situationType)
     {
-        return SituationTypeExtensions.GetDangers().HasFlag(situationType);
+        return SituationTypeExtensions.GetDangers().HasFlagSafe(situationType);
     }
 
     public static SituationType GetExplorationSituation()
     {
-        var timeOfDay = GameManager.GetTimeOfDayComponent();
-        var aurora = GameManager.GetAuroraManager();
-        var situation = aurora.AuroraIsActive() ? SituationType.ExplorationAurora : (timeOfDay.IsDay() ? SituationType.ExplorationDay : SituationType.ExplorationNight);
-        return situation;
+        try
+        {
+            var timeOfDay = GameManager.GetTimeOfDayComponent();
+            var aurora = GameManager.GetAuroraManager();
+            var situation = aurora.AuroraIsActive()
+                ? SituationType.ExplorationAurora
+                : (timeOfDay.IsDay() ? SituationType.ExplorationDay : SituationType.ExplorationNight);
+            return situation;
+        }
+        catch
+        {
+            return SituationType.Disabled;
+        }
     }
 }

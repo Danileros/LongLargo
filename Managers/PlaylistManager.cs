@@ -1,4 +1,5 @@
 using Il2Cpp;
+using LongLargo.Extensions;
 using LongLargo.Interfaces;
 using LongLargo.Model;
 using LongLargo.Utils;
@@ -86,7 +87,7 @@ public class PlaylistManager : IPlaylistManager
         var soundtracks = _soundtracks
             .Where(s =>
                 s != Main.AudioPlayer.LastSoundtrack
-                && s.SituationsRestrictsTo.HasFlag(situation)
+                && s.SituationsRestrictsTo.HasFlagSafe(situation)
                 && s.LocationsTypeRestrictTo.HasFlag(locationType)
                 && (s.LocationRestrictTo is null or { Length: 0 } || s.LocationRestrictTo.Contains(scene)))
             .ToArray();
@@ -112,7 +113,7 @@ public class PlaylistManager : IPlaylistManager
         var soundtracks = _soundtracks
             .Where(s =>
                 s != Main.AudioPlayer.LastSoundtrack
-                && s.SituationsRestrictsTo.HasFlag(situation))
+                && s.SituationsRestrictsTo.HasFlagSafe(situation))
             .ToArray();
 
         var soundtrack = ChooseRandomSoundtrack(soundtracks, notVanilla);
@@ -129,21 +130,12 @@ public class PlaylistManager : IPlaylistManager
     private bool IsVanillaOnly(SituationType situation)
     {
         return
-            SettingsManager.Settings.ExplorationVanillaOnly
-                && (SituationType.ExplorationNight | SituationType.ExplorationDay 
-                                                   | SituationType.ExplorationAurora).HasFlag(situation)
-            || SettingsManager.Settings.WeatherVanillaOnly
-                && (SituationType.WeatherBlizzard | SituationType.WeatherClear 
-                                                  | SituationType.WeatherFog 
-                                                  | SituationType.WeatherSnow).HasFlag(situation)
-            || SettingsManager.Settings.TimeVanillaOnly
-                && (SituationType.TimeDawn | SituationType.TimeDusk).HasFlag(situation)
-            || SettingsManager.Settings.StalkedVanillaOnly
-                && (SituationType.Stalked).HasFlag(situation)
-            || SettingsManager.Settings.TimberwolfSuppress
-                && (SituationType.Timberwolf).HasFlag(situation)
-            || SettingsManager.Settings.ConditionVanillaOnly
-                && (SituationType.ConditionSuccess | SituationType.ConditionSorrow).HasFlag(situation);
+            SettingsManager.Settings.ExplorationVanillaOnly && situation.IsExploration()
+            || SettingsManager.Settings.WeatherVanillaOnly && situation.IsWeather()
+            || SettingsManager.Settings.TimeVanillaOnly && situation.IsTime()
+            || SettingsManager.Settings.StalkedVanillaOnly && (SituationType.Stalked).HasFlagSafe(situation)
+            || SettingsManager.Settings.TimberwolfSuppress && (SituationType.Timberwolf).HasFlagSafe(situation)
+            || SettingsManager.Settings.ConditionVanillaOnly && situation.IsCondition();
     }
 
     private SoundtrackInfo ChooseRandomSoundtrack(ICollection<SoundtrackInfo> soundtracks, bool notVanilla = false)

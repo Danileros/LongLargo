@@ -188,7 +188,7 @@ public class AudioPlayer : IAudioPlayer
 
     public void StopIfSituation(SituationType situations, float fadeOut = 0)
     {
-        if (situations.HasFlag(LastSituation) && LastSituation != SituationType.Disabled)
+        if (situations.HasFlagSafe(LastSituation))
         {
             if (!IsPlaying)
             {

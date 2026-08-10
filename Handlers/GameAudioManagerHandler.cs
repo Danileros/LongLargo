@@ -288,7 +288,7 @@ public static class GameAudioManagerHandler
         }
 
         // since Timberwolf combat is silenced by Vanilla, I think suppressing here it is better
-        if (SettingsManager.Settings.TimberwolfSuppress && (SituationType.Timberwolf).HasFlag(situationInfo.Situation))
+        if (SettingsManager.Settings.TimberwolfSuppress && (SituationType.Timberwolf).HasFlagSafe(situationInfo.Situation))
         {
             return true;
         }
@@ -298,12 +298,11 @@ public static class GameAudioManagerHandler
 
     private static bool MaybeSupressEvent(SituationType situation)
     {
-        if (SettingsManager.Settings.WeatherSuppress && (SituationType.WeatherClear | SituationType.WeatherBlizzard | 
-                                                  SituationType.WeatherSnow | SituationType.WeatherFog).HasFlag(situation)
-            || SettingsManager.Settings.TimeSuppress && (SituationType.TimeDawn | SituationType.TimeDusk).HasFlag(situation)
-            || SettingsManager.Settings.StalkedSuppress && (SituationType.Stalked).HasFlag(situation)
-            || SettingsManager.Settings.TimberwolfSuppress && (SituationType.Timberwolf).HasFlag(situation)
-            || SettingsManager.Settings.ConditionSuppress && (SituationType.ConditionSuccess | SituationType.ConditionSorrow).HasFlag(situation))
+        if (SettingsManager.Settings.WeatherSuppress && situation.IsWeather()
+            || SettingsManager.Settings.TimeSuppress && situation.IsTime()
+            || SettingsManager.Settings.StalkedSuppress && (SituationType.Stalked).HasFlagSafe(situation)
+            || SettingsManager.Settings.TimberwolfSuppress && (SituationType.Timberwolf).HasFlagSafe(situation)
+            || SettingsManager.Settings.ConditionSuppress && situation.IsCondition())
         {
             return true;
         }
@@ -329,7 +328,7 @@ public static class GameAudioManagerHandler
             return false;
         }
 
-        if (situationInfo.Situation.HasFlag(SituationType.Stalked) || situationInfo.Situation.HasFlag(SituationType.Timberwolf))
+        if (situationInfo.Situation.HasFlagSafe(SituationType.Stalked) || situationInfo.Situation.HasFlagSafe(SituationType.Timberwolf))
         {
             Main.AudioPlayer.PlayHard(soundtrack, situationInfo.Situation, true);
             if (!playVanilla)
