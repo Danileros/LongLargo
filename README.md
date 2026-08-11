@@ -6,6 +6,7 @@ A MelonLoader mod for **The Long Dark** survival mode.
 
 Long Largo is a mod with a single goal: to enhance your gaming experience by improving the music. **The Long Dark** features a vast array of musical tracks, yet you rarely hear most of them in Survival Mode—and that is precisely what this mod aims to change. Long Largo restores music from the story campaign and integrates it into your playthrough. It does far more than a simple background music player; every track is carefully selected to match specific in-game situations and locations, ensuring the best possible emotional impact. And the mod doesn't stop there: it also allows you to add your own music and customize the settings to your liking.
 
+
 Short list of features:
 * Does not alter the game's gameplay in any way. Do alter immersion in the best way.
 * 67 forgotten tracks restored.
@@ -16,6 +17,11 @@ Short list of features:
 * Supports custom music. With flexible customization!
 * Allows to control every musical event.
 * ... And you can even disable wolf stalking sound, of course!
+  Watch the preview video on Youtube for more information!
+
+## Youtube preview
+
+[![Watch the video](https://img.youtube.com/vi/MQeAOC8LnzA/0.jpg)](https://www.youtube.com/watch?v=MQeAOC8LnzA)
 
 ## Exploration music overhaul
 
