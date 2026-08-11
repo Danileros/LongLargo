@@ -2,7 +2,7 @@ using AudioMgr;
 using Il2Cpp;
 using LongLargo.Extensions;
 using LongLargo.Managers;
-using LongLargo.Model;
+using LongLargo.Models;
 using LongLargo.Utils;
 using UnityEngine;
 

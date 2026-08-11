@@ -1,4 +1,4 @@
-using LongLargo.Model;
+using LongLargo.Models;
 
 namespace LongLargo.Interfaces;
 

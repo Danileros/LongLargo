@@ -1,7 +1,6 @@
-using System;
 using System.Text.Json.Serialization;
 
-namespace LongLargo.Model;
+namespace LongLargo.Models;
 
 /// <summary>
 /// Location type for playlist.

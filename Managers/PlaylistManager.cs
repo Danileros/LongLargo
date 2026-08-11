@@ -1,7 +1,7 @@
 using Il2Cpp;
 using LongLargo.Extensions;
 using LongLargo.Interfaces;
-using LongLargo.Model;
+using LongLargo.Models;
 using LongLargo.Utils;
 
 namespace LongLargo.Managers;
@@ -133,7 +133,7 @@ public class PlaylistManager : IPlaylistManager
             SettingsManager.Settings.ExplorationVanillaOnly && situation.IsExploration()
             || SettingsManager.Settings.WeatherVanillaOnly && situation.IsWeather()
             || SettingsManager.Settings.TimeVanillaOnly && situation.IsTime()
-            || SettingsManager.Settings.StalkedVanillaOnly && (SituationType.Stalked).HasFlagSafe(situation)
+            || SettingsManager.Settings.StalkedSuppress && (SituationType.Stalked).HasFlagSafe(situation)
             || SettingsManager.Settings.TimberwolfSuppress && (SituationType.Timberwolf).HasFlagSafe(situation)
             || SettingsManager.Settings.ConditionVanillaOnly && situation.IsCondition();
     }

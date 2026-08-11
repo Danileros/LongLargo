@@ -1,5 +1,5 @@
 using Il2Cpp;
-using LongLargo.Model;
+using LongLargo.Models;
 
 namespace LongLargo.Extensions;
 

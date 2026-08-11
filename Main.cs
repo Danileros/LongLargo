@@ -2,7 +2,7 @@
 using LongLargo.Extensions;
 using LongLargo.Interfaces;
 using LongLargo.Managers;
-using LongLargo.Model;
+using LongLargo.Models;
 using LongLargo.Utils;
 using MelonLoader;
 using UnityEngine;
@@ -29,7 +29,7 @@ public class Main : MelonMod
 
         PlaylistManager = new PlaylistManager();
         AudioPlayer = new AudioPlayer();
-        PackProximityManager = new PackProximityManager();
+        PackProximityManager = new PackProximityManager(SettingsManager.Settings.ProximityRange);
         DebugManager = new DebugManagerProxy();
         AddConsoleCommands();
     }

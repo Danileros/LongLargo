@@ -1,10 +1,9 @@
-using System;
 using System.Text.Json.Serialization;
 using AudioMgr;
 using LongLargo.Utils;
 using UnityEngine;
 
-namespace LongLargo.Model;
+namespace LongLargo.Models;
 
 /// <summary>
 /// Information about soundtrack and when it should play.

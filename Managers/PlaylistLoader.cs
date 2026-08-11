@@ -2,7 +2,7 @@ using System.Globalization;
 using System.Reflection;
 using System.Text.Json;
 using AudioMgr;
-using LongLargo.Model;
+using LongLargo.Models;
 using LongLargo.Utils;
 using NAudio.Wave;
 using UnityEngine;

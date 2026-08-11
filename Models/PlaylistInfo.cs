@@ -1,6 +1,4 @@
-using System.Collections.Generic;
-
-namespace LongLargo.Model;
+namespace LongLargo.Models;
 
 /// <summary>
 /// Playlist information (used for serialization, updates on game start automatically).

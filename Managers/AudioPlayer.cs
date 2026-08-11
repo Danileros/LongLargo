@@ -3,7 +3,7 @@ using AudioMgr;
 using Il2Cpp;
 using LongLargo.Extensions;
 using LongLargo.Interfaces;
-using LongLargo.Model;
+using LongLargo.Models;
 using LongLargo.Utils;
 using MelonLoader;
 using UnityEngine;

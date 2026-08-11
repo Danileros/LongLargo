@@ -1,22 +1,36 @@
 using Il2Cpp;
 using LongLargo.Interfaces;
-using LongLargo.Model;
+using LongLargo.Models;
+using LongLargo.Utils;
 using UnityEngine;
 
 namespace LongLargo.Managers;
 
 public class PackProximityManager : IPackProximityManager
 {
-    private const float TimeNotInCombatBeforeFade = 60;
-    private const float DistanceCombat = 50;
-    private const float DistanceFadeInstant = 150;
-
+    
     private float nextUpdate = 0;
     private SoundtrackInfo _soundtrack;
     private GameObject _go;
-    
+    private readonly List<PackProximitySettings> _proximitySettings;
+    private PackProximitySettings _settings;
+
     public bool IsInCombat { get; private set; } = false;
     public float FadeoutTimer { get; private set; } = 0;
+    public PackProximityRange Range => _settings.PackProximityRange;
+
+    public PackProximityManager(PackProximityRange settingsType)
+    {
+        var loader = new PackProximitySettingsLoader();
+        _proximitySettings = loader.LoadAll();
+        _settings = _proximitySettings.Single(s => s.PackProximityRange == settingsType);
+    }
+
+    public void SelectSettings(PackProximityRange settingsType)
+    {
+        _settings = _proximitySettings.Single(s => s.PackProximityRange == settingsType);
+        LLogger.Log($"Proximity settings selected: {settingsType}");
+    }
 
     /// <summary>
     /// Executes on Play_TimberwolfCombat event, pack morale hud activates.
@@ -94,17 +108,17 @@ public class PackProximityManager : IPackProximityManager
             && !Main.AudioPlayer.IsFading
             && Main.AudioPlayer.LastSituation == SituationType.Timberwolf)
         {
-            if (dinstance > DistanceFadeInstant)
+            if (dinstance > _settings.DistanceFadeInstant)
             {
                 // Too far
                 Main.AudioPlayer.Stop(3f);
             }
-            else if (dinstance < DistanceCombat)
+            else if (dinstance < _settings.DistanceCombat)
             {
                 // Consider it to be an intense combat, no fadeout!
                 FadeoutTimer = 0;
             }
-            else if(FadeoutTimer > TimeNotInCombatBeforeFade)
+            else if(FadeoutTimer > _settings.TimeNotInCombatBeforeFade)
             {
                 // Not in combat range for too long, consider we're on safe elevation
                 Main.AudioPlayer.Stop(3f);
@@ -112,7 +126,7 @@ public class PackProximityManager : IPackProximityManager
         }
         else
         {
-            if (dinstance < DistanceCombat)
+            if (dinstance < _settings.DistanceCombat)
             {
                 // In combat proximity again
                 Main.AudioPlayer.PlayHard(_soundtrack, SituationType.Timberwolf, true);

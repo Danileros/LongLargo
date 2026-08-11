@@ -73,10 +73,16 @@ public class PackManagerHandler : MonoBehaviour
 
     private string RefreshDebug()
     {
+        if (GameManager.m_vpFPSPlayer == null)
+        {
+            return "";
+        }
+        
         var player = GameManager.m_vpFPSPlayer.transform;
         var sb = new StringBuilder();
         sb.AppendLine($"Closest: {_distance:F2}");
         sb.AppendLine($"Fadeout timer: {Main.PackProximityManager.FadeoutTimer}");
+        sb.AppendLine($"Range: {Main.PackProximityManager.Range}");
         
         foreach (var packinfo in _instance.m_PackAnimalGroupByLeader)
         {

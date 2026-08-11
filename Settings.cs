@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using AudioMgr;
 using Il2Cpp;
-using LongLargo.Model;
+using LongLargo.Models;
 using ModSettings;
 using UnityEngine;
 
@@ -60,6 +60,27 @@ internal class Settings : JsonModSettings
     [Slider(1, 200)]
     public uint ExplorationDelay = 50;
 
+    [Section("Stalked")]
+        
+    [Name("Suppress Stalked soundtracks")]
+    [Description("If Yes, you will be stalked silently.")]
+    public bool StalkedSuppress = false;
+
+    // [Name("Vanilla only Stalked soundtracks")]
+    // [Description("If Yes, only vanilla tracks would play.")]
+    // public bool StalkedVanillaOnly = false;
+
+    [Section("Timberwolf")]
+        
+    [Name("Suppress Timberwolf soundtracks")]
+    [Description("If Yes, you will fight timberwolves without custom soundtracks.")]
+    public bool TimberwolfSuppress = false;
+
+    [Name("Combat range")]
+    [Description("If wolves are out of combat range, music will fade. Make it shorter if the music plays too intensely.")]
+    [Choice("Very short", "Short", "Medium", "Default", "Long", "Very long")]
+    public PackProximityRange ProximityRange = PackProximityRange.Default;
+
     [Section("Weather")]
         
     [Name("Suppress Weather soundtracks")]
@@ -80,22 +101,6 @@ internal class Settings : JsonModSettings
     [Description("If Yes, only vanilla dusk and dawn tracks would play.")]
     public bool TimeVanillaOnly = false;
 
-    [Section("Stalked")]
-        
-    [Name("Suppress Stalked soundtracks")]
-    [Description("If Yes, you will be stalked silently.")]
-    public bool StalkedSuppress = false;
-
-    [Name("Vanilla only Stalked soundtracks")]
-    [Description("If Yes, only vanilla tracks would play.")]
-    public bool StalkedVanillaOnly = false;
-
-    [Section("Timberwolf")]
-        
-    [Name("Suppress Timberwolf soundtracks")]
-    [Description("If Yes, you will fight timberwolves without custom soundtracks.")]
-    public bool TimberwolfSuppress = false;
-
     [Section("Condition")]
         
     [Name("Suppress Success/Sorrow soundtracks")]
@@ -106,15 +111,7 @@ internal class Settings : JsonModSettings
     [Description("If Yes, only vanilla tracks would play.")]
     public bool ConditionVanillaOnly = false;
 
-    protected override void OnChange(FieldInfo field, object oldValue, object newValue)
-    {
-        if (field.Name is nameof(ModEnabled) or nameof(BgmVolumeEnabled)) 
-        {
-            Refresh();
-        }
-    }
-
-    protected override void OnConfirm()
+    internal void Apply()
     {
         if (BgmVolumeEnabled)
         {
@@ -135,6 +132,21 @@ internal class Settings : JsonModSettings
         {
             Main.AudioPlayer.StopIfSituation(SituationType.Timberwolf);
         }
+        
+        Main.PackProximityManager.SelectSettings(ProximityRange);
+    }
+
+    protected override void OnChange(FieldInfo field, object oldValue, object newValue)
+    {
+        if (field.Name is nameof(ModEnabled) or nameof(BgmVolumeEnabled)) 
+        {
+            Refresh();
+        }
+    }
+
+    protected override void OnConfirm()
+    {
+        Apply();
 
         base.OnConfirm();
     }
@@ -153,13 +165,13 @@ internal class Settings : JsonModSettings
         SetFieldVisible(nameof(TimeSuppress), ModEnabled);
         SetFieldVisible(nameof(TimeVanillaOnly), ModEnabled);
         SetFieldVisible(nameof(StalkedSuppress), ModEnabled);
-        SetFieldVisible(nameof(StalkedVanillaOnly), ModEnabled);
+        // SetFieldVisible(nameof(StalkedVanillaOnly), ModEnabled);
         SetFieldVisible(nameof(TimberwolfSuppress), ModEnabled);
+        SetFieldVisible(nameof(ProximityRange), ModEnabled);
         SetFieldVisible(nameof(ConditionSuppress), ModEnabled);
         SetFieldVisible(nameof(ConditionVanillaOnly), ModEnabled);
         SetFieldVisible(nameof(KeyPlayNext), ModEnabled);
         SetFieldVisible(nameof(KeyStop), ModEnabled);
         SetFieldVisible(nameof(KeyPlayLast), ModEnabled);
-        
     }
 }

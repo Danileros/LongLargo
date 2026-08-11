@@ -1,4 +1,4 @@
-using LongLargo.Model;
+using LongLargo.Models;
 using UnityEngine;
 
 namespace LongLargo.Interfaces;
@@ -11,9 +11,20 @@ namespace LongLargo.Interfaces;
 public interface IPackProximityManager
 {
     /// <summary>
+    /// Selects settings (when user changed it).
+    /// </summary>
+    /// <param name="settingsType">Selected setting.</param>
+    void SelectSettings(PackProximityRange settingsType);
+    
+    /// <summary>
     /// In combat is when timberwolf combat bar is active. 
     /// </summary>
     bool IsInCombat { get; }
+    
+    /// <summary>
+    /// Current settings for proximity.
+    /// </summary>
+    PackProximityRange Range { get; }
     
     /// <summary>
     /// When runs too high, music will fadeout. Only runs when game is not paused and player is far from wolves.
