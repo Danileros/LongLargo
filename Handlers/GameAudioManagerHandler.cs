@@ -202,7 +202,6 @@ public static class GameAudioManagerHandler
                     Main.AudioPlayer.Stop(1f);
                 }
 
-                Main.AudioPlayer.ResetLastSoundtrack();
                 break;
                 
             //// I did not need 
@@ -279,10 +278,10 @@ public static class GameAudioManagerHandler
                 case SituationInfo.SilenceLength.None:
                     return true;
                 case SituationInfo.SilenceLength.Short:
-                    Main.AudioPlayer.PlayHard(Main.PlaylistManager.LongSilence, situationInfo.Situation, 3f);
+                    Main.AudioPlayer.PlayHard(Main.PlaylistManager.ShortSilence, situationInfo.Situation, 3f);
                     return true;
                 case SituationInfo.SilenceLength.Long:
-                    Main.AudioPlayer.PlayHard(Main.PlaylistManager.ShortSilence, situationInfo.Situation, 3f);
+                    Main.AudioPlayer.PlayHard(Main.PlaylistManager.LongSilence, situationInfo.Situation, 3f);
                     return true;
             }
         }
