@@ -11,12 +11,12 @@ public class PackProximitySettingsLoader
         
         list.Add(new PackProximitySettings(
             PackProximityRange.Default,
-            60,
+            30,
             50,
             150));
         list.Add(new PackProximitySettings(
             PackProximityRange.Short,
-            40,
+            30,
             20,
             150));
         list.Add(new PackProximitySettings(
@@ -26,17 +26,17 @@ public class PackProximitySettingsLoader
             150));
         list.Add(new PackProximitySettings(
             PackProximityRange.Medium,
-            50,
+            30,
             35,
             150));
         list.Add(new PackProximitySettings(
             PackProximityRange.Long,
-            60,
+            30,
             60,
             150));
         list.Add(new PackProximitySettings(
             PackProximityRange.VeryLong,
-            60,
+            30,
             70,
             150));
         return list;

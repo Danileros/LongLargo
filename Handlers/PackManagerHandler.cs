@@ -18,7 +18,7 @@ public class PackManagerHandler : MonoBehaviour
     public void Awake()
     {
         _instance = gameObject.GetComponent<PackManager>();
-        Main.DebugManager.RegisterDebugCommand("ll_debug_packs", RefreshDebug);
+        Main.DebugManager.RegisterDebugCommand("ll_debug_packs", DebugData);
     }
 
     public void OnDestroy()
@@ -71,7 +71,7 @@ public class PackManagerHandler : MonoBehaviour
         return 99999f;
     }
 
-    private string RefreshDebug()
+    private string DebugData()
     {
         if (GameManager.m_vpFPSPlayer == null)
         {
@@ -80,17 +80,11 @@ public class PackManagerHandler : MonoBehaviour
         
         var player = GameManager.m_vpFPSPlayer.transform;
         var sb = new StringBuilder();
-        sb.AppendLine($"Closest: {_distance:F2}");
-        sb.AppendLine($"Fadeout timer: {Main.PackProximityManager.FadeoutTimer}");
-        sb.AppendLine($"Range: {Main.PackProximityManager.Range}");
-        
         foreach (var packinfo in _instance.m_PackAnimalGroupByLeader)
         {
             var leader = packinfo.Key;
             var group = packinfo.Value;
             var lPos = leader.transform.position;
-            var lDistance = Vector3.Distance(player.position, lPos);
-            // sb.AppendLine($"Leader: {lDistance:F2} | {leader.m_PackMode}");
             sb.AppendLine($"Pack:   {group.m_TargetAwarenessTime:F2} | {group.m_PackMoraleModifier}");
             foreach (var animal in group.m_Members)
             {

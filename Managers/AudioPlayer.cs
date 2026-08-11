@@ -13,7 +13,7 @@ namespace LongLargo.Managers;
 public class AudioPlayer : IAudioPlayer
 {
     private float LastTime = Time.time;
-        
+
     public SituationType LastSituation { get; private set; } = SituationType.Disabled;
 
     public SoundtrackInfo LastSoundtrack { get; private set; }
@@ -60,6 +60,11 @@ public class AudioPlayer : IAudioPlayer
     private object _lastPlayToken;
     private object _lastFadeToken;
     // private object _loopToken;
+
+    public AudioPlayer()
+    {
+        Main.DebugManager.RegisterDebugCommand("ll_debug_audio", DebugData);
+    }
 
     public static void ResetVolume()
     {
@@ -235,7 +240,7 @@ public class AudioPlayer : IAudioPlayer
                $"Situation:  {LastSituation}, Looped: {Shot._audioSource.loop}\n" +
                $"Soundtrack: {LastSoundtrack?.TrackName ?? "none"}\n" +
                $"Delay:      {Time.time - LastTime:F1}\n" +
-               $"Time:       {playtime}\n";
+               $"Time:       {playtime}";
 
     }
 

@@ -1,3 +1,4 @@
+using System.Text;
 using Il2Cpp;
 using LongLargo.Interfaces;
 using LongLargo.Models;
@@ -14,6 +15,7 @@ public class PackProximityManager : IPackProximityManager
     private GameObject _go;
     private readonly List<PackProximitySettings> _proximitySettings;
     private PackProximitySettings _settings;
+    private float _distance;
 
     public bool IsInCombat { get; private set; } = false;
     public float FadeoutTimer { get; private set; } = 0;
@@ -24,6 +26,7 @@ public class PackProximityManager : IPackProximityManager
         var loader = new PackProximitySettingsLoader();
         _proximitySettings = loader.LoadAll();
         _settings = _proximitySettings.Single(s => s.PackProximityRange == settingsType);
+        Main.DebugManager.RegisterDebugCommand("ll_debug_proximity", DebugData);
     }
 
     public void SelectSettings(PackProximityRange settingsType)
@@ -102,6 +105,8 @@ public class PackProximityManager : IPackProximityManager
         {
             return;
         }
+        
+        _distance = dinstance;;
 
         FadeoutTimer += Time.deltaTime;
         if (Main.AudioPlayer.IsPlaying
@@ -113,7 +118,7 @@ public class PackProximityManager : IPackProximityManager
                 // Too far
                 Main.AudioPlayer.Stop(3f);
             }
-            else if (dinstance < _settings.DistanceCombat)
+            else if (dinstance < _settings.DistanceCombat && !IsInSafety())
             {
                 // Consider it to be an intense combat, no fadeout!
                 FadeoutTimer = 0;
@@ -135,5 +140,20 @@ public class PackProximityManager : IPackProximityManager
                 FadeoutTimer = 0;
             }
         }
+    }
+
+    private string DebugData()
+    {
+        return $"IsInCombat: {IsInCombat}/{GameManager.m_IsPaused}/{GameManager.s_IsGameplaySuspended}/{GameManager.s_IsAISuspended}\n"
+               + $"Distance: {_distance:F2}, Range mode: {Range}\n"
+               + $"Fadeout timer: {FadeoutTimer}\n"
+               + $"IsInSafety: {IsInSafety()}";
+    }
+
+    private bool IsInSafety()
+    {
+        // is indoor that is not a cave or in a vehicle 
+        return GameManager.GetPlayerManagerComponent().InHibernationPreventionIndoorEnvironment()
+               || GameManager.GetPlayerInVehicle().IsInside();
     }
 }

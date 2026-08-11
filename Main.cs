@@ -27,10 +27,10 @@ public class Main : MelonMod
         Debug.Log($"[{Info.Name}] Version {Info.Version} loaded!");
         SettingsManager.OnLoad();
 
+        DebugManager = new DebugManagerProxy();
         PlaylistManager = new PlaylistManager();
         AudioPlayer = new AudioPlayer();
         PackProximityManager = new PackProximityManager(SettingsManager.Settings.ProximityRange);
-        DebugManager = new DebugManagerProxy();
         AddConsoleCommands();
     }
     
@@ -89,7 +89,6 @@ public class Main : MelonMod
         uConsole.RegisterCommand("ll_play_last", new Action(CommandPlayLast));
         uConsole.RegisterCommand("ll_silence", new Action(CommandSilence));
         uConsole.RegisterCommand("ll_stinger_weather", new Action(CommandStingerWeather));
-        DebugManager.RegisterDebugCommand("ll_debug_audio", AudioPlayer.DebugData);
     }
 
     private static void CommandStop()
