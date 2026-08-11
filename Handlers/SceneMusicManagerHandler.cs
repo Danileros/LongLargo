@@ -27,7 +27,7 @@ public class SceneMusicManagerHandler : MonoBehaviour
             return;
         }
 
-        LLogger.Debug("[SceneMusicManagerImpl] awakens");
+        LLogger.Debug("[SceneMusicManager] awakens");
         var delayModifier = SettingsManager.Settings.ExplorationDelay;
         if (delayModifier != 100)
         {
@@ -39,10 +39,13 @@ public class SceneMusicManagerHandler : MonoBehaviour
             _instance.m_TimeToPlayNextExploreMusic
                 = Time.time + _instance.m_MinSecondsBetweenExploreMusic * modifier + Random.Range(0, _delayRange);
         }
+        
+        Main.DebugManager.RegisterDebugCommand("ll_debug_timer", DebugOutput);
     }
 
     public void OnDestroy()
     {
+        Main.DebugManager.UnregisterDebugCommand("ll_debug_timer");
         LLogger.Debug("[SceneMusicManager] destroyed");
         Main.AudioPlayer.Stop(1f);
     }
@@ -86,5 +89,11 @@ public class SceneMusicManagerHandler : MonoBehaviour
         }
         
         return allowVanilla;
+    }
+
+    [HideFromIl2Cpp]
+    public string DebugOutput()
+    {
+        return $"Next at: {_instance.m_TimeToPlayNextExploreMusic - Time.time}";
     }
 }

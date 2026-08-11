@@ -228,17 +228,14 @@ public class AudioPlayer : IAudioPlayer
 
     public string DebugData()
     {
-        var time = Shot._audioSource.time;
-        var duration = LastSoundtrack?.Clip?.clipLength ?? 0;
+        var time = (int)Shot._audioSource.time;
+        var duration = (int)(LastSoundtrack?.Clip?.clipLength ?? 0);
         var playtime = IsPlaying ? $"{time/60:00}:{time%60:00}/{duration/60:00}:{duration%60:00}" : "N/A";
-        return $"IsPlaying:  {IsPlaying}\n" +
-               $"IsFading:   {IsFading}\n" +
-               $"IsPaused:   {IsPaused}\n" +
-               $"Looped:     {Shot._audioSource.loop}\n" +
-               $"Situation:  {LastSituation}\n" +
+        return $"IsPlaying: {IsPlaying}, IsFading: {IsFading}, IsPaused: {IsPaused}\n" +
+               $"Situation:  {LastSituation}, Looped: {Shot._audioSource.loop}\n" +
                $"Soundtrack: {LastSoundtrack?.TrackName ?? "none"}\n" +
                $"Delay:      {Time.time - LastTime:F1}\n" +
-               $"Time:       {playtime}";
+               $"Time:       {playtime}\n";
 
     }
 
