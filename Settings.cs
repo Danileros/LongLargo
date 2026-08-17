@@ -133,7 +133,7 @@ internal class Settings : JsonModSettings
             Main.AudioPlayer.StopIfSituation(SituationType.Timberwolf);
         }
         
-        Main.PackProximityManager.SelectSettings(ProximityRange);
+        Main.PackCombatManager.SelectSettings(ProximityRange);
     }
 
     protected override void OnChange(FieldInfo field, object oldValue, object newValue)

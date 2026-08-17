@@ -8,7 +8,7 @@ namespace LongLargo.Interfaces;
 /// Just enabling music for combat is not enough - player can successfully escape from them or they could stuck.
 /// Keeping combat music when player is 1 km away does not makes any sense.
 /// </summary>
-public interface IPackProximityManager
+public interface IPackCombatManager
 {
     /// <summary>
     /// Selects settings (when user changed it).
@@ -49,5 +49,5 @@ public interface IPackProximityManager
     /// <summary>
     /// Distance-based music play.
     /// </summary>
-    void UpdateMusic(float dinstance);
+    void UpdateMusic(float dinstance, bool moraleChanged);
 }

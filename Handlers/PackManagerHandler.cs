@@ -11,7 +11,9 @@ namespace LongLargo.Handlers;
 public class PackManagerHandler : MonoBehaviour
 {
     private PackManager _instance;
-    private float _distance;
+    
+    
+    private Dictionary<PackGroup, float> morales = new Dictionary<PackGroup, float>(4);
 
     public PackManagerHandler(IntPtr intPtr)  : base(intPtr) { }
 
@@ -31,13 +33,14 @@ public class PackManagerHandler : MonoBehaviour
     {
         _instance = packManager;
 
-        _distance = GetDistance();
-        Main.PackProximityManager.UpdateMusic(_distance);
+        var distance = GetDistance();
+        var moraleChanged = IsMoraleChanged();
+        Main.PackCombatManager.UpdateMusic(distance, moraleChanged);
     }
 
     private float GetDistance()
     {
-        if (Main.PackProximityManager.IsInCombat
+        if (Main.PackCombatManager.IsInCombat
             && !GameManager.m_IsPaused
             && !GameManager.s_IsGameplaySuspended
             && !GameManager.s_IsAISuspended)
@@ -71,6 +74,39 @@ public class PackManagerHandler : MonoBehaviour
         return 99999f;
     }
 
+    private bool IsMoraleChanged()
+    {
+        var moraleChanged = false;
+        var groupsInCombat = new List<PackGroup>(_instance.m_PackAnimalGroupByLeader.Count);
+        foreach (var packinfo in _instance.m_PackAnimalGroupByLeader)
+        {
+            var group = packinfo.Value;
+            var moraleModifier = group.m_PackMoraleModifier;
+            if (!morales.TryGetValue(group, out var morale) || !Mathf.Approximately(moraleModifier, morale))
+            {
+                moraleChanged = true;
+            }
+            
+            morales[group] = moraleModifier;
+            groupsInCombat.Add(group);
+        }
+
+        var groupsToRemove = morales
+            .Keys
+            .Where(g => !groupsInCombat.Contains(g))
+            .ToArray();
+        if (groupsToRemove.Length > 0)
+        {
+            moraleChanged = true;
+            foreach (var group in groupsToRemove)
+            {
+                morales.Remove(group);
+            }
+        }
+        
+        return moraleChanged;
+    }
+
     private string DebugData()
     {
         if (GameManager.m_vpFPSPlayer == null)
@@ -85,12 +121,12 @@ public class PackManagerHandler : MonoBehaviour
             var leader = packinfo.Key;
             var group = packinfo.Value;
             var lPos = leader.transform.position;
-            sb.AppendLine($"Pack:   {group.m_TargetAwarenessTime:F2} | {group.m_PackMoraleModifier}");
+            sb.AppendLine($"Pack:   {group.m_TargetAwarenessTime:F2} | {group.m_PackMoraleModifier:F2}");
             foreach (var animal in group.m_Members)
             {
                 var aPos = animal.transform.position;
                 var aDistance = Vector3.Distance(player.position, aPos);
-                sb.AppendLine($"Animal: {aDistance:F2} | {animal.m_StayWithinRadius}");
+                sb.AppendLine($"Animal: {aDistance:F2} | {animal.m_StayWithinRadius} | {animal.m_BaseAi.m_HoldGroundDistanceFromFire:F2} | {animal.m_BaseAi.m_HoldGroundOuterDistanceFromFire:F2}");
             }
         }
         

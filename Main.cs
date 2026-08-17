@@ -18,7 +18,7 @@ public class Main : MelonMod
     public static IAudioPlayer AudioPlayer { get; private set; }
     
     // Timberwolf combat special 
-    public static IPackProximityManager PackProximityManager { get; private set; }
+    public static IPackCombatManager PackCombatManager { get; private set; }
     
     public static DebugManagerProxy DebugManager { get; private set; }
 
@@ -30,14 +30,14 @@ public class Main : MelonMod
         DebugManager = new DebugManagerProxy();
         PlaylistManager = new PlaylistManager();
         AudioPlayer = new AudioPlayer();
-        PackProximityManager = new PackProximityManager(SettingsManager.Settings.ProximityRange);
+        PackCombatManager = new PackCombatManager(SettingsManager.Settings.ProximityRange);
         AddConsoleCommands();
     }
     
     public override void OnSceneWasLoaded(int buildIndex, string sceneName)
     {
         // Stops playing danger music
-        PackProximityManager.ForceLeaveCombat();
+        PackCombatManager.ForceLeaveCombat();
         AudioPlayer.StopIfSituation(SituationType.Stalked);
     }
 

@@ -172,7 +172,7 @@ public static class GameAudioManagerHandler
                 break;
             case "Play_TimberwolfCombat":
                 // situationInfo.Situation = SituationType.Timberwolf;
-                situationInfo.Situation = Main.PackProximityManager.OnPlayCombat(go);
+                situationInfo.Situation = Main.PackCombatManager.OnPlayCombat(go);
                 break;
             // stop loop events
             case "Stop_musicMood_AnimalStalking":
@@ -180,7 +180,7 @@ public static class GameAudioManagerHandler
                 Main.AudioPlayer.StopIfSituation(SituationType.Stalked, 3f);
                 break;
             case "Stop_TimberwolfCombat":
-                situationInfo.Situation = Main.PackProximityManager.OnStopCombat();
+                situationInfo.Situation = Main.PackCombatManager.OnStopCombat();
                 // situationInfo.Situation = SituationType.Disabled;
                 // Main.AudioPlayer.StopIfSituation(SituationType.Timberwolf, 3f);
                 break;
