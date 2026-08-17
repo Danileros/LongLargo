@@ -106,7 +106,7 @@ public class PackProximityManager : IPackProximityManager
             return;
         }
         
-        _distance = dinstance;;
+        _distance = dinstance;
 
         FadeoutTimer += Time.deltaTime;
         if (Main.AudioPlayer.IsPlaying

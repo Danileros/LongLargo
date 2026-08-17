@@ -153,7 +153,7 @@ public class AudioPlayer : IAudioPlayer
         if (SettingsManager.Settings.DebugMode)
         {
             LLogger.Debug("[Queue] Stopping");
-            LLogger.Debug(new System.Diagnostics.StackTrace(true).ToString());
+            // LLogger.Debug(new System.Diagnostics.StackTrace(true).ToString());
         }
         
         Shot._audioSource.Stop();
@@ -180,7 +180,7 @@ public class AudioPlayer : IAudioPlayer
             if (SettingsManager.Settings.DebugMode)
             {
                 LLogger.Debug($"[Queue] Stopping with fade out {fadeOut:N}");
-                LLogger.Debug(new System.Diagnostics.StackTrace(true).ToString());
+                // LLogger.Debug(new System.Diagnostics.StackTrace(true).ToString());
             }
             
             _lastFadeToken = MelonCoroutines.Start(this.StopRoutine(fadeOut));

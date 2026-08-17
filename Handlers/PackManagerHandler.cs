@@ -45,7 +45,7 @@ public class PackManagerHandler : MonoBehaviour
             try
             {
                 var distance = 99999f;
-                var playerPosition = GameManager.m_vpFPSPlayer.transform.position;
+                var playerPosition = GameManager.GetPlayerTransform().position;
                 foreach (var packinfo in _instance.m_PackAnimalGroupByLeader)
                 {
                     var group = packinfo.Value;
