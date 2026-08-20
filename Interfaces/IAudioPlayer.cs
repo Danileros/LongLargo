@@ -88,6 +88,11 @@ public interface IAudioPlayer
     /// Stops current track if it matches any situation from input. Input like ExplorationDay | ExplorationNight.
     /// </summary>
     void StopIfSituation(SituationType situations, float fadeOut = 0);
+
+    /// <summary>
+    /// Break the Silence.
+    /// </summary>
+    void StopIfSilence();
     
     /// <summary>
     /// Pauses.

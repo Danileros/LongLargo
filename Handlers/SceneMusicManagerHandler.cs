@@ -47,7 +47,7 @@ public class SceneMusicManagerHandler : MonoBehaviour
     {
         Main.DebugManager.UnregisterDebugCommand("ll_debug_timer");
         LLogger.Debug("[SceneMusicManager] destroyed");
-        Main.AudioPlayer.Stop(1f);
+        // Main.AudioPlayer.Stop(1f);
     }
 
     /// <summary>

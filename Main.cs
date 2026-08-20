@@ -11,6 +11,8 @@ namespace LongLargo;
 
 public class Main : MelonMod
 {
+    private string _previousSceneName;
+    
     // To get soundtracks
     public static IPlaylistManager PlaylistManager { get; private set; }
     
@@ -33,12 +35,72 @@ public class Main : MelonMod
         PackCombatManager = new PackCombatManager(SettingsManager.Settings.ProximityRange);
         AddConsoleCommands();
     }
-    
-    public override void OnSceneWasLoaded(int buildIndex, string sceneName)
+
+    public override void OnSceneWasUnloaded(int buildIndex, string sceneName)
     {
+        if (ScenesHelper.IsSubscene(sceneName))
+        {
+            base.OnSceneWasUnloaded(buildIndex, sceneName);
+            return;
+        }
+        
+        LLogger.Debug($"[Main] Scene {sceneName} unloaded");
+
         // Stops playing danger music
         PackCombatManager.ForceLeaveCombat();
-        AudioPlayer.StopIfSituation(SituationType.Stalked);
+        AudioPlayer.StopIfSituation(SituationType.Stalked, 1f);
+        AudioPlayer.StopIfSilence();
+        _previousSceneName = sceneName;
+        
+        base.OnSceneWasUnloaded(buildIndex, sceneName);
+    }
+
+    public override void OnSceneWasLoaded(int buildIndex, string sceneName)
+    {
+        if (ScenesHelper.IsMenu(sceneName) || ScenesHelper.IsTales(sceneName))
+        {
+            Main.AudioPlayer.Stop(1f);
+            base.OnSceneWasLoaded(buildIndex, sceneName);
+            return;
+        }
+        
+        if (ScenesHelper.IsSubscene(sceneName))
+        {
+            base.OnSceneWasLoaded(buildIndex, sceneName);
+            return;
+        }
+        
+        LLogger.Debug($"[Main] Scene {sceneName} loaded");
+
+        if (StopExplorationMusicOnTransit(sceneName))
+        {
+            Main.AudioPlayer.StopIfSituation(SituationTypeExtensions.GetExplorations(), 1f);
+        }
+
+        base.OnSceneWasLoaded(buildIndex, sceneName);
+    }
+
+    // Check if we are entering/exiting buildings.
+    // Most buildings has no exploration music so LL should not stop playing each time player visiting a small cabin.
+    private bool StopExplorationMusicOnTransit(string sceneName)
+    {
+        var locationFrom = ScenesHelper.GetLocationType(_previousSceneName);
+        var locationTo = ScenesHelper.GetLocationType(sceneName);
+
+        if (locationFrom == LocationType.Building || locationTo == LocationType.Building)
+        {
+            var buildingScene = locationFrom == LocationType.Building
+                ? _previousSceneName
+                : sceneName;
+
+            // However, Dam and Steam Tunnels somehow HAS exploration music so LL should stop music this time
+            if (!ScenesHelper.IsExplorationBuilding(buildingScene))
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public override void OnUpdate()
@@ -72,7 +134,7 @@ public class Main : MelonMod
         }
 
         var scene = GameManager.m_ActiveScene;
-        if (ScenesHelper.IsForbidden(scene) || ScenesHelper.IsTales(scene)) // Don't mess with tales
+        if (ScenesHelper.IsMenu(scene) || ScenesHelper.IsTales(scene)) // Don't mess with tales
         {
             return true;
         }
