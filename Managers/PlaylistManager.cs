@@ -132,10 +132,8 @@ public class PlaylistManager : IPlaylistManager
         return
             SettingsManager.Settings.ExplorationVanillaOnly && situation.IsExploration()
             || SettingsManager.Settings.WeatherVanillaOnly && situation.IsWeather()
-            || SettingsManager.Settings.TimeVanillaOnly && situation.IsTime()
             || SettingsManager.Settings.StalkedSuppress && (SituationType.Stalked).HasFlagSafe(situation)
-            || SettingsManager.Settings.TimberwolfSuppress && (SituationType.Timberwolf).HasFlagSafe(situation)
-            || SettingsManager.Settings.ConditionVanillaOnly && situation.IsCondition();
+            || SettingsManager.Settings.TimberwolfSuppress && (SituationType.Timberwolf).HasFlagSafe(situation);
     }
 
     private SoundtrackInfo ChooseRandomSoundtrack(ICollection<SoundtrackInfo> soundtracks, bool notVanilla = false)

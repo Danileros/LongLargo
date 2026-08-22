@@ -47,11 +47,11 @@ internal class Settings : JsonModSettings
 
     [Section("Exploration")]
 
-    [Name("Suppress Exploration soundtracks")]
-    [Description("If Yes, the exploration tracks would never play.")]
+    [Name("Suppress Exploration music")]
+    [Description("If Yes, the exploration music would never play.")]
     public bool ExplorationSuppress = false;
 
-    [Name("Vanilla only Exploration soundtracks")]
+    [Name("Disable modded Exploration music")]
     [Description("If Yes, only vanilla exploration tracks would play.")]
     public bool ExplorationVanillaOnly = false;
     
@@ -60,56 +60,38 @@ internal class Settings : JsonModSettings
     [Slider(1, 200)]
     public uint ExplorationDelay = 50;
 
-    [Section("Stalked")]
+    [Section("Danger")]
         
-    [Name("Suppress Stalked soundtracks")]
+    [Name("Suppress Stalked sound")]
     [Description("If Yes, you will be stalked silently.")]
     public bool StalkedSuppress = false;
-
-    // [Name("Vanilla only Stalked soundtracks")]
-    // [Description("If Yes, only vanilla tracks would play.")]
-    // public bool StalkedVanillaOnly = false;
-
-    [Section("Timberwolf")]
         
-    [Name("Suppress Timberwolf soundtracks")]
-    [Description("If Yes, you will fight timberwolves without custom soundtracks.")]
+    [Name("Suppress Timberwolf combat music")]
+    [Description("If Yes, you will fight timberwolves in silence (like in vanilla).")]
     public bool TimberwolfSuppress = false;
 
-    [Name("Combat range")]
+    [Name("Combat range (obsolete)")]
     [Description("If wolves are out of combat range, music will fade. Make it shorter if the music plays too intensely.")]
     [Choice("Very short", "Short", "Medium", "Default", "Long", "Very long")]
     public PackProximityRange ProximityRange = PackProximityRange.Default;
 
-    [Section("Weather")]
+    [Section("Stringers")]
         
-    [Name("Suppress Weather soundtracks")]
-    [Description("If Yes, the weather tracks would never play.")]
+    [Name("Suppress Weather stingers")]
+    [Description("If Yes, the weather stingers would never play.")]
     public bool WeatherSuppress = false;
 
-    [Name("Vanilla only Exploration soundtracks")]
-    [Description("If Yes, only vanilla exploration tracks would play.")]
+    [Name("Disable modded Weather stingers")]
+    [Description("If Yes, only vanilla weather stingers would play.")]
     public bool WeatherVanillaOnly = false;
-
-    [Section("Time of day")]
         
-    [Name("Suppress Time of day soundtracks")]
+    [Name("Suppress Time of day stingers")]
     [Description("If Yes, a dusk and dawn tracks would never play.")]
     public bool TimeSuppress = false;
-
-    [Name("Vanilla only Time soundtracks")]
-    [Description("If Yes, only vanilla dusk and dawn tracks would play.")]
-    public bool TimeVanillaOnly = false;
-
-    [Section("Condition")]
         
-    [Name("Suppress Success/Sorrow soundtracks")]
+    [Name("Suppress Success/Sorrow stingers")]
     [Description("If Yes, success and sorrow tracks would never play.")]
     public bool ConditionSuppress = false;
-
-    [Name("Vanilla only Success/Sorrow soundtracks")]
-    [Description("If Yes, only vanilla tracks would play.")]
-    public bool ConditionVanillaOnly = false;
 
     internal void Apply()
     {
@@ -163,13 +145,11 @@ internal class Settings : JsonModSettings
         SetFieldVisible(nameof(WeatherSuppress), ModEnabled);
         SetFieldVisible(nameof(WeatherVanillaOnly), ModEnabled);
         SetFieldVisible(nameof(TimeSuppress), ModEnabled);
-        SetFieldVisible(nameof(TimeVanillaOnly), ModEnabled);
         SetFieldVisible(nameof(StalkedSuppress), ModEnabled);
         // SetFieldVisible(nameof(StalkedVanillaOnly), ModEnabled);
         SetFieldVisible(nameof(TimberwolfSuppress), ModEnabled);
         SetFieldVisible(nameof(ProximityRange), ModEnabled);
         SetFieldVisible(nameof(ConditionSuppress), ModEnabled);
-        SetFieldVisible(nameof(ConditionVanillaOnly), ModEnabled);
         SetFieldVisible(nameof(KeyPlayNext), ModEnabled);
         SetFieldVisible(nameof(KeyStop), ModEnabled);
         SetFieldVisible(nameof(KeyPlayLast), ModEnabled);
