@@ -180,12 +180,14 @@ public class PackCombatManager : IPackCombatManager
         return GameManager.GetPlayerInVehicle().IsInside();
     }
 
-    // Actually, fire gives you 15m protection circle against timberwolves
+    // Actually, fire gives you 15m protection circle against timberwolves.
+    // It works for every fire stage, even while starting fire, you are already protected.
     // But only if campfire is visible for them. And I can't be sure it is visible from any direction.
-    // So only being really close counts by me
+    // And fire starting could fail. So only being really close to fully burning fire counts as safety.
     private bool IsNearFire()
     {
         return GameManager.GetPlayerTransform() != null
-               && GameManager.GetFireManagerComponent().PointInRadiusOfBurningFire(GameManager.GetPlayerTransform().position);
+               && GameManager.GetFireManagerComponent()
+                   .PointInRadiusOfFullyBurningFire(GameManager.GetPlayerTransform().position);
     }
 }
