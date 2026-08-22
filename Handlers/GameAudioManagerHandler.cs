@@ -197,10 +197,7 @@ public static class GameAudioManagerHandler
             case "Stop_Weather_PartlyCloudy":
             case "Stop_Weather_ToxicFog":
                 situationInfo.Situation = SituationType.Disabled;
-                if (Main.AudioPlayer.LastSituation.IsWeather())
-                {
-                    Main.AudioPlayer.Stop(1f);
-                }
+                Main.AudioPlayer.StopIfSituation(SituationTypeExtensions.GetWeathers());
 
                 break;
                 
@@ -318,13 +315,19 @@ public static class GameAudioManagerHandler
 
     private static bool PlayCLip(bool playVanilla, SituationInfo situationInfo, SoundtrackInfo soundtrack, GameObject go)
     {
-        if (!playVanilla && situationInfo.WithStringer)
+        if (situationInfo.WithStringer)
         {
-            // Play replaced stringer with delay, replace original event with stingerless
-            LLogger.Debug($"[GameAudioManager] Replacing event with {situationInfo.StingerlessEvent}");
-            Main.AudioPlayer.PlaySoftDelayed(soundtrack, situationInfo.Situation, situationInfo.Delay);
-            GameAudioManager.PlaySound(situationInfo.StingerlessEvent, go);
-            return false;
+            if (!playVanilla)
+            {
+                // Play replaced stringer with delay, replace original event with stingerless
+                LLogger.Debug($"[GameAudioManager] Replacing event with {situationInfo.StingerlessEvent}");
+                Main.AudioPlayer.PlaySoftDelayed(soundtrack, situationInfo.Situation, situationInfo.Delay);
+                GameAudioManager.PlaySound(situationInfo.StingerlessEvent, go);
+            }
+            else
+            {
+                Main.AudioPlayer.PlaySoftDelayed(soundtrack, situationInfo.Situation, situationInfo.Delay);
+            }
         }
 
         if (situationInfo.Situation.HasFlagSafe(SituationType.Stalked) || situationInfo.Situation.HasFlagSafe(SituationType.Timberwolf))

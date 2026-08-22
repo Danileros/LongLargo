@@ -280,9 +280,7 @@ public class AudioPlayer : IAudioPlayer
         uConsole.Log($"[LL] Now playing: {soundtrack.TrackName}");
         
         Shot._audioSource.loop = loop;
-        if (delay <= 0.001f
-            || soundtrack == Main.PlaylistManager.LongSilence
-            || soundtrack == Main.PlaylistManager.ShortSilence)
+        if (delay <= 0.001f)
         {
             Shot._audioSource.Play();
             return;
