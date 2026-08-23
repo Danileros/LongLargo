@@ -146,7 +146,6 @@ internal class Settings : JsonModSettings
         SetFieldVisible(nameof(WeatherVanillaOnly), ModEnabled);
         SetFieldVisible(nameof(TimeSuppress), ModEnabled);
         SetFieldVisible(nameof(StalkedSuppress), ModEnabled);
-        // SetFieldVisible(nameof(StalkedVanillaOnly), ModEnabled);
         SetFieldVisible(nameof(TimberwolfSuppress), ModEnabled);
         SetFieldVisible(nameof(ProximityRange), ModEnabled);
         SetFieldVisible(nameof(ConditionSuppress), ModEnabled);

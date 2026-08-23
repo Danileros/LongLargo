@@ -18,6 +18,8 @@ public class AudioPlayer : IAudioPlayer
 
     public SoundtrackInfo LastSoundtrack { get; private set; }
 
+    public float LastDelay { get; set; }
+
     public bool IsFading { get; private set; }
 
     public bool IsPaused => !IsPlaying && Shot._audioSource.time > 0f;
@@ -242,12 +244,17 @@ public class AudioPlayer : IAudioPlayer
         var time = (int)Shot._audioSource.time;
         var duration = (int)(LastSoundtrack?.Clip?.clipLength ?? 0);
         var playtime = IsPlaying ? $"{time/60:00}:{time%60:00}/{duration/60:00}:{duration%60:00}" : "N/A";
+        string delay = "N/A";
+        if (IsPlaying && time <= 0)
+        {
+            delay = $"{Time.time - LastTime:F1}/{LastDelay}";
+        }
+
         return $"IsPlaying: {IsPlaying}, IsFading: {IsFading}, IsPaused: {IsPaused}\n" +
                $"Situation:  {LastSituation}, Looped: {Shot._audioSource.loop}\n" +
                $"Soundtrack: {LastSoundtrack?.TrackName ?? "none"}\n" +
-               $"Delay:      {Time.time - LastTime:F1}\n" +
+               $"Delay:      {delay}\n" +
                $"Time:       {playtime}";
-
     }
 
     private void StopAllCoroutines()
@@ -273,6 +280,7 @@ public class AudioPlayer : IAudioPlayer
         LastSoundtrack = soundtrack;
         LastSituation = situation;
         LastTime = Time.time;
+        LastDelay = delay;
         Shot._audioSource.Stop();
         ResetVolume();
         Shot._audioSource.clip = clip.audioClip;
