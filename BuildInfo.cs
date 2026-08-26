@@ -23,7 +23,7 @@ namespace LongLargo
 		public const string Author                          = "Danileros";
 		/// <summary>Current version</summary>
 		/// <value>This should always be <see href="https://semver.org">Semantic Versioning</see></value>
-		public const string Version                         = "1.1.1";
+		public const string Version                         = "1.1.3";
 		/// <summary>Name used on GUI's, like ModSettings</summary>
 		public const string GuiName                         = "Long Largo";
 		/// <summary>The minimum Melon Loader version that your mod requires</summary>
