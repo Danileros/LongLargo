@@ -89,7 +89,8 @@ public class PlaylistManager : IPlaylistManager
                 s != Main.AudioPlayer.LastSoundtrack
                 && s.SituationsRestrictsTo.HasFlagSafe(situation)
                 && s.LocationsTypeRestrictTo.HasFlag(locationType)
-                && (s.LocationRestrictTo is null or { Length: 0 } || s.LocationRestrictTo.Contains(scene)))
+                && (s.LocationRestrictTo is null or { Length: 0 } || s.LocationRestrictTo.Contains(scene))
+                && (!SettingsManager.Settings.DisableCopyrightedMusic || s.Copyright != true))
             .ToArray();
 
         var soundtrack = ChooseRandomSoundtrack(soundtracks, notVanilla);
@@ -113,7 +114,8 @@ public class PlaylistManager : IPlaylistManager
         var soundtracks = _soundtracks
             .Where(s =>
                 s != Main.AudioPlayer.LastSoundtrack
-                && s.SituationsRestrictsTo.HasFlagSafe(situation))
+                && s.SituationsRestrictsTo.HasFlagSafe(situation)
+                && (!SettingsManager.Settings.DisableCopyrightedMusic || s.Copyright != true))
             .ToArray();
 
         var soundtrack = ChooseRandomSoundtrack(soundtracks, notVanilla);

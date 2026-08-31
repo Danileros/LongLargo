@@ -56,4 +56,9 @@ public class SoundtrackInfo
     /// Only for Timberwolf combat loop.
     /// </summary>
     public string StopTrackName { get; set; } = null;
+    
+    /// <summary>
+    /// Music is under copyright.
+    /// </summary>
+    public bool? Copyright { get; set; } = null;
 }

@@ -34,7 +34,10 @@ internal class Settings : JsonModSettings
     [Description("Chance to play Vanilla soundtrack. 200 would make Vanilla play twice more often than modded.")]
     [Slider(0, 400)]
     public uint ModVanillaMusicChance = 100;
-    
+
+    [Name("Disable Copyrighted Music")]
+    [Description("Set it to Yes if you are streaming on Youtube.")]
+    public bool DisableCopyrightedMusic = false;
     
     [Name("Play next")]
     public KeyCode KeyPlayNext = KeyCode.None;
@@ -116,6 +119,11 @@ internal class Settings : JsonModSettings
         }
         
         Main.PackCombatManager.SelectSettings(ProximityRange);
+
+        if (Main.AudioPlayer.IsPlaying && Main.AudioPlayer.LastSoundtrack.Copyright == true)
+        {
+            Main.AudioPlayer.Stop();
+        }
     }
 
     protected override void OnChange(FieldInfo field, object oldValue, object newValue)

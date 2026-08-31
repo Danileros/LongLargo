@@ -196,6 +196,12 @@ public class Main : MelonMod
             uConsole.Log($"[LL] No track found with name {trackName}");
             return;
         }
+
+        if (soundtrack.Copyright == true && SettingsManager.Settings.DisableCopyrightedMusic)
+        {
+            uConsole.Log($"[LL] 'Disable Copyrighted Music' restricts playing {trackName}.");
+            return;
+        }
             
         AudioPlayer.PlayHard(soundtrack, SituationType.Disabled);
     }
