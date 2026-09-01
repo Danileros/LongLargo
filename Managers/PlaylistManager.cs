@@ -74,7 +74,7 @@ public class PlaylistManager : IPlaylistManager
         }
     }
     
-    public (SoundtrackInfo, bool) GetExplorationSoundtrack(SituationType situation, bool notVanilla = false)
+    public (SoundtrackInfo, bool) GetExplorationSoundtrack(FSituationType situation, bool excludeVanillaMusic = false)
     {
         if (IsVanillaOnly(situation))
         {
@@ -93,7 +93,7 @@ public class PlaylistManager : IPlaylistManager
                 && (!SettingsManager.Settings.DisableCopyrightedMusic || s.Copyright != true))
             .ToArray();
 
-        var soundtrack = ChooseRandomSoundtrack(soundtracks, notVanilla);
+        var soundtrack = ChooseRandomSoundtrack(soundtracks, situation, excludeVanillaMusic);
         if (soundtrack != null)
         {
             return (soundtrack, false);
@@ -104,7 +104,7 @@ public class PlaylistManager : IPlaylistManager
         }
     }
 
-    public (SoundtrackInfo, bool) GetSituationSoundtrack(SituationType situation, bool notVanilla = false)
+    public (SoundtrackInfo, bool) GetSituationSoundtrack(FSituationType situation, bool excludeVanillaMusic = false)
     {
         if (IsVanillaOnly(situation))
         {
@@ -118,7 +118,7 @@ public class PlaylistManager : IPlaylistManager
                 && (!SettingsManager.Settings.DisableCopyrightedMusic || s.Copyright != true))
             .ToArray();
 
-        var soundtrack = ChooseRandomSoundtrack(soundtracks, notVanilla);
+        var soundtrack = ChooseRandomSoundtrack(soundtracks, situation, excludeVanillaMusic);
         if (soundtrack != null)
         {
             return (soundtrack, false);
@@ -129,27 +129,31 @@ public class PlaylistManager : IPlaylistManager
         }
     }
 
-    private bool IsVanillaOnly(SituationType situation)
+    private bool IsVanillaOnly(FSituationType situation)
     {
         return
-            SettingsManager.Settings.ExplorationVanillaOnly && situation.IsExploration()
-            || SettingsManager.Settings.WeatherVanillaOnly && situation.IsWeather()
-            || SettingsManager.Settings.StalkedSuppress && (SituationType.Stalked).HasFlagSafe(situation)
-            || SettingsManager.Settings.TimberwolfSuppress && (SituationType.Timberwolf).HasFlagSafe(situation);
+            SettingsManager.Settings.ExplorationMusicMode == EExplorationMusicMode.Vanilla && situation.IsExploration()
+            || SettingsManager.Settings.WeatherMode == EWeatherStingerMode.Vanilla && situation.IsWeather()
+            || SettingsManager.Settings.StalkedMode == EStalkedMode.Vanilla && (FSituationType.Stalked).HasFlagSafe(situation)
+            || SettingsManager.Settings.TimberwolfSuppress && (FSituationType.Timberwolf).HasFlagSafe(situation);
     }
 
-    private SoundtrackInfo ChooseRandomSoundtrack(ICollection<SoundtrackInfo> soundtracks, bool notVanilla = false)
+    private SoundtrackInfo ChooseRandomSoundtrack(ICollection<SoundtrackInfo> soundtracks,
+        FSituationType situation,
+        bool excludeVanillaMusic = false)
     {
-        var vanillaChance = notVanilla ? 0 : SettingsManager.Settings.ModVanillaMusicChance;
-        var sum = soundtracks.Sum(s => s.Chance) + vanillaChance;
-        var choosenOne = UnityEngine.Random.Range(0, sum);
-        if (choosenOne < vanillaChance)
+        var customWeightsSum = soundtracks.Sum(s => s.Chance);
+        var vanillaWeight = CalculateVanillaWeight(situation, excludeVanillaMusic, customWeightsSum);
+
+        var totalWeights = customWeightsSum + vanillaWeight;
+        var choosenOne = UnityEngine.Random.Range(0, totalWeights);
+        if (choosenOne < vanillaWeight)
         {
             return null; // vanilla
         }
         else
         {
-            choosenOne -= vanillaChance;
+            choosenOne -= vanillaWeight;
             foreach (var soundtrack in soundtracks)
             {
                 choosenOne -= soundtrack.Chance;
@@ -161,5 +165,96 @@ public class PlaylistManager : IPlaylistManager
         }
         
         return null;
+    }
+
+    private long CalculateVanillaWeight(FSituationType situation, bool excludeVanillaMusic, long customWeightsSum)
+    {
+        long vanillaWeight;
+        if (excludeVanillaMusic)
+        {
+            vanillaWeight = 0;
+        }
+        else
+        {
+            switch (situation)
+            {
+                case FSituationType.ExplorationDay:
+                case FSituationType.ExplorationNight:
+                case FSituationType.ExplorationAurora:
+                    vanillaWeight = CalculateExplorationWeight(customWeightsSum);
+                    break;
+                case FSituationType.WeatherClear:
+                case FSituationType.WeatherFog:
+                case FSituationType.WeatherSnow:
+                case FSituationType.WeatherBlizzard:
+                    vanillaWeight = CalculateWeatherWeight(customWeightsSum);
+                    break;
+                case FSituationType.Stalked:
+                    vanillaWeight = CalculateStalkedWeight(customWeightsSum);
+                    break;
+                case FSituationType.Timberwolf:
+                    vanillaWeight = 0;
+                    break;
+                default:
+                    vanillaWeight = 100;
+                    break;
+            }
+        }
+
+        return vanillaWeight;
+    }
+
+    private long CalculateExplorationWeight(long customWeightsSum)
+    {
+        switch(SettingsManager.Settings.ExplorationMusicMode)
+        {
+            case EExplorationMusicMode.Suppress:
+            case EExplorationMusicMode.CustomOnly:
+                return 0;
+            case EExplorationMusicMode.X05:
+                return 50;
+            case EExplorationMusicMode.Default:
+                return 100;
+            case EExplorationMusicMode.X2:
+                return 200;
+            case EExplorationMusicMode.X5:
+                return 500;
+            case EExplorationMusicMode.X10:
+                return 1000;
+            case EExplorationMusicMode.Balanced:
+                return customWeightsSum;
+            default:
+                return 0;
+        }
+    }
+
+    private long CalculateWeatherWeight(long customWeightsSum)
+    {
+        switch(SettingsManager.Settings.WeatherMode)
+        {
+            case EWeatherStingerMode.Suppress:
+            case EWeatherStingerMode.CustomOnly:
+                return 0;
+            case EWeatherStingerMode.Default:
+                return 100;
+            case EWeatherStingerMode.Balanced:
+                return customWeightsSum;
+            default:
+                return 0;
+        }
+    }
+
+    private long CalculateStalkedWeight(long customWeightsSum)
+    {
+        switch(SettingsManager.Settings.StalkedMode)
+        {
+            case EStalkedMode.Suppress:
+            case EStalkedMode.Wintermute:
+                return 0;
+            case EStalkedMode.Default:
+                return 100;
+            default:
+                return 0;
+        }
     }
 }

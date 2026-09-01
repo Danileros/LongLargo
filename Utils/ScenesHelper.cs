@@ -26,49 +26,49 @@ public static class ScenesHelper
             || sceneName == "DamTransitionZone";
     }
     
-    public static LocationType GetLocationType(string sceneName)
+    public static FLocationType GetLocationType(string sceneName)
     {
         if (IsMenu(sceneName) || IsSubscene(sceneName))
         {
-            return LocationType.Disabled;
+            return FLocationType.Disabled;
         }
         
         if (sceneName.EndsWith("Region")
             || sceneName.EndsWith("SurvivalZone")) // BlackrockPrisonSurvivalZone is a part of BlackrockRegion for me
         {
-            return LocationType.Region;
+            return FLocationType.Region;
         }
 
         if (sceneName.Contains("MineTransitionZone"))
         {
-            return LocationType.Mine;
+            return FLocationType.Mine;
         }
 
         if (sceneName.Contains("CaveTransitionZone"))
         {
-            return LocationType.Cave;
+            return FLocationType.Cave;
         }
 
         if (sceneName.Contains("DamTransitionZone"))
         {
-            return LocationType.Building;
+            return FLocationType.Building;
         }
 
         if (sceneName.Contains("TransitionZone"))
         {
-            return LocationType.TransitionZone;
+            return FLocationType.TransitionZone;
         }
 
         if (sceneName.Contains("Cave"))
         {
-            return LocationType.Cave;
+            return FLocationType.Cave;
         }
 
         if (sceneName.Contains("Mine"))
         {
-            return LocationType.Mine;
+            return FLocationType.Mine;
         }
 
-        return LocationType.Building;
+        return FLocationType.Building;
     }
 }

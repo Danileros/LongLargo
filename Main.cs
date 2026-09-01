@@ -32,7 +32,7 @@ public class Main : MelonMod
         DebugManager = new DebugManagerProxy();
         PlaylistManager = new PlaylistManager();
         AudioPlayer = new AudioPlayer();
-        PackCombatManager = new PackCombatManager(SettingsManager.Settings.ProximityRange);
+        PackCombatManager = new PackCombatManager(EPackProximityRange.Default);
         AddConsoleCommands();
     }
 
@@ -48,7 +48,7 @@ public class Main : MelonMod
 
         // Stops playing danger music
         PackCombatManager.ForceLeaveCombat();
-        AudioPlayer.StopIfSituation(SituationType.Stalked, 1f);
+        AudioPlayer.StopIfSituation(FSituationType.Stalked, 1f);
         AudioPlayer.StopIfSilence();
         _previousSceneName = sceneName;
         
@@ -87,9 +87,9 @@ public class Main : MelonMod
         var locationFrom = ScenesHelper.GetLocationType(_previousSceneName);
         var locationTo = ScenesHelper.GetLocationType(sceneName);
 
-        if (locationFrom == LocationType.Building || locationTo == LocationType.Building)
+        if (locationFrom == FLocationType.Building || locationTo == FLocationType.Building)
         {
-            var buildingScene = locationFrom == LocationType.Building
+            var buildingScene = locationFrom == FLocationType.Building
                 ? _previousSceneName
                 : sceneName;
 
@@ -203,25 +203,25 @@ public class Main : MelonMod
             return;
         }
             
-        AudioPlayer.PlayHard(soundtrack, SituationType.Disabled);
+        AudioPlayer.PlayHard(soundtrack, FSituationType.Disabled);
     }
     
     private static void CommandPlayNext()
     {
         var (soundtrack, _)
             = PlaylistManager.GetExplorationSoundtrack(SituationTypeExtensions.GetExplorationSituation(),true);
-        AudioPlayer.PlayHard(soundtrack, SituationType.Disabled);
+        AudioPlayer.PlayHard(soundtrack, FSituationType.Disabled);
     }
     
     private static void CommandPlayLast()
     {
-        AudioPlayer.PlayHard(AudioPlayer.LastSoundtrack, SituationType.Disabled);
+        AudioPlayer.PlayHard(AudioPlayer.LastSoundtrack, FSituationType.Disabled);
     }
     
     private static void CommandSilence()
     {
         var soundtrack = PlaylistManager.ShortSilence;
-        AudioPlayer.PlayHard(soundtrack, SituationType.Disabled);
+        AudioPlayer.PlayHard(soundtrack, FSituationType.Disabled);
     }
 
     private static void CommandStingerWeather()

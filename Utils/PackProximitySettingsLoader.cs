@@ -6,36 +6,36 @@ public class PackProximitySettingsLoader
 {
     public List<PackProximitySettings> LoadAll()
     {
-        var length = (int)Enum.GetValues<PackProximityRange>().Max() + 1;
+        var length = (int)Enum.GetValues<EPackProximityRange>().Max() + 1;
         var list = new List<PackProximitySettings>(length);
         
         list.Add(new PackProximitySettings(
-            PackProximityRange.Default,
+            EPackProximityRange.Default,
             30,
             50,
             150));
         list.Add(new PackProximitySettings(
-            PackProximityRange.Short,
+            EPackProximityRange.Short,
             25,
             20,
             150));
         list.Add(new PackProximitySettings(
-            PackProximityRange.VeryShort,
+            EPackProximityRange.VeryShort,
             20,
             10,
             150));
         list.Add(new PackProximitySettings(
-            PackProximityRange.Medium,
+            EPackProximityRange.Medium,
             30,
             35,
             150));
         list.Add(new PackProximitySettings(
-            PackProximityRange.Long,
+            EPackProximityRange.Long,
             35,
             60,
             150));
         list.Add(new PackProximitySettings(
-            PackProximityRange.VeryLong,
+            EPackProximityRange.VeryLong,
             40,
             70,
             150));

@@ -1,6 +1,7 @@
 using Il2Cpp;
 using Il2CppInterop.Runtime.Attributes;
 using LongLargo.Managers;
+using LongLargo.Models;
 using LongLargo.Utils;
 using MelonLoader;
 using UnityEngine;
@@ -50,7 +51,7 @@ public class MusicEventManagerHandler : MonoBehaviour
     [HideFromIl2Cpp]
     public bool CheckForSorrow()
     {
-        return !SettingsManager.Settings.StalkedSuppress;
+        return !SettingsManager.Settings.ConditionSuppress;
     }
 
     [HideFromIl2Cpp]

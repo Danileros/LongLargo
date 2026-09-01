@@ -10,7 +10,7 @@ public interface IAudioPlayer
     /// <summary>
     /// Situation that triggered current (or last) soundtrack. Always one flag.
     /// </summary>
-    SituationType LastSituation { get; }
+    FSituationType LastSituation { get; }
     
     /// <summary>
     /// Last (or current) soundtrack. Can be null.
@@ -48,7 +48,7 @@ public interface IAudioPlayer
     /// <param name="soundtrack">Soundtrack.</param>
     /// <param name="situation">Situation.</param>
     /// <param name="loop">true if it should be looped.</param>
-    void PlaySoft(SoundtrackInfo soundtrack, SituationType situation, bool loop = false);
+    void PlaySoft(SoundtrackInfo soundtrack, FSituationType situation, bool loop = false);
 
     /// <summary>
     /// Tries to play with delay and gently refuses if something is playing already.
@@ -56,7 +56,7 @@ public interface IAudioPlayer
     /// <param name="soundtrack">Soundtrack.</param>
     /// <param name="situation">Situation.</param>
     /// <param name="delay">Delay to start.</param>
-    void PlaySoftDelayed(SoundtrackInfo soundtrack, SituationType situation, float delay);
+    void PlaySoftDelayed(SoundtrackInfo soundtrack, FSituationType situation, float delay);
 
     /// <summary>
     /// Stops whatever we play already and plays.
@@ -64,7 +64,7 @@ public interface IAudioPlayer
     /// <param name="soundtrack">Soundtrack.</param>
     /// <param name="situation">Situation.</param>
     /// <param name="loop">true if it should be looped.</param>
-    void PlayHard(SoundtrackInfo soundtrack, SituationType situation, bool loop = false);
+    void PlayHard(SoundtrackInfo soundtrack, FSituationType situation, bool loop = false);
 
     /// <summary>
     /// Stops whatever we play already and plays.
@@ -72,7 +72,7 @@ public interface IAudioPlayer
     /// <param name="soundtrack">Soundtrack.</param>
     /// <param name="situation">Situation.</param>
     /// <param name="fadeOut">time to fade out current track (if any).</param>
-    void PlayHard(SoundtrackInfo soundtrack, SituationType situation, float fadeOut);
+    void PlayHard(SoundtrackInfo soundtrack, FSituationType situation, float fadeOut);
 
     /// <summary>
     /// Stops current track and all routines.
@@ -87,7 +87,7 @@ public interface IAudioPlayer
     /// <summary>
     /// Stops current track if it matches any situation from input. Input like ExplorationDay | ExplorationNight.
     /// </summary>
-    void StopIfSituation(SituationType situations, float fadeOut = 0);
+    void StopIfSituation(FSituationType situations, float fadeOut = 0);
 
     /// <summary>
     /// Break the Silence.

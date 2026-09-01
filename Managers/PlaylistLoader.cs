@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Reflection;
 using System.Text.Json;
 using AudioMgr;
+using LongLargo.Extensions;
 using LongLargo.Models;
 using LongLargo.Utils;
 using NAudio.Wave;
@@ -63,17 +64,17 @@ public class PlaylistLoader
         {
             TrackName = "shortsilence",
             AssetBundle = assetBundle,
-            SituationsRestrictsTo = SituationType.Disabled,
+            SituationsRestrictsTo = FSituationType.Disabled,
             Clip = shortSilenceClip,
-            LocationsTypeRestrictTo = LocationType.Any,
+            LocationsTypeRestrictTo = FLocationType.Any,
         };
         longSilence = new SoundtrackInfo()
         {
             TrackName = "longsilence",
             AssetBundle = assetBundle,
-            SituationsRestrictsTo = SituationType.Disabled,
+            SituationsRestrictsTo = FSituationType.Disabled,
             Clip = longSilenceClip,
-            LocationsTypeRestrictTo = LocationType.Any,
+            LocationsTypeRestrictTo = FLocationType.Any,
         };
     }
     
@@ -91,19 +92,20 @@ public class PlaylistLoader
         var clipManager = AudioMaster.NewClipManager();
         try
         {
-            if (SettingsManager.Settings.EnableUglyLoad)
+            if (true)
             {
                 LoadUgly(soundtrackPaths, clipManager);
             }
             else
             {
-                foreach (var path in soundtrackPaths)
-                {
-                    clipManager.LoadClipFromFile(
-                        GetTrackName(path),
-                        path,
-                        ClipManager.LoadType.Stream);
-                }
+                //// The time will come
+                // foreach (var path in soundtrackPaths)
+                // {
+                //     clipManager.LoadClipFromFile(
+                //         GetTrackName(path),
+                //         path,
+                //         ClipManager.LoadType.Stream);
+                // }
             }
         }
         catch (Exception e)
@@ -154,7 +156,18 @@ public class PlaylistLoader
             .ToArray();
         localPlaylist.SoundtrackInfos.AddRange(missingSoundtracks);
 
-        if (missingSoundtracks.Length > 0 || deleted > 0)
+        // demonstrate "StopTrackName" for custom timberwolf combat
+        var updated = 0;
+        foreach (var soundtrackInfo in localPlaylist.SoundtrackInfos)
+        {
+            if (soundtrackInfo.SituationsRestrictsTo.HasFlagSafe(FSituationType.Timberwolf))
+            {
+                soundtrackInfo.StopTrackName = string.Empty;
+                updated++;
+            }
+        }
+
+        if (missingSoundtracks.Length > 0 || deleted > 0 || updated > 0)
         {
             LLogger.Log("Playlist mismatch detected, updating PlaylistInfo.json");
             WriteUpdatedPlaylist(localPlaylist, jsonPath);
@@ -248,8 +261,15 @@ Fields:
 
     private void LoadLlAudio(List<SoundtrackInfo> loadedSoundtracks)
     {
-        var naudio = Assembly.LoadFrom(Path.Combine(FolderPath, "NAudio.dll"));
-        LLogger.Log("Loaded NAudio");
+        try
+        {
+            var naudio = Assembly.LoadFrom(Path.Combine(FolderPath, "NAudio.dll"));
+            LLogger.Log("Loaded NAudio");
+        }
+        catch (Exception e)
+        {
+            LLogger.Error(e.ToString());
+        }
         
         var rawPaths = Directory.GetFiles(FolderPath, "*.raw", SearchOption.TopDirectoryOnly);
         var ilStreams = rawPaths
@@ -312,17 +332,24 @@ Fields:
 
     private void LoadUgly(string[] soundtrackPaths, ClipManager clipManager)
     {
-        if (soundtrackPaths.Length == 0)
+        try
         {
-            return;
-        }
+            if (soundtrackPaths.Length == 0)
+            {
+                return;
+            }
 
-        foreach (var path in soundtrackPaths)
+            foreach (var path in soundtrackPaths)
+            {
+                var (pcmData, channels, sampleRate) = LoadAudioAsFloat(path);
+                var name = GetTrackName(path);
+                var audioClip = LoadFromRawPCM(name, pcmData, channels, sampleRate);
+                clipManager.LoadAudioclip(name, audioClip);
+            }
+        }
+        catch (Exception e)
         {
-            var (pcmData, channels, sampleRate) = LoadAudioAsFloat(path);
-            var name = GetTrackName(path);
-            var audioClip = LoadFromRawPCM(name, pcmData, channels, sampleRate);
-            clipManager.LoadAudioclip(name, audioClip);
+            LLogger.Error(e.ToString());
         }
     }
 

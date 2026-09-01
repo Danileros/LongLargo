@@ -32,11 +32,11 @@ public interface IPlaylistManager
     /// Gets random exploration clip.
     /// </summary>
     /// <returns>(SoundtrackInfo, playVanilla)</returns>
-    (SoundtrackInfo, bool) GetExplorationSoundtrack(SituationType situation, bool notVanilla = false);
+    (SoundtrackInfo, bool) GetExplorationSoundtrack(FSituationType situation, bool excludeVanillaMusic = false);
 
     /// <summary>
     /// Gets random situation soundtrack.
     /// </summary>
     /// <returns>(SoundtrackInfo, playVanilla)</returns>
-    (SoundtrackInfo, bool) GetSituationSoundtrack(SituationType situation, bool notVanilla = false);
+    (SoundtrackInfo, bool) GetSituationSoundtrack(FSituationType situation, bool excludeVanillaMusic = false);
 }

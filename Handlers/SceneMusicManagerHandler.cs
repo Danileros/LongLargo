@@ -2,6 +2,7 @@ using Il2Cpp;
 using Il2CppInterop.Runtime.Attributes;
 using LongLargo.Extensions;
 using LongLargo.Managers;
+using LongLargo.Models;
 using LongLargo.Utils;
 using MelonLoader;
 using UnityEngine;
@@ -62,7 +63,7 @@ public class SceneMusicManagerHandler : MonoBehaviour
             return true;
         }
 
-        if (SettingsManager.Settings.ExplorationSuppress)
+        if (SettingsManager.Settings.ExplorationMusicMode == EExplorationMusicMode.Suppress)
         {
             _instance.ResetExploreMusicTimer();
             return false;

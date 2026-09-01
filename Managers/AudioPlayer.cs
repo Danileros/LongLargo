@@ -14,7 +14,7 @@ public class AudioPlayer : IAudioPlayer
 {
     private float LastTime = Time.time;
 
-    public SituationType LastSituation { get; private set; } = SituationType.Disabled;
+    public FSituationType LastSituation { get; private set; } = FSituationType.Disabled;
 
     public SoundtrackInfo LastSoundtrack { get; private set; }
 
@@ -99,7 +99,7 @@ public class AudioPlayer : IAudioPlayer
         Shot._audioSource.volume = volume;
     }
     
-    public void PlaySoft(SoundtrackInfo soundtrack, SituationType situation, bool loop = false)
+    public void PlaySoft(SoundtrackInfo soundtrack, FSituationType situation, bool loop = false)
     {
         if (soundtrack != null && !IsPlaying)
         {
@@ -109,7 +109,7 @@ public class AudioPlayer : IAudioPlayer
         }
     }
 
-    public void PlaySoftDelayed(SoundtrackInfo soundtrack, SituationType situation, float delay)
+    public void PlaySoftDelayed(SoundtrackInfo soundtrack, FSituationType situation, float delay)
     {
         if (soundtrack != null && !IsPlaying)
         {
@@ -120,7 +120,7 @@ public class AudioPlayer : IAudioPlayer
         }
     }
 
-    public void PlayHard(SoundtrackInfo soundtrack, SituationType situation, bool loop = false)
+    public void PlayHard(SoundtrackInfo soundtrack, FSituationType situation, bool loop = false)
     {
         if (soundtrack != null)
         {
@@ -130,7 +130,7 @@ public class AudioPlayer : IAudioPlayer
         }
     }
 
-    public void PlayHard(SoundtrackInfo soundtrack, SituationType situation, float fadeOut)
+    public void PlayHard(SoundtrackInfo soundtrack, FSituationType situation, float fadeOut)
     {
         if (soundtrack != null)
         {
@@ -185,7 +185,7 @@ public class AudioPlayer : IAudioPlayer
         }
     }
 
-    public void StopIfSituation(SituationType situations, float fadeOut = 0)
+    public void StopIfSituation(FSituationType situations, float fadeOut = 0)
     {
         if (situations.HasFlagSafe(LastSituation))
         {
@@ -274,7 +274,7 @@ public class AudioPlayer : IAudioPlayer
         }
     }
 
-    private void PlayInternal(SoundtrackInfo soundtrack, SituationType situation, bool loop, float delay = 0.0f)
+    private void PlayInternal(SoundtrackInfo soundtrack, FSituationType situation, bool loop, float delay = 0.0f)
     {
         var clip = soundtrack.Clip;
         LastSoundtrack = soundtrack;
@@ -297,7 +297,7 @@ public class AudioPlayer : IAudioPlayer
         Shot._audioSource.PlayScheduled(AudioSettings.dspTime + delay);
     }
 
-    private IEnumerator PlayAfterFade(SoundtrackInfo soundtrack, SituationType situation, float fadeOut)
+    private IEnumerator PlayAfterFade(SoundtrackInfo soundtrack, FSituationType situation, float fadeOut)
     {
         yield return FadeRoutine(fadeOut);
         PlayInternal(soundtrack, situation, false);

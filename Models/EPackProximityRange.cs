@@ -1,6 +1,6 @@
 namespace LongLargo.Models;
 
-public enum PackProximityRange
+public enum EPackProximityRange
 {
     VeryShort,
     Short,

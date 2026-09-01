@@ -5,83 +5,83 @@ namespace LongLargo.Extensions;
 
 public static class SituationTypeExtensions
 {
-    public static SituationType GetWeathers()
+    public static FSituationType GetWeathers()
     {
-        return SituationType.WeatherClear
-                | SituationType.WeatherFog
-                | SituationType.WeatherSnow
-                | SituationType.WeatherBlizzard;
+        return FSituationType.WeatherClear
+                | FSituationType.WeatherFog
+                | FSituationType.WeatherSnow
+                | FSituationType.WeatherBlizzard;
     }
     
-    public static SituationType GetTimes()
+    public static FSituationType GetTimes()
     {
-        return SituationType.TimeDawn
-                | SituationType.TimeDusk;
+        return FSituationType.TimeDawn
+                | FSituationType.TimeDusk;
     }
     
-    public static SituationType GetExplorations()
+    public static FSituationType GetExplorations()
     {
-        return SituationType.ExplorationAurora
-                | SituationType.ExplorationDay
-                | SituationType.ExplorationNight;
+        return FSituationType.ExplorationAurora
+                | FSituationType.ExplorationDay
+                | FSituationType.ExplorationNight;
     }
     
-    public static SituationType GetConditions()
+    public static FSituationType GetConditions()
     {
-        return SituationType.ConditionSorrow
-                | SituationType.ConditionSuccess;
+        return FSituationType.ConditionSorrow
+                | FSituationType.ConditionSuccess;
     }
     
-    public static SituationType GetDangers()
+    public static FSituationType GetDangers()
     {
-        return SituationType.Stalked
-               | SituationType.Timberwolf;
+        return FSituationType.Stalked
+               | FSituationType.Timberwolf;
     }
 
-    public static bool HasFlagSafe(this SituationType situationType, SituationType flag)
+    public static bool HasFlagSafe(this FSituationType situationType, FSituationType flag)
     {
-        return flag != SituationType.Disabled && situationType.HasFlag(flag);
+        return flag != FSituationType.Disabled && situationType.HasFlag(flag);
     }
     
-    public static bool IsWeather(this SituationType situationType)
+    public static bool IsWeather(this FSituationType situationType)
     {
         return SituationTypeExtensions.GetWeathers().HasFlagSafe(situationType);
     }
     
-    public static bool IsTime(this SituationType situationType)
+    public static bool IsTime(this FSituationType situationType)
     {
         return SituationTypeExtensions.GetTimes().HasFlagSafe(situationType);
     }
     
-    public static bool IsExploration(this SituationType situationType)
+    public static bool IsExploration(this FSituationType situationType)
     {
         return SituationTypeExtensions.GetExplorations().HasFlagSafe(situationType);
     }
     
-    public static bool IsCondition(this SituationType situationType)
+    public static bool IsCondition(this FSituationType situationType)
     {
         return SituationTypeExtensions.GetConditions().HasFlagSafe(situationType);
     }
     
-    public static bool IsDanger(this SituationType situationType)
+    public static bool IsDanger(this FSituationType situationType)
     {
         return SituationTypeExtensions.GetDangers().HasFlagSafe(situationType);
     }
 
-    public static SituationType GetExplorationSituation()
+    public static FSituationType GetExplorationSituation()
     {
         try
         {
             var timeOfDay = GameManager.GetTimeOfDayComponent();
             var aurora = GameManager.GetAuroraManager();
             var situation = aurora.AuroraIsActive()
-                ? SituationType.ExplorationAurora
-                : (timeOfDay.IsDay() ? SituationType.ExplorationDay : SituationType.ExplorationNight);
+                ? FSituationType.ExplorationAurora
+                : (timeOfDay.IsDay() ? FSituationType.ExplorationDay : FSituationType.ExplorationNight);
             return situation;
         }
         catch
         {
-            return SituationType.Disabled;
+            return FSituationType.Disabled;
         }
     }
 }

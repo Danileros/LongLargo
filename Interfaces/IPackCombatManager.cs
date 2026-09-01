@@ -14,7 +14,7 @@ public interface IPackCombatManager
     /// Selects settings (when user changed it).
     /// </summary>
     /// <param name="settingsType">Selected setting.</param>
-    void SelectSettings(PackProximityRange settingsType);
+    void SelectSettings(EPackProximityRange settingsType);
     
     /// <summary>
     /// In combat is when timberwolf combat bar is active. 
@@ -24,7 +24,7 @@ public interface IPackCombatManager
     /// <summary>
     /// Current settings for proximity.
     /// </summary>
-    PackProximityRange Range { get; }
+    EPackProximityRange Range { get; }
     
     /// <summary>
     /// When runs too high, music will fadeout. Only runs when game is not paused and player is far from wolves.
@@ -34,12 +34,12 @@ public interface IPackCombatManager
     /// <summary>
     /// Executes on Play_TimberwolfCombat event, pack morale hud activates.
     /// </summary>
-    SituationType OnPlayCombat(GameObject go);
+    FSituationType OnPlayCombat(GameObject go);
 
     /// <summary>
     /// Executes on Stop_TimberwolfCombat event or scene load, pack morale hud deactivates.
     /// </summary>
-    SituationType OnStopCombat();
+    FSituationType OnStopCombat();
 
     /// <summary>
     /// Executes on scene change.

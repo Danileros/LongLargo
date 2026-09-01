@@ -20,53 +20,53 @@ public class PackCombatManager : IPackCombatManager
 
     public bool IsInCombat { get; private set; } = false;
     public float FadeoutTimer { get; private set; } = 0;
-    public PackProximityRange Range => _settings.PackProximityRange;
+    public EPackProximityRange Range => _settings.EPackProximityRange;
 
-    public PackCombatManager(PackProximityRange settingsType)
+    public PackCombatManager(EPackProximityRange settingsType)
     {
         var loader = new PackProximitySettingsLoader();
         _proximitySettings = loader.LoadAll();
-        _settings = _proximitySettings.Single(s => s.PackProximityRange == settingsType);
+        _settings = _proximitySettings.Single(s => s.EPackProximityRange == settingsType);
         Main.DebugManager.RegisterDebugCommand("ll_debug_combat", DebugData);
     }
 
-    public void SelectSettings(PackProximityRange settingsType)
+    public void SelectSettings(EPackProximityRange settingsType)
     {
-        _settings = _proximitySettings.Single(s => s.PackProximityRange == settingsType);
+        _settings = _proximitySettings.Single(s => s.EPackProximityRange == settingsType);
         LLogger.Log($"Proximity settings selected: {settingsType}");
     }
 
     /// <summary>
     /// Executes on Play_TimberwolfCombat event, pack morale hud activates.
     /// </summary>
-    public SituationType OnPlayCombat(GameObject go)
+    public FSituationType OnPlayCombat(GameObject go)
     {
         _go = go;
         if (!SettingsManager.Settings.TimberwolfSuppress)
         {
-            (_soundtrack, _) = Main.PlaylistManager.GetSituationSoundtrack(SituationType.Timberwolf, true);
-            Main.AudioPlayer.PlayHard(_soundtrack, SituationType.Timberwolf, true);
+            (_soundtrack, _) = Main.PlaylistManager.GetSituationSoundtrack(FSituationType.Timberwolf, true);
+            Main.AudioPlayer.PlayHard(_soundtrack, FSituationType.Timberwolf, true);
             GameAudioManager.PlaySound(2904596785U, go);
             GameAudioManager.PlaySound(3267898453U, go);
         }
 
         IsInCombat = true;
         FadeoutTimer = 0;
-        return SituationType.Disabled;
+        return FSituationType.Disabled;
     }
 
     /// <summary>
     /// Executes on Stop_TimberwolfCombat event or scene load, pack morale hud deactivates.
     /// </summary>
-    public SituationType OnStopCombat()
+    public FSituationType OnStopCombat()
     {
         if (!IsInCombat)
         {
-            return SituationType.Disabled;
+            return FSituationType.Disabled;
         }
         
         IsInCombat = false;
-        if (Main.AudioPlayer.IsPlaying && Main.AudioPlayer.LastSituation == SituationType.Timberwolf)
+        if (Main.AudioPlayer.IsPlaying && Main.AudioPlayer.LastSituation == FSituationType.Timberwolf)
         {
             if (!string.IsNullOrEmpty(_soundtrack.StopTrackName))
             {
@@ -74,7 +74,7 @@ public class PackCombatManager : IPackCombatManager
                     .FirstOrDefault(t => t.AssetBundle == _soundtrack.AssetBundle
                                          && t.TrackName == _soundtrack.StopTrackName);
 
-                Main.AudioPlayer.PlayHard(stopTrack, SituationType.Disabled);
+                Main.AudioPlayer.PlayHard(stopTrack, FSituationType.Disabled);
             }
             else
             {
@@ -82,7 +82,7 @@ public class PackCombatManager : IPackCombatManager
             }
         }
         
-        return SituationType.Disabled;
+        return FSituationType.Disabled;
     }
 
     /// <summary>
@@ -91,7 +91,7 @@ public class PackCombatManager : IPackCombatManager
     public void ForceLeaveCombat()
     {
         IsInCombat = false;
-        Main.AudioPlayer.StopIfSituation(SituationType.Timberwolf, 1f);
+        Main.AudioPlayer.StopIfSituation(FSituationType.Timberwolf, 1f);
     }
 
     /// <summary>
@@ -125,7 +125,7 @@ public class PackCombatManager : IPackCombatManager
 
         if (Main.AudioPlayer.IsPlaying
             && !Main.AudioPlayer.IsFading
-            && Main.AudioPlayer.LastSituation == SituationType.Timberwolf)
+            && Main.AudioPlayer.LastSituation == FSituationType.Timberwolf)
         {
             if (dinstance > _settings.DistanceFadeInstant)
             {
@@ -148,7 +148,7 @@ public class PackCombatManager : IPackCombatManager
             if (IsActiveCombat())
             {
                 // In intense combat again
-                Main.AudioPlayer.PlayHard(_soundtrack, SituationType.Timberwolf, true);
+                Main.AudioPlayer.PlayHard(_soundtrack, FSituationType.Timberwolf, true);
                 GameAudioManager.PlaySound(2904596785U, _go);
                 GameAudioManager.PlaySound(3267898453U, _go);
                 FadeoutTimer = 0;

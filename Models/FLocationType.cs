@@ -7,7 +7,7 @@ namespace LongLargo.Models;
 /// </summary>
 [Flags]
 [JsonConverter(typeof(JsonStringEnumConverter))]
-public enum LocationType
+public enum FLocationType
 {
     Any = -1,
     Disabled = 0,

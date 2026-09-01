@@ -37,14 +37,14 @@ public class SoundtrackInfo
     /// If Any, plays anytime.
     /// </summary>
     [JsonConverter(typeof(SafeJsonEnumConverterFactory))]
-    public SituationType SituationsRestrictsTo { get; set; } = SituationType.ExplorationDay | SituationType.ExplorationNight;
+    public FSituationType SituationsRestrictsTo { get; set; } = FSituationType.ExplorationDay | FSituationType.ExplorationNight;
     
     /// <summary>
     /// Play only at specific location type (outdoors, cave, etc).
     /// If Any, plays at any location type.
     /// </summary>
     [JsonConverter(typeof(SafeJsonEnumConverterFactory))]
-    public LocationType LocationsTypeRestrictTo { get; set; } = LocationType.Region | LocationType.TransitionZone;
+    public FLocationType LocationsTypeRestrictTo { get; set; } = FLocationType.Region | FLocationType.TransitionZone;
 
     /// <summary>
     /// Play only at specific locations (like TPV to The Pleasant Valley).

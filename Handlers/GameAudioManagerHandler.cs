@@ -82,50 +82,50 @@ public static class GameAudioManagerHandler
                 situationInfo.Situation = SituationTypeExtensions.GetExplorationSituation();
                 break;
             case "Play_MusicClear":
-                situationInfo.Situation = SituationType.WeatherClear;
+                situationInfo.Situation = FSituationType.WeatherClear;
                 break;
             case "Play_Weather_Clear_withStinger45":
             case "Play_Weather_Clear_withStinger60":
-                situationInfo.Situation = SituationType.WeatherClear;
+                situationInfo.Situation = FSituationType.WeatherClear;
                 situationInfo.SetStinger("Play_Weather_Clear");
                 break;
             case "Play_Weather_ClearAurora_withStinger05":
             case "Play_Weather_ClearAurora_withStinger60":
-                situationInfo.Situation = SituationType.WeatherClear;
+                situationInfo.Situation = FSituationType.WeatherClear;
                 situationInfo.SetStinger("Play_Weather_ClearAurora");
                 break;
             case "Play_MusicFoggy":
-                situationInfo.Situation = SituationType.WeatherFog;
+                situationInfo.Situation = FSituationType.WeatherFog;
                 break;
             case "Play_Weather_LightFog_withStinger45":
             case "Play_Weather_LightFog_withStinger60":
-                situationInfo.Situation = SituationType.WeatherFog;
+                situationInfo.Situation = FSituationType.WeatherFog;
                 situationInfo.SetStinger("Play_Weather_LightFog");
                 break;
             case "Play_Weather_DenseFog_withStinger30":
             case "Play_Weather_DenseFog_withStinger45":
             case "Play_Weather_DenseFog_withStinger60":
-                situationInfo.Situation = SituationType.WeatherFog;
+                situationInfo.Situation = FSituationType.WeatherFog;
                 situationInfo.SetStinger("Play_Weather_DenseFog");
                 break;
             case "Play_Weather_ElectrostaticFog":
-                situationInfo.Situation = SituationType.WeatherFog;
+                situationInfo.Situation = FSituationType.WeatherFog;
                 break;
             case "Play_MusicHeavySnow":
-                situationInfo.Situation = SituationType.WeatherSnow;
+                situationInfo.Situation = FSituationType.WeatherSnow;
                 break;
             case "Play_Weather_HeavySnow_withStinger30":
-                situationInfo.Situation = SituationType.WeatherSnow;
+                situationInfo.Situation = FSituationType.WeatherSnow;
                 situationInfo.SetStinger("Play_Weather_HeavySnow");
                 break;
             case "Play_MusicStorm":
-                situationInfo.Situation = SituationType.WeatherBlizzard;
+                situationInfo.Situation = FSituationType.WeatherBlizzard;
                 break;
             case "Play_Weather_Blizzard_withStinger00":
             case "Play_Weather_Blizzard_withStinger05":
             case "Play_Weather_Blizzard_withStinger30":
             case "Play_Weather_Blizzard_withStinger60":
-                situationInfo.Situation = SituationType.WeatherBlizzard;
+                situationInfo.Situation = FSituationType.WeatherBlizzard;
                 situationInfo.SetStinger("Play_Weather_Blizzard");
                 break;
             case "Play_MusicWeather":
@@ -134,41 +134,41 @@ public static class GameAudioManagerHandler
                 {
                     case WeatherStage.LightSnow:
                     case WeatherStage.HeavySnow:
-                        situationInfo.Situation = SituationType.WeatherSnow;
+                        situationInfo.Situation = FSituationType.WeatherSnow;
                         break;
                     case WeatherStage.PartlyCloudy:
                     case WeatherStage.Cloudy:
                     case WeatherStage.ClearAurora:
                     case WeatherStage.Clear:
                     default:
-                        situationInfo.Situation = SituationType.WeatherClear;
+                        situationInfo.Situation = FSituationType.WeatherClear;
                         break;
                     case WeatherStage.Blizzard:
-                        situationInfo.Situation = SituationType.WeatherBlizzard;
+                        situationInfo.Situation = FSituationType.WeatherBlizzard;
                         break;
                     case WeatherStage.LightFog:
                     case WeatherStage.DenseFog:
                     case WeatherStage.ToxicFog:
                     case WeatherStage.ElectrostaticFog:
-                        situationInfo.Situation = SituationType.WeatherFog;
+                        situationInfo.Situation = FSituationType.WeatherFog;
                         break;
                 }
                 break;
             case "Play_musicMood_HappySuccess":
-                situationInfo.Situation = SituationType.ConditionSuccess;
+                situationInfo.Situation = FSituationType.ConditionSuccess;
                 break;
             case "Play_musicMood_Sorrow":
-                situationInfo.Situation = SituationType.ConditionSorrow;
+                situationInfo.Situation = FSituationType.ConditionSorrow;
                 break;
             case "Play_MusicTODDawn":
-                situationInfo.Situation = SituationType.TimeDawn;
+                situationInfo.Situation = FSituationType.TimeDawn;
                 break;
             case "Play_MusicTODDusk":
-                situationInfo.Situation = SituationType.TimeDusk;
+                situationInfo.Situation = FSituationType.TimeDusk;
                 break;
             // loop events, high priority
             case "Play_musicMood_AnimalStalking":
-                situationInfo.Situation = SituationType.Stalked;
+                situationInfo.Situation = FSituationType.Stalked;
                 break;
             case "Play_TimberwolfCombat":
                 // situationInfo.Situation = SituationType.Timberwolf;
@@ -176,8 +176,8 @@ public static class GameAudioManagerHandler
                 break;
             // stop loop events
             case "Stop_musicMood_AnimalStalking":
-                situationInfo.Situation = SituationType.Disabled;
-                Main.AudioPlayer.StopIfSituation(SituationType.Stalked, 3f);
+                situationInfo.Situation = FSituationType.Disabled;
+                Main.AudioPlayer.StopIfSituation(FSituationType.Stalked, 3f);
                 break;
             case "Stop_TimberwolfCombat":
                 situationInfo.Situation = Main.PackCombatManager.OnStopCombat();
@@ -196,7 +196,7 @@ public static class GameAudioManagerHandler
             case "Stop_Weather_LightSnow":
             case "Stop_Weather_PartlyCloudy":
             case "Stop_Weather_ToxicFog":
-                situationInfo.Situation = SituationType.Disabled;
+                situationInfo.Situation = FSituationType.Disabled;
                 Main.AudioPlayer.StopIfSituation(SituationTypeExtensions.GetWeathers());
 
                 break;
@@ -233,7 +233,7 @@ public static class GameAudioManagerHandler
             case "Play_musicScene_AshCanyon_Enter":
             case "Play_musicScene_Hub_Enter":
                 LLogger.Debug("[GameAudioManager] Playing Silence to avoid overlap");
-                situationInfo.Situation = SituationType.Disabled;
+                situationInfo.Situation = FSituationType.Disabled;
                 situationInfo.SilenceType = SituationInfo.SilenceLength.Long;
                 break;
             case "Play_musicTales_Intro_Stinger":
@@ -243,13 +243,13 @@ public static class GameAudioManagerHandler
             case "Play_SndMusNewLocationShort":
             case "Play_musicTales_Bunker_Stinger":
                 LLogger.Debug("[GameAudioManager] Playing short Silence to avoid overlap");
-                situationInfo.Situation = SituationType.Disabled;
+                situationInfo.Situation = FSituationType.Disabled;
                 situationInfo.SilenceType = SituationInfo.SilenceLength.Short;
                 break;
             
             default:
                 // Not for us
-                situationInfo.Situation = SituationType.Disabled;
+                situationInfo.Situation = FSituationType.Disabled;
                 situationInfo.WorthLogging = false;
                 break;
         }
@@ -268,7 +268,7 @@ public static class GameAudioManagerHandler
 
     private static bool MaybeIgnoreEvent(SituationInfo situationInfo)
     {
-        if (situationInfo.Situation == SituationType.Disabled)
+        if (situationInfo.Situation == FSituationType.Disabled)
         {
             switch (situationInfo.SilenceType)
             {
@@ -284,7 +284,7 @@ public static class GameAudioManagerHandler
         }
 
         // since Timberwolf combat is silenced by Vanilla, I think suppressing here it is better
-        if (SettingsManager.Settings.TimberwolfSuppress && (SituationType.Timberwolf).HasFlagSafe(situationInfo.Situation))
+        if (SettingsManager.Settings.TimberwolfSuppress && (FSituationType.Timberwolf).HasFlagSafe(situationInfo.Situation))
         {
             return true;
         }
@@ -292,12 +292,12 @@ public static class GameAudioManagerHandler
         return false;
     }
 
-    private static bool MaybeSupressEvent(SituationType situation)
+    private static bool MaybeSupressEvent(FSituationType situation)
     {
-        if (SettingsManager.Settings.WeatherSuppress && situation.IsWeather()
+        if (SettingsManager.Settings.WeatherMode == EWeatherStingerMode.Suppress && situation.IsWeather()
             || SettingsManager.Settings.TimeSuppress && situation.IsTime()
-            || SettingsManager.Settings.StalkedSuppress && (SituationType.Stalked).HasFlagSafe(situation)
-            || SettingsManager.Settings.TimberwolfSuppress && (SituationType.Timberwolf).HasFlagSafe(situation)
+            || SettingsManager.Settings.StalkedMode == EStalkedMode.Suppress && (FSituationType.Stalked).HasFlagSafe(situation)
+            || SettingsManager.Settings.TimberwolfSuppress && (FSituationType.Timberwolf).HasFlagSafe(situation)
             || SettingsManager.Settings.ConditionSuppress && situation.IsCondition())
         {
             return true;
@@ -305,7 +305,7 @@ public static class GameAudioManagerHandler
 
         // Check if we're already playing something custom
         if (Main.AudioPlayer.IsPlaying
-            && situation != SituationType.Stalked && situation != SituationType.Timberwolf)
+            && situation != FSituationType.Stalked && situation != FSituationType.Timberwolf)
         {
             return true;
         }
@@ -330,7 +330,7 @@ public static class GameAudioManagerHandler
             }
         }
 
-        if (situationInfo.Situation.HasFlagSafe(SituationType.Stalked) || situationInfo.Situation.HasFlagSafe(SituationType.Timberwolf))
+        if (situationInfo.Situation.HasFlagSafe(FSituationType.Stalked) || situationInfo.Situation.HasFlagSafe(FSituationType.Timberwolf))
         {
             Main.AudioPlayer.PlayHard(soundtrack, situationInfo.Situation, true);
             if (!playVanilla)
@@ -365,7 +365,7 @@ public static class GameAudioManagerHandler
             StingerlessEvent = stingerlessEvent;
         }
 
-        public SituationType Situation;
+        public FSituationType Situation;
         public bool WithStringer;
         public string StingerlessEvent;
         public float Delay = 0;
