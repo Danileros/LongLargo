@@ -28,14 +28,19 @@ public class NAudioLoader
         catch (Exception e)
         {
             _naudio = null;
-            LLogger.Error("Failed to load NAudio, user music feature is now disabled. Ensure Directory " +
-                          "'Mods/LongLargo' exists and has NAudio dlls. This error is not critical, " +
-                          "main Long Largo features are still enabled");
+            LLogger.Log("Cannot load NAudio, user music feature is now disabled. Ensure Directory " +
+                        "'Mods/LongLargo' exists and has NAudio dlls. This is not critical problem, " +
+                        "main Long Largo features are still enabled");
         }
     }
     
     public void LoadUgly(string[] soundtrackPaths, ClipManager clipManager)
     {
+        if (_naudio == null)
+        {
+            return;
+        }
+        
         try
         {
             if (soundtrackPaths.Length == 0)
