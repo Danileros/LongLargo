@@ -116,7 +116,7 @@ public class Main : MelonMod
         var keyPlayStop = SettingsManager.Settings.KeyStop;
         if (keyPlayStop != KeyCode.None && Input.GetKeyDown(keyPlayStop))
         {
-            AudioPlayer.Stop();
+            CommandStop();
         }
 
         var keyPlayLast = SettingsManager.Settings.KeyPlayLast;
@@ -156,6 +156,7 @@ public class Main : MelonMod
     private static void CommandStop()
     {
         AudioPlayer.Stop();
+        AudioPlayer.StopVanilla();
     }
 
     private static void CommandShowPlaylist()
@@ -202,7 +203,8 @@ public class Main : MelonMod
             uConsole.Log($"[LL] 'Disable Copyrighted Music' restricts playing {trackName}.");
             return;
         }
-            
+
+        AudioPlayer.StopVanilla();
         AudioPlayer.PlayHard(soundtrack, FSituationType.Disabled);
     }
     

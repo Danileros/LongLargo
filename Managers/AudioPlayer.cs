@@ -148,6 +148,14 @@ public class AudioPlayer : IAudioPlayer
         }
     }
 
+    public void StopVanilla(GameObject go = null)
+    {
+        // <ActionPostEventEntry Id="2904596785" Name="musicMixer_StopSceneMusicFadeOut"/>
+        // <ActionPostEventEntry Id="3267898453" Name="musicMixer_StopWeatherMusicFadeOut"/>
+        GameAudioManager.PlaySound(2904596785U, go);
+        GameAudioManager.PlaySound(3267898453U, go);
+    }
+
     public void Stop()
     {
         if (SettingsManager.Settings.DebugMode)

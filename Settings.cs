@@ -104,7 +104,7 @@ internal class Settings : JsonModSettings
                  "\nIf Suppress, you will be stalked silently.")]
     [Choice(
         "Suppress (no stalked music)",
-        "Wintermute stalked music",
+        "Wintermute (or user added)",
         "Default (vanilla+wintermute)",
         "Vanilla"
     )]

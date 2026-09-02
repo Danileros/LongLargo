@@ -46,8 +46,7 @@ public class PackCombatManager : IPackCombatManager
         {
             (_soundtrack, _) = Main.PlaylistManager.GetSituationSoundtrack(FSituationType.Timberwolf, true);
             Main.AudioPlayer.PlayHard(_soundtrack, FSituationType.Timberwolf, true);
-            GameAudioManager.PlaySound(2904596785U, go);
-            GameAudioManager.PlaySound(3267898453U, go);
+            Main.AudioPlayer.StopVanilla();
         }
 
         IsInCombat = true;
@@ -149,8 +148,7 @@ public class PackCombatManager : IPackCombatManager
             {
                 // In intense combat again
                 Main.AudioPlayer.PlayHard(_soundtrack, FSituationType.Timberwolf, true);
-                GameAudioManager.PlaySound(2904596785U, _go);
-                GameAudioManager.PlaySound(3267898453U, _go);
+                Main.AudioPlayer.StopVanilla(_go);
                 FadeoutTimer = 0;
             }
         }

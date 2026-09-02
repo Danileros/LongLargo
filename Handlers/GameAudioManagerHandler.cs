@@ -332,15 +332,12 @@ public static class GameAudioManagerHandler
 
         if (situationInfo.Situation.HasFlagSafe(FSituationType.Stalked) || situationInfo.Situation.HasFlagSafe(FSituationType.Timberwolf))
         {
-            Main.AudioPlayer.PlayHard(soundtrack, situationInfo.Situation, true);
             if (!playVanilla)
             {
-                // TODO: debug
-                // <ActionPostEventEntry Id="2904596785" Name="musicMixer_StopSceneMusicFadeOut"/>
-                // <ActionPostEventEntry Id="3267898453" Name="musicMixer_StopWeatherMusicFadeOut"/>
-                GameAudioManager.PlaySound(2904596785U, go);
-                GameAudioManager.PlaySound(3267898453U, go);
+                Main.AudioPlayer.StopVanilla(go);
             }
+            
+            Main.AudioPlayer.PlayHard(soundtrack, situationInfo.Situation, true);
         }
         else
         {

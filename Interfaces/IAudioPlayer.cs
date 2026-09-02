@@ -1,4 +1,5 @@
 using LongLargo.Models;
+using UnityEngine;
 
 namespace LongLargo.Interfaces;
 
@@ -73,6 +74,11 @@ public interface IAudioPlayer
     /// <param name="situation">Situation.</param>
     /// <param name="fadeOut">time to fade out current track (if any).</param>
     void PlayHard(SoundtrackInfo soundtrack, FSituationType situation, float fadeOut);
+    
+    /// <summary>
+    /// Stops vanilla exploration music and stingers. Does not stops any LL track.
+    /// </summary>
+    void StopVanilla(GameObject go = null);
 
     /// <summary>
     /// Stops current track and all routines.
