@@ -113,7 +113,7 @@ public class PlaylistManager : IPlaylistManager
 
         var soundtracks = _soundtracks
             .Where(s =>
-                s != Main.AudioPlayer.LastSoundtrack
+                (s != Main.AudioPlayer.LastSoundtrack || situation == FSituationType.Stalked)
                 && s.SituationsRestrictsTo.HasFlagSafe(situation)
                 && (!SettingsManager.Settings.DisableCopyrightedMusic || s.Copyright != true))
             .ToArray();
