@@ -14,8 +14,15 @@ public class NAudioLoader
     {
         try
         {
-            _naudio = Assembly.LoadFrom(Path.Combine(folderPath, "NAudio.dll"));
-            _audioFileReaderType = _naudio.GetType("NAudio.Wave.AudioFileReader");
+            var assembliesList = AppDomain.CurrentDomain.GetAssemblies();
+            _naudio = assembliesList
+                .FirstOrDefault(assembly => assembly.GetName().Name == "NAudio");
+            if (_naudio == null)
+            {
+                _naudio = Assembly.LoadFrom(Path.Combine(folderPath, "NAudio.dll"));
+                _audioFileReaderType = _naudio.GetType("NAudio.Wave.AudioFileReader");
+            }
+
             LLogger.Log("Loaded NAudio");
         }
         catch (Exception e)
