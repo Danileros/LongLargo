@@ -48,7 +48,33 @@ Long Largo also supports manual control via in-game console. Here is a list of c
 * ll_play_next - plays next Exploration track.
 * ll_stop - stops current track.
 
+## AI Disclaimer
+
+No code or music was developed using AI. All decisions, all code are mine and only mine. All the content you'll get with the mod is created by people. The only exception I make is generating a sketch for the mod logo. Sometimes. And even then, I finish them by hand. They're not part of the mod anyway.
+
+## Known Issues
+
+* Not a bug. MelonLoader 0.7.2 + AudioManager 2.0.5 currently can't load custom soundtracks from folder. A memory-consuming workaround is used as temporary solution. Long Largo will stop being hungry on memory once it fixed. Until then, it is not recommended to upload gigabytes of lossless files to the LongLargo folder, so as not to overflow the RAM.
+* Not a bug. Some indoor locations specific to Tales From Far Territory DLC is excluded from supported locations list. It is intended design.
+
+## Installation
+
+* Common mods installation process is described at [TLD Mods](https://tldmods.net/install.html). Make sure your MelonLoader version matches.
+* Install all the dependencies:
+
+- [ModSettings](https://github.com/DigitalzombieTLD/ModSettings/releases)
+- [AudioManager](https://github.com/DigitalzombieTLD/AudioManager/releases)
+
+
+* Install the latest AudioCore plugin (to Plugins folder, not Mods folder!):
+
+- [AudioCore](https://github.com/DigitalzombieTLD/AudioCore/releases)
+
+* Download latest Long Largo version from Releases page.
+* Drop archive files to Mods folder in The Long Dark game directory.
+
 ## Custom music how-to
+
 Drop soundtracks you want to hear in-game to LongLargo folder in Mods. MP3 and WAV supported. They will be automatically registered and configured in PlaylistInfo.json on next game launch. Long Largo by default treats any musical clip as an exploration clip suitable for day and night. For example, let's say you want to add regular music for research. Simply drop it into the LongLargo folder and that's it. It will play.
 
 In more complex cases, you will have to customize Playlist.json for your needs. Open PlaylistInfo.json with text editor or JSON editor and follow the built-in instructions. I recommend you add music, launch the game, and close it so that LongLargo registers it in the playlist and makes it easier for you to customize it.
@@ -117,31 +143,6 @@ There is two rare additional options: "Copyright" and "StopTrackName". "Copyrigh
 First is main combat loop music. Stop music is disabled because it shouldn't be triggered by any situation (ending combat is not a situation). Because it labeled in StopTrackName for first track, it would play.
 
 If you want to share your tracks—best solution is to create an assetbundle using Unity designer. Put inside all tracks and PlaylistInfo.json.
-
-## AI Disclaimer
-
-No code or music was developed using AI. All decisions, all code are mine and only mine. All the content you'll get with the mod is created by people. The only exception I make is generating a sketch for the mod logo. Sometimes. And even then, I finish them by hand. They're not part of the mod anyway.
-
-## Known Issues
-
-* Not a bug. MelonLoader 0.7.2 + AudioManager 2.0.5 currently can't load custom soundtracks from folder. A memory-consuming workaround is used as temporary solution. Long Largo will stop being hungry on memory once it fixed. Until then, it is not recommended to upload gigabytes of lossless files to the LongLargo folder, so as not to overflow the RAM.
-* Not a bug. Some indoor locations specific to Tales From Far Territory DLC is excluded from supported locations list. It is intended design.
-
-## Installation
-
-* Common mods installation process is described at [TLD Mods](https://tldmods.net/install.html). Make sure your MelonLoader version matches.
-* Install all the dependencies:
-
-- [ModSettings](https://github.com/DigitalzombieTLD/ModSettings/releases)
-- [AudioManager](https://github.com/DigitalzombieTLD/AudioManager/releases)
-
-
-* Install the latest AudioCore plugin (to Plugins folder, not Mods folder!):
-
-- [AudioCore](https://github.com/DigitalzombieTLD/AudioCore/releases)
-
-* Download latest Long Largo version from Releases page.
-* Drop archive files to Mods folder in The Long Dark game directory.
 
 ## Special Thanks
 
