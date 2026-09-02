@@ -223,7 +223,7 @@ internal class Settings : JsonModSettings
                 ExplorationMusicMode = EExplorationMusicMode.Vanilla;
                 ExplorationDelay = 100;
                 StalkedMode = EStalkedMode.Vanilla;
-                TimberwolfSuppress = false;
+                TimberwolfSuppress = true;
                 WeatherMode = EWeatherStingerMode.Vanilla;
                 TimeSuppress = false;
                 ConditionSuppress = false;
@@ -232,7 +232,7 @@ internal class Settings : JsonModSettings
                 ExplorationMusicMode = EExplorationMusicMode.Vanilla;
                 ExplorationDelay = 100;
                 StalkedMode = EStalkedMode.Suppress;
-                TimberwolfSuppress = false;
+                TimberwolfSuppress = true;
                 WeatherMode = EWeatherStingerMode.Vanilla;
                 TimeSuppress = false;
                 ConditionSuppress = false;
@@ -300,6 +300,8 @@ internal class Settings : JsonModSettings
         SetFieldVisible(nameof(Preset), ModEnabled);
         SetFieldVisible(nameof(BgmVolume), BgmVolumeEnabled && ModEnabled);
         SetFieldVisible(nameof(BgmVolumeEnabled), ModEnabled);
+        SetFieldVisible(nameof(DebugMode), ModEnabled);
+        SetFieldVisible(nameof(DisableCopyrightedMusic), ModEnabled);
         SetFieldVisible(nameof(ExplorationMusicMode), ModEnabled);
         SetFieldVisible(nameof(ExplorationDelay), ModEnabled);
         SetFieldVisible(nameof(StalkedMode), ModEnabled);
