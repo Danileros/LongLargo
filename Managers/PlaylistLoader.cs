@@ -1,11 +1,9 @@
-using System.Globalization;
 using System.Reflection;
 using System.Text.Json;
 using AudioMgr;
 using LongLargo.Extensions;
 using LongLargo.Models;
 using LongLargo.Utils;
-using NAudio.Wave;
 using UnityEngine;
 
 namespace LongLargo.Managers;
@@ -37,8 +35,8 @@ public class PlaylistLoader
         }
 
         var loadedSoundtracks = new List<SoundtrackInfo>();
-        LoadLlAudio(loadedSoundtracks);
-        LoadSoundracksFromDisk(loadedSoundtracks);
+        var nAudioLoader = LoadLlAudio(loadedSoundtracks);
+        LoadSoundracksFromDisk(loadedSoundtracks, nAudioLoader);
         LoadAssetBundlesFromDisk(loadedSoundtracks);
         return loadedSoundtracks;
     }
@@ -79,7 +77,7 @@ public class PlaylistLoader
     }
     
     // Load local soundtracks provided by user.
-    private void LoadSoundracksFromDisk(List<SoundtrackInfo> loadedSoundtracks)
+    private void LoadSoundracksFromDisk(List<SoundtrackInfo> loadedSoundtracks, NAudioLoader nAudioLoader)
     {
         var soundtrackPaths = Directory.GetFiles(FolderPath, "*.*", SearchOption.TopDirectoryOnly)
             .Where(p =>
@@ -94,7 +92,7 @@ public class PlaylistLoader
         {
             if (true)
             {
-                LoadUgly(soundtrackPaths, clipManager);
+                nAudioLoader.LoadUgly(soundtrackPaths, clipManager);
             }
             else
             {
@@ -142,7 +140,7 @@ public class PlaylistLoader
         }
         
         var soundtrackNames
-            = soundtrackPaths.Select(path => GetTrackName(path));
+            = soundtrackPaths.Select(path => PlaylistHelper.GetTrackName(path));
         var deleted = localPlaylist.SoundtrackInfos
             .RemoveAll(p => string.IsNullOrEmpty(p.TrackName) || !soundtrackNames.Contains(p.TrackName));
         
@@ -259,12 +257,12 @@ Fields:
         }
     }
 
-    private void LoadLlAudio(List<SoundtrackInfo> loadedSoundtracks)
+    private NAudioLoader LoadLlAudio(List<SoundtrackInfo> loadedSoundtracks)
     {
+        var nAudioLoader = new NAudioLoader();
         try
         {
-            var naudio = Assembly.LoadFrom(Path.Combine(FolderPath, "NAudio.dll"));
-            LLogger.Log("Loaded NAudio");
+            nAudioLoader.LoadLibraries(FolderPath);
         }
         catch (Exception e)
         {
@@ -292,6 +290,8 @@ Fields:
         {
             LoadAssetBundle(loadedSoundtracks, AssetBundle.LoadFromStream(ilStream));
         }
+
+        return nAudioLoader;
     }
 
     private void LoadAssetBundlesFromDisk(List<SoundtrackInfo> loadedSoundtracks)
@@ -329,54 +329,6 @@ Fields:
         clipManager.LoadAllClipsFromBundle(assetBundle);
         ExtractClips(loadedSoundtracks, assetBundle, clipManager, playlist);
     }
-
-    private void LoadUgly(string[] soundtrackPaths, ClipManager clipManager)
-    {
-        try
-        {
-            if (soundtrackPaths.Length == 0)
-            {
-                return;
-            }
-
-            foreach (var path in soundtrackPaths)
-            {
-                var (pcmData, channels, sampleRate) = LoadAudioAsFloat(path);
-                var name = GetTrackName(path);
-                var audioClip = LoadFromRawPCM(name, pcmData, channels, sampleRate);
-                clipManager.LoadAudioclip(name, audioClip);
-            }
-        }
-        catch (Exception e)
-        {
-            LLogger.Error(e.ToString());
-        }
-    }
-
-    // TODO: remove when Melon or AudioManager will get an update
-    private (float[],int, int) LoadAudioAsFloat(string filePath)
-    {
-        using (var reader = new AudioFileReader(filePath))
-        {
-            // Total number of samples = length in bytes / bytes per sample (4 for float)
-            var sampleCount = (int)(reader.Length / 4);
-            var buffer = new float[sampleCount];
-    
-            // Read all samples into the array
-            var read = reader.Read(buffer, 0, buffer.Length);
-            var channels = reader.WaveFormat.Channels;
-            var sampleRate = reader.WaveFormat.SampleRate;
-            return (buffer, channels, sampleRate);
-        }
-    }
-    
-    private AudioClip LoadFromRawPCM(string name, float[] pcmData, int channels, int sampleRate)
-    {
-        var clip = AudioClip.Create(name, pcmData.Length / channels, channels, sampleRate, false);
-        clip.SetData(pcmData, 0);
-    
-        return clip;
-    }
     
     private void ExtractClips(List<SoundtrackInfo> loadedSoundtracks, AssetBundle assetBundle, ClipManager clipManager, PlaylistInfo playlist)
     {
@@ -400,10 +352,5 @@ Fields:
         }
         
         LLogger.Log($"Loaded {i} soundtracks from {(!assetBundle ? "local folder" : assetBundle.name)}");
-    }
-
-    private static string GetTrackName(string path)
-    {
-        return Path.GetFileNameWithoutExtension(path).ToLower(CultureInfo.CurrentCulture);
     }
 }
