@@ -49,7 +49,72 @@ Long Largo also supports manual control via in-game console. Here is a list of c
 * ll_stop - stops current track.
 
 ## Custom music how-to
-Drop soundtracks you want to hear in-game to LongLargo folder in Mods. MP3 and WAV supported. They will be automatically registered and configured in PlaylistInfo.json on next game launch. Long Largo by default treats any musical clip as an exploration clip suitable for day and night. If you want to customize it, open PlaylistInfo.json with text editor or JSON editor and follow the built-in instructions. 
+Drop soundtracks you want to hear in-game to LongLargo folder in Mods. MP3 and WAV supported. They will be automatically registered and configured in PlaylistInfo.json on next game launch. Long Largo by default treats any musical clip as an exploration clip suitable for day and night. For example, let's say you want to add regular music for research. Simply drop it into the LongLargo folder and that's it. It will play.
+
+In more complex cases, you will have to customize Playlist.json for your needs. Open PlaylistInfo.json with text editor or JSON editor and follow the built-in instructions. I recommend you add music, launch the game, and close it so that LongLargo registers it in the playlist and makes it easier for you to customize it.
+
+For example, we want to add music for Aurora and for caves. After starting and closing TLD we would get this record:
+
+``` JSON
+    {
+      "TrackName": "aurora",
+      "Chance": 100,
+      "SituationsRestrictsTo": "ExplorationDay, ExplorationNight",
+      "LocationsTypeRestrictTo": "Region, TransitionZone",
+      "LocationRestrictTo": []
+    },
+    {
+      "TrackName": "cave",
+      "Chance": 100,
+      "SituationsRestrictsTo": "ExplorationDay, ExplorationNight",
+      "LocationsTypeRestrictTo": "Region, TransitionZone",
+      "LocationRestrictTo": []
+    },
+```
+
+Now we should customize to this:
+
+``` JSON
+    {
+      "TrackName": "aurora",
+      "Chance": 100,
+      "SituationsRestrictsTo": "ExplorationAurora",
+      "LocationsTypeRestrictTo": "Region, TransitionZone",
+      "LocationRestrictTo": []
+    },
+    {
+      "TrackName": "cave",
+      "Chance": 100,
+      "SituationsRestrictsTo": "ExplorationDay, ExplorationNight, ExplorationAurora",
+      "LocationsTypeRestrictTo": "Cave, Mine",
+      "LocationRestrictTo": []
+    },
+```
+
+There is two rare additional options: "Copyright" and "StopTrackName". "Copyright" is used in pair with "Disable copyright music" in settings, it's all it does. "StopTrackName" is even more rare: it is used for timberwolf combat only. When combat ends, it plays. Here is an example of adding copyrighted timberwolf combat tracks:
+
+
+``` JSON
+    {
+      "TrackName": "copyrightedtimberwolfcombatloop",
+      "Chance": 100,
+      "SituationsRestrictsTo": "Timberwolf",
+      "LocationsTypeRestrictTo": "Any",
+      "LocationRestrictTo": [],
+	  "StopTrackName": "sndmustimberwolfcombatstop",
+	  "Copyright": true
+    },
+    {
+      "TrackName": "copyrightedtimberwolfcombatstop",
+      "Chance": 100,
+      "SituationsRestrictsTo": "Disabled",
+      "LocationsTypeRestrictTo": "Any",
+      "LocationRestrictTo": [],
+	  "Copyright": true
+    },
+```
+
+First is main combat loop music. Stop music is disabled because it shouldn't be triggered by any situation (ending combat is not a situation). Because it labeled in StopTrackName for first track, it would play.
 
 If you want to share your tracks—best solution is to create an assetbundle using Unity designer. Put inside all tracks and PlaylistInfo.json.
 
