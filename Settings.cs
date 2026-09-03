@@ -273,7 +273,6 @@ internal class Settings : JsonModSettings
                 TimeSuppress = false;
                 ConditionSuppress = false;
                 break;
-            case EPreset.Custom:
             default:
                 Preset = EPreset.Custom;
                 break;

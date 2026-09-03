@@ -20,6 +20,9 @@ internal static class SettingsManager
     {
         switch (Settings.SettingsVersion)
         {
+            case CurrentVersion:
+                return;
+            
             case ESettingsVersion.v1_1_3: // 1.1.3 or lower
                 MigrateTo113();
                 break;
