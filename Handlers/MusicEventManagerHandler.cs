@@ -31,14 +31,14 @@ public class MusicEventManagerHandler : MonoBehaviour
         if (isStalkedNew != isStalked)
         {
             isStalked = isStalkedNew;
-            LLogger.Debug($"[CheckForBeingStalkedPost] New stalked status: {isStalked}");
+            Main.Logger.Debug($"[CheckForBeingStalkedPost] New stalked status: {isStalked}");
         }
         
         var isAttackedNew = _instance.m_WasBeingAttackedLastFrame;
         if (isAttackedNew != isAttacked)
         {
             isAttacked = isAttackedNew;
-            LLogger.Debug($"[CheckForBeingStalkedPost] New attacked status: {isStalked}");
+            Main.Logger.Debug($"[CheckForBeingStalkedPost] New attacked status: {isStalked}");
         }
     }
 
@@ -57,6 +57,6 @@ public class MusicEventManagerHandler : MonoBehaviour
     [HideFromIl2Cpp]
     public void PlayLocationSound(bool hasPlayedBefore)
     {
-        LLogger.Debug($"[PlayLocationSound] {hasPlayedBefore}");
+        Main.Logger.Debug($"[PlayLocationSound] {hasPlayedBefore}");
     }
 }

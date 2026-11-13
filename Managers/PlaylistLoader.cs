@@ -108,7 +108,7 @@ public class PlaylistLoader
         }
         catch (Exception e)
         {
-            LLogger.Error($"Failed loading soundtracks using AudioManager, error: {e.Message}");
+            Main.Logger.Error($"Failed loading soundtracks using AudioManager, error: {e.Message}");
 
             return;
         }
@@ -130,7 +130,7 @@ public class PlaylistLoader
             }
             catch (Exception e)
             {
-                LLogger.Error("Detected broken PlaylistInfo.json, recreating. Sad :(");
+                Main.Logger.Error("Detected broken PlaylistInfo.json, recreating. Sad :(");
                 localPlaylist = new PlaylistInfo();
             }
         }
@@ -167,7 +167,7 @@ public class PlaylistLoader
 
         if (missingSoundtracks.Length > 0 || deleted > 0 || updated > 0)
         {
-            LLogger.Log("Playlist mismatch detected, updating PlaylistInfo.json");
+            Main.Logger.Log("Playlist mismatch detected, updating PlaylistInfo.json");
             WriteUpdatedPlaylist(localPlaylist, jsonPath);
         }
 
@@ -266,7 +266,7 @@ Fields:
         }
         catch (Exception e)
         {
-            LLogger.Error(e.ToString());
+            Main.Logger.Error(e.ToString());
         }
         
         var rawPaths = Directory.GetFiles(FolderPath, "*.raw", SearchOption.TopDirectoryOnly);
@@ -306,11 +306,11 @@ Fields:
 
     private void LoadAssetBundle(List<SoundtrackInfo> loadedSoundtracks, AssetBundle assetBundle)
     {
-        LLogger.Log("Asset Bundle loaded: {0}", assetBundle.name);
+        Main.Logger.Log("Asset Bundle loaded: {0}", assetBundle.name);
         var jsonAsset = assetBundle.LoadAsset<TextAsset>("PlaylistInfo.json");
         if (!jsonAsset)
         {
-            LLogger.Error("Asset Bundle does not have PlaylistInfo.json, skipping");
+            Main.Logger.Error("Asset Bundle does not have PlaylistInfo.json, skipping");
             return;
         }
             
@@ -321,7 +321,7 @@ Fields:
         }
         catch (Exception e)
         {
-            LLogger.Error("Asset Bundle's PlaylistInfo.json can't be deserialized, skipping");
+            Main.Logger.Error("Asset Bundle's PlaylistInfo.json can't be deserialized, skipping");
             return;
         }
             
@@ -347,10 +347,10 @@ Fields:
             }
             else
             {
-                LLogger.Error($"Failed loading soundtrack {soundtrackInfo.TrackName} using AudioManager");
+                Main.Logger.Error($"Failed loading soundtrack {soundtrackInfo.TrackName} using AudioManager");
             }
         }
         
-        LLogger.Log($"Loaded {i} soundtracks from {(!assetBundle ? "local folder" : assetBundle.name)}");
+        Main.Logger.Log($"Loaded {i} soundtracks from {(!assetBundle ? "local folder" : assetBundle.name)}");
     }
 }

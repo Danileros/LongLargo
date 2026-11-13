@@ -13,7 +13,7 @@
 // {
 //     static bool Prefix(string in_pszEventName, GameObject in_gameObjectID)
 //     {
-//         LLogger.Debug($"[WWise PostEvent1]: {in_pszEventName}");
+//         Main.Logger.Debug($"[WWise PostEvent1]: {in_pszEventName}");
 //         return AkSoundEngineHandler.PostEvent(in_pszEventName); 
 //     }
 // }
@@ -30,7 +30,7 @@
 //         AkCallbackManager.EventCallback in_pfnCallback,
 //         Il2CppSystem.Object in_pCookie)
 //     {
-//         LLogger.Debug($"[WwisePostEvent2]: {in_pszEventName}");
+//         Main.Logger.Debug($"[WwisePostEvent2]: {in_pszEventName}");
 //         return AkSoundEngineHandler.PostEvent(in_pszEventName); 
 //     }
 // }
@@ -48,7 +48,7 @@
 //         Il2CppSystem.Object in_pCookie)
 //     {
 //         var name = EventIdProvider.GetEventName(in_eventID);
-//         LLogger.Debug($"[WwisePostEvent3]: {in_eventID}: {name}");
+//         Main.Logger.Debug($"[WwisePostEvent3]: {in_eventID}: {name}");
 //         return AkSoundEngineHandler.PostEvent(name); 
 //     }
 // }
@@ -62,7 +62,7 @@
 //     static bool Prefix(uint in_eventID, GameObject in_gameObjectID)
 //     {
 //         var name = EventIdProvider.GetEventName(in_eventID);
-//         LLogger.Debug($"[WwisePostEvent4]: {in_eventID}: {name}");
+//         Main.Logger.Debug($"[WwisePostEvent4]: {in_eventID}: {name}");
 //         return AkSoundEngineHandler.PostEvent(name); 
 //     }
 // }

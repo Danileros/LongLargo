@@ -33,7 +33,7 @@ public class PackCombatManager : IPackCombatManager
     public void SelectSettings(EPackProximityRange settingsType)
     {
         _settings = _proximitySettings.Single(s => s.EPackProximityRange == settingsType);
-        LLogger.Log($"Proximity settings selected: {settingsType}");
+        Main.Logger.Log($"Proximity settings selected: {settingsType}");
     }
 
     /// <summary>

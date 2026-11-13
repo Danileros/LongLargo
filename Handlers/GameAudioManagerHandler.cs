@@ -26,7 +26,7 @@ public static class GameAudioManagerHandler
         var situationInfo = GetSituationByEvent(soundName, go);
         if (situationInfo.WorthLogging)
         {
-            LLogger.Log($"[GameAudioManager] Hooking event {soundName}");
+            Main.Logger.Log($"[GameAudioManager] Hooking event {soundName}");
         }
         
         if (MaybeIgnoreEvent(situationInfo))
@@ -39,7 +39,7 @@ public static class GameAudioManagerHandler
         {
             if (situationInfo.Situation.IsWeather() && !string.IsNullOrEmpty(situationInfo.StingerlessEvent))
             {
-                LLogger.Debug($"[GameAudioManager] Replacing event with {situationInfo.StingerlessEvent}");
+                Main.Logger.Debug($"[GameAudioManager] Replacing event with {situationInfo.StingerlessEvent}");
                 GameAudioManager.PlaySound(situationInfo.StingerlessEvent, go);
             }
 
@@ -58,7 +58,7 @@ public static class GameAudioManagerHandler
             (soundtrack, playVanilla) = Main.PlaylistManager.GetSituationSoundtrack(situationInfo.Situation);
         }
 
-        LLogger.Debug($"[GameAudioManager] Choosing {situationInfo.Situation} clip {soundtrack?.TrackName ?? "ShortSilence"}");
+        Main.Logger.Debug($"[GameAudioManager] Choosing {situationInfo.Situation} clip {soundtrack?.TrackName ?? "ShortSilence"}");
         
         return PlayCLip(playVanilla, situationInfo, soundtrack, go);
     }
@@ -78,7 +78,7 @@ public static class GameAudioManagerHandler
             case "Play_SndMusicExplorationLong":
             case "Play_SndMusicExplorationLongDay":
             case "Play_SndMusicExplorationLongNight":
-                LLogger.Debug($"[GameAudioManager] Exploration event {soundName}");
+                Main.Logger.Debug($"[GameAudioManager] Exploration event {soundName}");
                 situationInfo.Situation = SituationTypeExtensions.GetExplorationSituation();
                 break;
             case "Play_MusicClear":
@@ -232,7 +232,7 @@ public static class GameAudioManagerHandler
             case "Play_SndMusNewLocation":
             case "Play_musicScene_AshCanyon_Enter":
             case "Play_musicScene_Hub_Enter":
-                LLogger.Debug("[GameAudioManager] Playing Silence to avoid overlap");
+                Main.Logger.Debug("[GameAudioManager] Playing Silence to avoid overlap");
                 situationInfo.Situation = FSituationType.Disabled;
                 situationInfo.SilenceType = SituationInfo.SilenceLength.Long;
                 break;
@@ -242,7 +242,7 @@ public static class GameAudioManagerHandler
             case "Play_musicTales_Outro_Stinger":
             case "Play_SndMusNewLocationShort":
             case "Play_musicTales_Bunker_Stinger":
-                LLogger.Debug("[GameAudioManager] Playing short Silence to avoid overlap");
+                Main.Logger.Debug("[GameAudioManager] Playing short Silence to avoid overlap");
                 situationInfo.Situation = FSituationType.Disabled;
                 situationInfo.SilenceType = SituationInfo.SilenceLength.Short;
                 break;
@@ -320,7 +320,7 @@ public static class GameAudioManagerHandler
             if (!playVanilla)
             {
                 // Play replaced stringer with delay, replace original event with stingerless
-                LLogger.Debug($"[GameAudioManager] Replacing event with {situationInfo.StingerlessEvent}");
+                Main.Logger.Debug($"[GameAudioManager] Replacing event with {situationInfo.StingerlessEvent}");
                 Main.AudioPlayer.PlaySoftDelayed(soundtrack, situationInfo.Situation, situationInfo.Delay);
                 GameAudioManager.PlaySound(situationInfo.StingerlessEvent, go);
             }

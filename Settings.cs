@@ -36,10 +36,6 @@ internal class Settings : JsonModSettings
     [Description("Sets the music volume for Long Largo tracks. Affected by MasterVolume, but not Music volume")]
     public uint BgmVolume = 100;
 
-    [Name("Debug mode")]
-    [Description("Write more info in logs. Useful when you want to report a problem with mod.")]
-    public bool DebugMode = false;
-
     // [Name("Load local soundtrack by NAudio")]
     // [Description("Fix for loading local files by AudioManager. Will be removed when unnecessary.")]
     // public bool EnableUglyLoad = true;
@@ -299,7 +295,6 @@ internal class Settings : JsonModSettings
         SetFieldVisible(nameof(Preset), ModEnabled);
         SetFieldVisible(nameof(BgmVolume), BgmVolumeEnabled && ModEnabled);
         SetFieldVisible(nameof(BgmVolumeEnabled), ModEnabled);
-        SetFieldVisible(nameof(DebugMode), ModEnabled);
         SetFieldVisible(nameof(DisableCopyrightedMusic), ModEnabled);
         SetFieldVisible(nameof(ExplorationMusicMode), ModEnabled);
         SetFieldVisible(nameof(ExplorationDelay), ModEnabled);

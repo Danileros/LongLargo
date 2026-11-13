@@ -23,12 +23,12 @@ public class NAudioLoader
                 _audioFileReaderType = _naudio.GetType("NAudio.Wave.AudioFileReader");
             }
 
-            LLogger.Log("Loaded NAudio");
+            Main.Logger.Log("Loaded NAudio");
         }
         catch (Exception e)
         {
             _naudio = null;
-            LLogger.Log("Cannot load NAudio, user music feature is now disabled. Ensure Directory " +
+            Main.Logger.Log("Cannot load NAudio, user music feature is now disabled. Ensure Directory " +
                         "'Mods/LongLargo' exists and has NAudio dlls. This is not critical problem, " +
                         "main Long Largo features are still enabled");
         }
@@ -58,7 +58,7 @@ public class NAudioLoader
         }
         catch (Exception e)
         {
-            LLogger.Error(e.ToString());
+            Main.Logger.Error(e.ToString());
         }
     }
 

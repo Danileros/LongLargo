@@ -23,6 +23,8 @@ public class Main : MelonMod
     public static IPackCombatManager PackCombatManager { get; private set; }
     
     public static DebugManagerProxy DebugManager { get; private set; }
+    
+    public static LoggerProxy<Main> Logger { get; } = new LoggerProxy<Main>();
 
     public override void OnInitializeMelon()
     {
@@ -44,7 +46,7 @@ public class Main : MelonMod
             return;
         }
         
-        LLogger.Debug($"[Main] Scene {sceneName} unloaded");
+        Logger.Debug($"[Main] Scene {sceneName} unloaded");
 
         // Stops playing danger music
         PackCombatManager.ForceLeaveCombat();
@@ -70,7 +72,7 @@ public class Main : MelonMod
             return;
         }
         
-        LLogger.Debug($"[Main] Scene {sceneName} loaded");
+        Main.Logger.Debug($"[Main] Scene {sceneName} loaded");
 
         if (StopExplorationMusicOnTransit(sceneName))
         {

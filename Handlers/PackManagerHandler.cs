@@ -67,7 +67,7 @@ public class PackManagerHandler : MonoBehaviour
             }
             catch (Exception e)
             {
-                LLogger.Error("Can't calculate timberwolf distance");
+                Main.Logger.Error("Can't calculate timberwolf distance");
             }
         }
         

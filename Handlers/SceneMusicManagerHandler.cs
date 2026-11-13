@@ -28,7 +28,7 @@ public class SceneMusicManagerHandler : MonoBehaviour
             return;
         }
 
-        LLogger.Debug("[SceneMusicManager] awakens");
+        Main.Logger.Debug("[SceneMusicManager] awakens");
         var delayModifier = SettingsManager.Settings.ExplorationDelay;
         if (delayModifier != 100)
         {
@@ -47,7 +47,7 @@ public class SceneMusicManagerHandler : MonoBehaviour
     public void OnDestroy()
     {
         Main.DebugManager.UnregisterDebugCommand("ll_debug_timer");
-        LLogger.Debug("[SceneMusicManager] destroyed");
+        Main.Logger.Debug("[SceneMusicManager] destroyed");
         // Main.AudioPlayer.Stop(1f);
     }
 
@@ -77,7 +77,7 @@ public class SceneMusicManagerHandler : MonoBehaviour
         var situation = SituationTypeExtensions.GetExplorationSituation();
         (var soundtrack, var allowVanilla) = Main.PlaylistManager.GetExplorationSoundtrack(situation);
         
-        LLogger.Debug($"[SceneMusicManager] Choosing clip {soundtrack?.TrackName ?? "LongSilence"}");
+        Main.Logger.Debug($"[SceneMusicManager] Choosing clip {soundtrack?.TrackName ?? "LongSilence"}");
         
         Main.AudioPlayer.PlaySoft(soundtrack, situation);
         if (!allowVanilla)

@@ -104,7 +104,7 @@ public class AudioPlayer : IAudioPlayer
         if (soundtrack != null && !IsPlaying)
         {
             Stop();
-            LLogger.Log($"[AudioPlayer] Now playing: {soundtrack.TrackName}");
+            Main.Logger.Log($"[AudioPlayer] Now playing: {soundtrack.TrackName}");
             PlayInternal(soundtrack, situation, loop);
         }
     }
@@ -114,7 +114,7 @@ public class AudioPlayer : IAudioPlayer
         if (soundtrack != null && !IsPlaying)
         {
             Stop();
-            LLogger.Log($"[AudioPlayer] Scheduled after {delay}: {soundtrack.TrackName}");
+            Main.Logger.Log($"[AudioPlayer] Scheduled after {delay}: {soundtrack.TrackName}");
             
             PlayInternal(soundtrack, situation, false, delay);
         }
@@ -125,7 +125,7 @@ public class AudioPlayer : IAudioPlayer
         if (soundtrack != null)
         {
             Stop();
-            LLogger.Log($"[AudioPlayer] Now playing hard: {soundtrack.TrackName}");
+            Main.Logger.Log($"[AudioPlayer] Now playing hard: {soundtrack.TrackName}");
             PlayInternal(soundtrack, situation, loop);
         }
     }
@@ -134,7 +134,7 @@ public class AudioPlayer : IAudioPlayer
     {
         if (soundtrack != null)
         {
-            LLogger.Log($"[AudioPlayer] Now playing hard with fade previous: {soundtrack.TrackName}");
+            Main.Logger.Log($"[AudioPlayer] Now playing hard with fade previous: {soundtrack.TrackName}");
             if (!IsPlaying)
             {
                 Stop();
@@ -158,11 +158,8 @@ public class AudioPlayer : IAudioPlayer
 
     public void Stop()
     {
-        if (SettingsManager.Settings.DebugMode)
-        {
-            LLogger.Debug("[AudioPlayer] Stopping");
-            LLogger.Debug(new System.Diagnostics.StackTrace(true).ToString());
-        }
+        Main.Logger.Debug("[AudioPlayer] Stopping");
+        Main.Logger.Debug(new System.Diagnostics.StackTrace(true).ToString());
         
         Shot._audioSource.Stop();
         Shot._audioSource.loop = false;
@@ -173,23 +170,20 @@ public class AudioPlayer : IAudioPlayer
     {
         if (!IsPlaying)
         {
-            LLogger.Debug($"[AudioPlayer] Stop rejected, nothing to stop");
+            Main.Logger.Debug($"[AudioPlayer] Stop rejected, nothing to stop");
             return;
         }
         
         if (!IsFading)
         {
-            if (SettingsManager.Settings.DebugMode)
-            {
-                LLogger.Debug($"[AudioPlayer] Stopping with fade out {fadeOut:N}");
-                LLogger.Debug(new System.Diagnostics.StackTrace(true).ToString());
-            }
+            Main.Logger.Debug($"[AudioPlayer] Stopping with fade out {fadeOut:N}");
+            Main.Logger.Debug(new System.Diagnostics.StackTrace(true).ToString());
             
             _lastStopToken = MelonCoroutines.Start(this.StopRoutine(fadeOut));
         }
         else
         {
-            LLogger.Debug($"[AudioPlayer] Stop rejected, already in process");
+            Main.Logger.Debug($"[AudioPlayer] Stop rejected, already in process");
         }
     }
 
@@ -214,7 +208,7 @@ public class AudioPlayer : IAudioPlayer
             return;
         }
         
-        LLogger.Debug($"[AudioPlayer] Stop rejected for {situations}, current is {LastSituation}");
+        Main.Logger.Debug($"[AudioPlayer] Stop rejected for {situations}, current is {LastSituation}");
     }
 
     public void StopIfSilence()
