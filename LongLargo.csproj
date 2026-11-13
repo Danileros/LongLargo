@@ -6,7 +6,6 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>disable</Nullable>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-		<DebugType>none</DebugType>
 		<RootNamespace>LongLargo</RootNamespace>
 	</PropertyGroup>
 
