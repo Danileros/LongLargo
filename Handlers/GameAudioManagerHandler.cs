@@ -223,24 +223,68 @@ public static class GameAudioManagerHandler
             case "Play_musicMood_SuspenseLowProbability":
             case "Play_musicMood_Vista":
             case "Play_musicMood_VistaLowProb":
+            case "Play_SndMusAreaTransition1":
+            case "Play_SndMusNewLocation":
+            case "Play_musicScene_AshCanyon_Enter":
+            // Don't mess with TFTFT
+            case "Play_musicScene_Hub_Enter":
             case "Play_musicTale02_RudigersChamber":
             case "Play_musicTales_Bunker_Exploration":
             case "Play_musicTales_Intro":
             case "Play_musicTales_Outro":
-            case "Play_SndMusAreaTransition1":
-            case "Play_SndMusNewLocation":
-            case "Play_musicScene_AshCanyon_Enter":
-            case "Play_musicScene_Hub_Enter":
+            // Don't mess with IronRoad
+            case "Play_musicScene_IR_PortRemnant_Exploration":
+            case "Play_musicScene_IR_TrackSection01_Exploration":
+            case "Play_IR01Wax01_Alice_Journal":
+            case "Play_IR01Wax01_Alice_Timeline":
+            case "Play_IR01Wax02_Alice_Journal":
+            case "Play_IR01Wax02_Alice_Timeline":
+            case "Play_IR01Wax03_Alice_Journal":
+            case "Play_IR01Wax03_Alice_Timeline":
+            case "Play_IR01Wax04_Angus_Journal":
+            case "Play_IR01Wax04_Angus_Timeline":
+            case "Play_IR01Wax05_Elsa_Journal":
+            case "Play_IR01Wax05_Elsa_Timeline":
+            case "Play_IR01Wax06_Alice_Journal":
+            case "Play_IR01Wax06_Alice_Timeline":
+            case "Play_IR01Wax07_Alice_Journal":
+            case "Play_IR01Wax07_Alice_Timeline":
+            case "Play_IR01Wax08_Maximillian_Journal":
+            case "Play_IR01Wax08_Maximillian_Timeline":
+            case "Play_IR01Wax09_Alice_Journal":
+            case "Play_IR01Wax09_Alice_Timeline":
+            case "Play_IR01Wax10_Maximillian_Journal":
+            case "Play_IR01Wax10_Maximillian_Timeline":
+            case "Play_IR01Wax11_Elsa_Journal":
+            case "Play_IR01Wax11_Elsa_Timeline":
+            case "Play_IR01Wax12_Maximillian_Journal":
+            case "Play_IR01Wax12_Maximillian_Timeline":
+            case "Play_IR01Wax13_Angus_Journal":
+            case "Play_IR01Wax13_Angus_Timeline":
+            case "Play_IR01Wax14_Elsa_Journal":
+            case "Play_IR01Wax14_Elsa_Timeline":
+            case "Play_IR01Wax15_Maximillian_Journal":
+            case "Play_IR01Wax15_Maximillian_Timeline":
+            case "Play_IR01Wax16_Maximillian_Journal":
+            case "Play_IR01Wax16_Maximillian_Timeline":
                 Main.Logger.Debug("[GameAudioManager] Playing Silence to avoid overlap");
                 situationInfo.Situation = FSituationType.Disabled;
                 situationInfo.SilenceType = SituationInfo.SilenceLength.Long;
                 break;
+            case "Play_SndMusNewLocationShort":
+            // Don't mess with TFTFT
             case "Play_musicTales_Intro_Stinger":
             case "Play_musicTales_Objective_Intro_Stinger":
             case "Play_musicTales_Objective_Outro_Stinger":
             case "Play_musicTales_Outro_Stinger":
-            case "Play_SndMusNewLocationShort":
             case "Play_musicTales_Bunker_Stinger":
+            // Don't mess with IronRoad
+            case "Play_musicStinger_IR_Arrive_PortRemnant_SeaCave":
+            case "Play_musicStinger_IR_Discover_Boat":
+            case "Play_musicStinger_IR_Discover_Train":
+            case "Play_musicStinger_IR_Discover_Whale":
+            case "Play_musicStinger_IR_Enter_Church":
+            case "Play_musicStinger_IR_LoadingScreen":
                 Main.Logger.Debug("[GameAudioManager] Playing short Silence to avoid overlap");
                 situationInfo.Situation = FSituationType.Disabled;
                 situationInfo.SilenceType = SituationInfo.SilenceLength.Short;
