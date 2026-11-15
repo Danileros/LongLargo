@@ -84,7 +84,7 @@ public class SceneMusicManagerHandler : MonoBehaviour
         {
             //_instance.ResetExploreMusicTimer();
             // Player can add LONG track so we should take it's length into equation instead of vanilla's fixed 240  
-            var duration = (soundtrack?.Clip?.clipLength ?? 0f) < 60 ? 60f : (float)soundtrack.Clip.clipLength;
+            var duration = (soundtrack?.Clip?.length ?? 0f) < 60 ? 60f : (float)soundtrack.Clip.length;
             _instance.m_TimeToPlayNextExploreMusic
                 = Time.time + duration + _minimalDelay + Random.Range(0, _delayRange);
         }

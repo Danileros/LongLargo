@@ -1,10 +1,8 @@
 using System.Collections;
-using AudioMgr;
 using Il2Cpp;
 using LongLargo.Extensions;
 using LongLargo.Interfaces;
 using LongLargo.Models;
-using LongLargo.Utils;
 using MelonLoader;
 using UnityEngine;
 
@@ -22,70 +20,44 @@ public class AudioPlayer : IAudioPlayer
 
     public bool IsFading { get; private set; }
 
-    public bool IsPaused => !IsPlaying && Shot._audioSource.time > 0f;
+    public bool IsPaused => !IsPlaying && (_audioSource == null || _audioSource.time > 0f);
 
-    public bool IsPlaying => Shot._audioSource.isPlaying;
-
-    private static Shot Shot
-    {
-        get
-        {
-            if (!_shot)
-            {
-                lock (typeof(AudioPlayer))
-                {
-                    if (!_shot)
-                    {
-                        try
-                        {
-                            AudioMaster.CreateMasterParent();
-                            _shot = AudioMaster.CreatePlayerShot(AudioMaster.SourceType.BGM);
-                            _onVolumeChange = ResetVolume;
-                            VolumeMaster.onVolumeChange += _onVolumeChange; // Now I'm in control!
-                            ResetVolume();
-                        }
-                        catch (Exception)
-                        {
-                            // Sometimes appears when exiting the game by Alt+F4, no reason to worry
-                        }
-                    }
-                }
-            }
-            
-            return _shot;
-        }
-    }
+    public bool IsPlaying => _audioSource?.isPlaying ?? false;
     
-    private static Shot _shot;
-    private static VolumeMaster.OnVolumeChange _onVolumeChange;
-    private static float _masterVolume;
+    private static AudioSource _audioSource;
     private object _lastPlayToken;
     private object _lastStopToken;
+    private GameObject _masterObject;
 
     public AudioPlayer()
     {
         Main.DebugManager.RegisterDebugCommand("ll_debug_audio", DebugData);
+        _masterObject = new GameObject("LL_AudioPlayer");
+        UnityEngine.GameObject.DontDestroyOnLoad(_masterObject);
+        _audioSource = _masterObject.AddComponent<AudioSource>();
     }
 
-    public static void ResetVolume()
+    public void ResetVolume()
     {
+        float masterVolume;
+        float musicVolume;
+        try
+        {
+            masterVolume = InterfaceManager.GetPanel<Panel_OptionsMenu>().State.m_MasterVolume;
+            musicVolume = InterfaceManager.GetPanel<Panel_OptionsMenu>().State.m_MusicVolume;
+        }
+        catch (Exception)
+        {
+            masterVolume = musicVolume = 1;
+        }
+        
         if (SettingsManager.Settings.BgmVolumeEnabled)
         {
-            try
-            {
-                _masterVolume = InterfaceManager.GetPanel<Panel_OptionsMenu>().State.m_MasterVolume;
-            }
-            catch (Exception)
-            {
-                // ignored
-            }
-
-            var masterVolume = _masterVolume;
-            Shot._audioSource.volume = masterVolume * SettingsManager.Settings.BgmVolume / 100f;
+            SetVolume(masterVolume * SettingsManager.Settings.BgmVolume / 100f);
         }
         else
         {
-            Shot._audioSource.volume = VolumeMaster.GetVolume(AudioMaster.SourceType.BGM);
+            SetVolume(masterVolume * musicVolume);
         }
     }
 
@@ -96,7 +68,7 @@ public class AudioPlayer : IAudioPlayer
 
     public void SetVolume(float volume)
     {
-        Shot._audioSource.volume = volume;
+        _audioSource.volume = volume;
     }
     
     public void PlaySoft(SoundtrackInfo soundtrack, FSituationType situation, bool loop = false)
@@ -161,8 +133,8 @@ public class AudioPlayer : IAudioPlayer
         Main.Logger.Debug("[AudioPlayer] Stopping");
         Main.Logger.Debug(new System.Diagnostics.StackTrace(true).ToString());
         
-        Shot._audioSource.Stop();
-        Shot._audioSource.loop = false;
+        _audioSource.Stop();
+        _audioSource.loop = false;
         StopAllCoroutines();
     }
 
@@ -229,7 +201,7 @@ public class AudioPlayer : IAudioPlayer
     {
         if (Main.AudioPlayer.IsPlaying)
         {
-            Shot._audioSource.Pause();
+            _audioSource.Pause();
         }
     }
 
@@ -237,14 +209,14 @@ public class AudioPlayer : IAudioPlayer
     {
         if (IsPaused)
         {
-            Shot._audioSource.UnPause();
+            _audioSource.UnPause();
         }
     }
 
     public string DebugData()
     {
-        var time = (int)Shot._audioSource.time;
-        var duration = (int)(LastSoundtrack?.Clip?.clipLength ?? 0);
+        var time = (int)_audioSource.time;
+        var duration = (int)(LastSoundtrack?.Clip?.length ?? 0);
         var playtime = IsPlaying ? $"{time/60:00}:{time%60:00}/{duration/60:00}:{duration%60:00}" : "N/A";
         string delay = "N/A";
         if (IsPlaying && time <= 0)
@@ -252,8 +224,8 @@ public class AudioPlayer : IAudioPlayer
             delay = $"{Time.time - LastTime:F1}/{LastDelay}";
         }
 
-        return $"IsPlaying: {IsPlaying}, IsFading: {IsFading}, IsPaused: {IsPaused}\n" +
-               $"Situation:  {LastSituation}, Looped: {Shot._audioSource.loop}\n" +
+        return $"IsPlaying:  {IsPlaying}, IsFading: {IsFading}, IsPaused: {IsPaused}\n" +
+               $"Situation:  {LastSituation}, Looped: {_audioSource.loop}\n" +
                $"Soundtrack: {LastSoundtrack?.TrackName ?? "none"}\n" +
                $"Delay:      {delay}\n" +
                $"Time:       {playtime}";
@@ -283,20 +255,20 @@ public class AudioPlayer : IAudioPlayer
         LastSituation = situation;
         LastTime = Time.time;
         LastDelay = delay;
-        Shot._audioSource.Stop();
+        _audioSource.Stop();
         ResetVolume();
-        Shot._audioSource.clip = clip.audioClip;
+        _audioSource.clip = clip;
         
         uConsole.Log($"[LL] Now playing: {soundtrack.TrackName}");
         
-        Shot._audioSource.loop = loop;
+        _audioSource.loop = loop;
         if (delay <= 0.001f)
         {
-            Shot._audioSource.Play();
+            _audioSource.Play();
             return;
         }
         
-        Shot._audioSource.PlayScheduled(AudioSettings.dspTime + delay);
+        _audioSource.PlayScheduled(AudioSettings.dspTime + delay);
     }
 
     private IEnumerator PlayAfterFade(SoundtrackInfo soundtrack, FSituationType situation, float fadeOut)
@@ -331,7 +303,7 @@ public class AudioPlayer : IAudioPlayer
     /// <returns>Reason to use MelonCoroutines.</returns>
     public IEnumerator FadeOut(float fadeTime)
     {
-        var startVolume = Shot._audioSource.volume;
+        var startVolume = _audioSource.volume;
         var startTime = Time.time;
         var time = 0f;
 
@@ -343,7 +315,7 @@ public class AudioPlayer : IAudioPlayer
             yield return null;
         }
 
-        Shot._audioSource.Stop();
+        _audioSource.Stop();
         ResetVolume();
     }
 }

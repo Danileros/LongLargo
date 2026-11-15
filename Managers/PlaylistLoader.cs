@@ -1,6 +1,5 @@
 using System.Reflection;
 using System.Text.Json;
-using AudioMgr;
 using LongLargo.Extensions;
 using LongLargo.Models;
 using LongLargo.Utils;
@@ -12,7 +11,7 @@ public class PlaylistLoader
 {
     // Different clipmanagers to avoid filename collision.
     private readonly List<AssetBundle> _loadedAssets = new List<AssetBundle>();
-    private readonly List<ClipManager> _loadedClipManagers = new List<ClipManager>();
+    private readonly List<ClipStorage> _loadedClipManagers = new List<ClipStorage>();
     
     internal static string FolderName { get; } = "LongLargo";
     internal static string FolderPath { get; } = Application.dataPath + "/../Mods/" + FolderName;
@@ -52,8 +51,7 @@ public class PlaylistLoader
         
         // I wish LoadFromMemory to work but no 
         var assetBundle = AssetBundle.LoadFromStream(ilStream);
-        var names = assetBundle.GetAllAssetNames();
-        var silenceManager = AudioMaster.NewClipManager();
+        var silenceManager = new ClipStorage();
         silenceManager.LoadAudioclip("ShortSilence", assetBundle.LoadAsset<AudioClip>("shortsilence.ogg"));
         silenceManager.LoadAudioclip("LongSilence", assetBundle.LoadAsset<AudioClip>("longsilence.ogg"));
         var shortSilenceClip = silenceManager.GetClip("ShortSilence");  // for stingers
@@ -87,7 +85,7 @@ public class PlaylistLoader
             })
             .ToArray();
         var localPlaylist = LoadLocalPlaylist(soundtrackPaths);
-        var clipManager = AudioMaster.NewClipManager();
+        var clipManager = new ClipStorage();
         try
         {
             if (true)
@@ -325,12 +323,11 @@ Fields:
             return;
         }
             
-        var clipManager = AudioMaster.NewClipManager();
-        clipManager.LoadAllClipsFromBundle(assetBundle);
+        var clipManager = ClipStorage.LoadFromBundle(assetBundle);
         ExtractClips(loadedSoundtracks, assetBundle, clipManager, playlist);
     }
     
-    private void ExtractClips(List<SoundtrackInfo> loadedSoundtracks, AssetBundle assetBundle, ClipManager clipManager, PlaylistInfo playlist)
+    private void ExtractClips(List<SoundtrackInfo> loadedSoundtracks, AssetBundle assetBundle, ClipStorage clipManager, PlaylistInfo playlist)
     {
         _loadedAssets.Add(assetBundle);
         _loadedClipManagers.Add(clipManager);

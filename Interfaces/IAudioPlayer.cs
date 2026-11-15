@@ -42,6 +42,11 @@ public interface IAudioPlayer
     /// Changes volume.
     /// </summary>
     void SetVolume(float volume);
+    
+    /// <summary>
+    /// Resets volume from settings.
+    /// </summary>
+    void ResetVolume();
 
     /// <summary>
     /// Tries to play and gently refuses if something is playing already.

@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using AudioMgr;
 using Il2Cpp;
 using LongLargo.Models;
 using ModSettings;
@@ -165,15 +164,7 @@ internal class Settings : JsonModSettings
 
     internal void Apply()
     {
-        if (BgmVolumeEnabled)
-        {
-            var masterVolume = InterfaceManager.GetPanel<Panel_OptionsMenu>().State.m_MasterVolume;
-            Main.AudioPlayer.SetVolume(masterVolume * BgmVolume / 100f);
-        }
-        else
-        {
-            Main.AudioPlayer.SetVolume(VolumeMaster.GetVolume(AudioMaster.SourceType.BGM));
-        }
+        Main.AudioPlayer.ResetVolume();
 
         if (StalkedMode == EStalkedMode.Suppress)
         {

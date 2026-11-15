@@ -1,5 +1,4 @@
 using System.Reflection;
-using AudioMgr;
 using LongLargo.Utils;
 using UnityEngine;
 
@@ -34,7 +33,7 @@ public class NAudioLoader
         }
     }
     
-    public void LoadUgly(string[] soundtrackPaths, ClipManager clipManager)
+    public void LoadUgly(string[] soundtrackPaths, ClipStorage clipManager)
     {
         if (_naudio == null)
         {

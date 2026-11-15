@@ -1,5 +1,4 @@
 using System.Text.Json.Serialization;
-using AudioMgr;
 using LongLargo.Utils;
 using UnityEngine;
 
@@ -20,7 +19,7 @@ public class SoundtrackInfo
     /// Clip.
     /// </summary>
     [JsonIgnore]
-    public Clip Clip { get; set; } = null;
+    public AudioClip Clip { get; set; } = null;
     
     /// <summary>
     /// Track name (must be not empty and unique).
