@@ -1,23 +1,23 @@
-// using HarmonyLib;
-// using Il2Cpp;
-// using LongLargo.Handlers;
-// using LongLargo.Helpers;
-// using UnityEngine;
-//
-// namespace LongLargo.Patches;
-//
-// [HarmonyPatch(typeof(AkSoundEngine))]
-// [HarmonyPatch(nameof(AkSoundEngine.PostEvent))]
-// [HarmonyPatch(new[] { typeof(string), typeof(GameObject) })]
-// public class WwisePostEventPatch1
-// {
-//     static bool Prefix(string in_pszEventName, GameObject in_gameObjectID)
-//     {
-//         Main.Logger.Debug($"[WWise PostEvent1]: {in_pszEventName}");
-//         return AkSoundEngineHandler.PostEvent(in_pszEventName); 
-//     }
-// }
-//
+using HarmonyLib;
+using Il2Cpp;
+using LongLargo.Handlers;
+using LongLargo.Utils;
+using UnityEngine;
+
+namespace LongLargo.Patches;
+
+[HarmonyPatch(typeof(AkSoundEngine))]
+[HarmonyPatch(nameof(AkSoundEngine.PostEvent))]
+[HarmonyPatch(new[] { typeof(string), typeof(GameObject) })]
+public class WwisePostEventPatch1
+{
+    static bool Prefix(string in_pszEventName, GameObject in_gameObjectID)
+    {
+        Main.Logger.Debug($"[WWise PostEvent1]: {in_pszEventName}");
+        return AkSoundEngineHandler.PostEvent(in_pszEventName); 
+    }
+}
+
 // [HarmonyPatch(typeof(AkSoundEngine))]
 // [HarmonyPatch(nameof(AkSoundEngine.PostEvent))]
 // [HarmonyPatch(new[] { typeof(string), typeof(GameObject), typeof(uint), typeof(AkCallbackManager.EventCallback), typeof(Il2CppSystem.Object) })]
