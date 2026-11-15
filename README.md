@@ -54,7 +54,7 @@ No code or music was developed using AI. All decisions, all code are mine and on
 
 ## Known Issues
 
-* Not a bug. MelonLoader 0.7.2 + AudioManager 2.0.5 currently can't load custom soundtracks from folder. A memory-consuming workaround is used as temporary solution. Long Largo will stop being hungry on memory once it fixed. Until then, it is not recommended to upload gigabytes of lossless files to the LongLargo folder, so as not to overflow the RAM.
+* Not a bug. MelonLoader 0.7.2 currently can't load custom soundtracks from folder. A memory-consuming workaround is used as temporary solution. Long Largo will stop being hungry on memory once it fixed. Until then, it is not recommended to upload gigabytes of lossless files to the LongLargo folder, so as not to overflow the RAM.
 * Not a bug. Some indoor locations specific to Tales From Far Territory DLC is excluded from supported locations list. It is intended design.
 
 ## Installation
@@ -63,7 +63,6 @@ No code or music was developed using AI. All decisions, all code are mine and on
 * Install all the dependencies:
 
 - [ModSettings](https://github.com/DigitalzombieTLD/ModSettings/releases)
-- [AudioManager](https://github.com/DigitalzombieTLD/AudioManager/releases)
 
 
 * Install the latest AudioCore plugin (to Plugins folder, not Mods folder!):
