@@ -91,6 +91,10 @@ internal class Settings : JsonModSettings
     [Description("Delay between Exploration soundtracks, percents. Vanilla is 100, recommended is 50.")]
     [Slider(1, 200)]
     public uint ExplorationDelay = 50;
+        
+    [Name("Suppress Aurora sound effect")]
+    [Description("If Yes, Aurora sound effect would not play.")]
+    public bool AuroraSuppress = true;
 
     [Section("Danger")]
 
@@ -214,6 +218,7 @@ internal class Settings : JsonModSettings
                 WeatherMode = EWeatherStingerMode.Vanilla;
                 TimeSuppress = false;
                 ConditionSuppress = false;
+                AuroraSuppress = false;
                 break;
             case EPreset.VanillaNoStalkingWolf:
                 ExplorationMusicMode = EExplorationMusicMode.Vanilla;
@@ -223,6 +228,7 @@ internal class Settings : JsonModSettings
                 WeatherMode = EWeatherStingerMode.Vanilla;
                 TimeSuppress = false;
                 ConditionSuppress = false;
+                AuroraSuppress = false;
                 break;
             case EPreset.Recommended:
                 ExplorationMusicMode = EExplorationMusicMode.Default;
@@ -232,6 +238,7 @@ internal class Settings : JsonModSettings
                 WeatherMode = EWeatherStingerMode.Default;
                 TimeSuppress = false;
                 ConditionSuppress = false;
+                AuroraSuppress = true;
                 break;
             case EPreset.RecommendedNoStalkingWolf:
                 ExplorationMusicMode = EExplorationMusicMode.Default;
@@ -241,6 +248,7 @@ internal class Settings : JsonModSettings
                 WeatherMode = EWeatherStingerMode.Default;
                 TimeSuppress = false;
                 ConditionSuppress = false;
+                AuroraSuppress = true;
                 break;
             case EPreset.Balanced:
                 ExplorationMusicMode = EExplorationMusicMode.Balanced;
@@ -250,6 +258,7 @@ internal class Settings : JsonModSettings
                 WeatherMode = EWeatherStingerMode.Balanced;
                 TimeSuppress = false;
                 ConditionSuppress = false;
+                AuroraSuppress = true;
                 break;
             case EPreset.BalancedNoStalkingWolf:
                 ExplorationMusicMode = EExplorationMusicMode.Balanced;
@@ -259,6 +268,7 @@ internal class Settings : JsonModSettings
                 WeatherMode = EWeatherStingerMode.Balanced;
                 TimeSuppress = false;
                 ConditionSuppress = false;
+                AuroraSuppress = true;
                 break;
             default:
                 Preset = EPreset.Custom;
@@ -297,5 +307,6 @@ internal class Settings : JsonModSettings
         SetFieldVisible(nameof(KeyPlayNext), ModEnabled);
         SetFieldVisible(nameof(KeyStop), ModEnabled);
         SetFieldVisible(nameof(KeyPlayLast), ModEnabled);
+        SetFieldVisible(nameof(AuroraSuppress), ModEnabled);
     }
 }

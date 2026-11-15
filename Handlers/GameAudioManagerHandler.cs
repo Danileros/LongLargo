@@ -2,6 +2,7 @@ using Il2Cpp;
 using LongLargo.Extensions;
 using LongLargo.Managers;
 using LongLargo.Models;
+using LongLargo.Utils;
 using UnityEngine;
 
 namespace LongLargo.Handlers;
@@ -366,5 +367,13 @@ public static class GameAudioManagerHandler
         public float Delay = 0;
         public SilenceLength SilenceType = SilenceLength.None;
         public bool WorthLogging = true;
+    }
+
+    public static void SetRtpcValue(GameAudioManager gameAudioManager, ref uint rtpcID, ref float rtpcValue, ref GameObject go)
+    {
+        if (SettingsManager.Settings.AuroraSuppress && RtpcIdProvider.GetEventName(rtpcID) == "AuroraStrength") 
+        {
+            rtpcValue = 0;
+        }
     }
 }

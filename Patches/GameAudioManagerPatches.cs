@@ -49,4 +49,13 @@ internal class GameAudioManagerPatches
             return GameAudioManagerHandler.PlayMusic(soundID, ref go);
         }
     }
+    
+    [HarmonyPatch(typeof(GameAudioManager), "SetRTPCValue", new Type[] { typeof(uint), typeof(float), typeof(GameObject) })]
+    public class GameAudioManager_SetRTPCValue
+    {
+        public static void Prefix(GameAudioManager __instance, ref uint rtpcID, ref float rtpcValue, ref GameObject go)
+        {
+            GameAudioManagerHandler.SetRtpcValue(__instance, ref rtpcID, ref rtpcValue, ref go);
+        }
+    }
 }
