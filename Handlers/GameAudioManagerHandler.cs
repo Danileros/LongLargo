@@ -233,6 +233,7 @@ public static class GameAudioManagerHandler
             case "Play_musicTales_Intro":
             case "Play_musicTales_Outro":
             // Don't mess with IronRoad
+            case "Play_WaxCylinderCannister_GearItem_PickUp":
             case "Play_musicScene_IR_PortRemnant_Exploration":
             case "Play_musicScene_IR_TrackSection01_Exploration":
             case "Play_IR01Wax01_Alice_Journal":
